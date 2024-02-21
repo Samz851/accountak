@@ -9,9 +9,8 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-        <script type="module" crossorigin src="{{asset("assets/index-95114c63.js")}}"></script>
-        <link rel="modulepreload" crossorigin href="{{asset("assets/antd-b6862f28.js")}}">
-        <link rel="stylesheet" href="{{asset("assets/index-c0a315f8.css")}}">
+        @viteReactRefresh
+        @vite('resources/js/index.tsx')
         {{-- @vite('src/main.tsx') --}}
         <!-- Styles -->
         <style>
