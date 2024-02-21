@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
+use App\Models\AccountType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class AccountFactory extends Factory
 {
+    // protected string $model = Account::class;
     /**
      * Define the model's default state.
      *
@@ -17,7 +20,9 @@ class AccountFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'account_name' => $this->faker->name(),
+            'account_type' => AccountType::doesntHave('childTypes')->get()->random()->id,
+            'parent_account_id' => null
         ];
     }
 }

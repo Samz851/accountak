@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('amount');
             $table->foreignId('debit_account_id')->constrained('accounts');
             $table->foreignId('credit_account_id')->constrained('accounts');
+            $table->nullableMorphs('noteable');
             $table->timestamps();
         });
     }

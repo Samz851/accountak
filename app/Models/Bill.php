@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Bill extends Model
 {
@@ -18,5 +19,10 @@ class Bill extends Model
     public function vendor()
     {
         return $this->belongsTo(Contact::class, 'vendor_id');
+    }
+
+    public function transactionRecord(): MorphOne
+    {
+        return $this->morphOne(TransRecord::class, 'noteable');
     }
 }

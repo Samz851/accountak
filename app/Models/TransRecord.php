@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class TransRecord extends Model
 {
@@ -16,6 +17,11 @@ class TransRecord extends Model
         'debit_account_id',
         'credit_account_id',
     ];
+
+    public function notesPR(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
     public function debitAccount()
     {
