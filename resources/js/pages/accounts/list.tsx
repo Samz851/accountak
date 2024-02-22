@@ -13,6 +13,7 @@ import {
     FilterDropdown,
     getDefaultSortOrder,
     ExportButton,
+    CreateButton,
 } from "@refinedev/antd";
 import {
     Table,
@@ -28,14 +29,14 @@ import {
 import { IAccount, IAccountFilterVariables } from "../../interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal, UserStatus } from "../../components";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl } = useNavigation();
+    const { showUrl, createUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -81,11 +82,28 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     return (
         <List
             breadcrumb={false}
-            headerProps={{
-                extra: (
-                    <ExportButton onClick={triggerExport} loading={isLoading} />
-                ),
-            }}
+            headerButtons={(props) => [
+                <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+                <CreateButton
+                    {...props.createButtonProps}
+                    key="create"
+                    size="large"
+                    onClick={() => {
+                        return go({
+                            to: `${createUrl("accounts")}`,
+                            query: {
+                                to: pathname,
+                            },
+                            options: {
+                                keepQuery: true,
+                            },
+                            type: "replace",
+                        });
+                    }}
+                >
+                    {t("products.actions.add")}
+                </CreateButton>,
+            ]}
             title={
                 <ListTitleButton
                     toPath="accounts/create"
@@ -206,7 +224,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     title="Children"
                     render={(_, value) =>
                         value.child_accounts.map(child => (
-                            <Typography.Text
+                            <Typography.Text key={child?.id}
                                 style={{
                                     whiteSpace: "nowrap",
                                 }}

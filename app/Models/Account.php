@@ -16,6 +16,8 @@ class Account extends Model
         'parent_account_id',
     ];
 
+    protected $with = ['childAccounts'];
+
     public function accountType(): BelongsTo
     {
         return $this->belongsTo(AccountType::class, 'account_type');

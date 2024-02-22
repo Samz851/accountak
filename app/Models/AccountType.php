@@ -17,6 +17,13 @@ class AccountType extends Model
         'parent_account_type',
     ];
 
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['childTypes'];
+
     public function parentType(): BelongsTo
     {
         return $this->belongsTo(AccountType::class, 'parent_account_type');

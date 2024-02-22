@@ -26,10 +26,15 @@ import {
     Row,
     Select,
     Space,
+    TreeSelect,
     Typography,
 } from "antd";
+
 import { IAccount } from "@/interfaces";
 
+import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
+import { useAccountsSelect, useAccountsSelectCustom } from "@/hooks/useAccountsSelect";
+import { useState } from "react";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -54,6 +59,17 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
     const go = useGo();
+    const [typeValue, setTypeValue] = useState<string>();
+    const [parentValue, setParentValue] = useState<string>();
+
+    const onChangeType = (newValue: string) => {
+        console.log(newValue);
+        setTypeValue(newValue);
+    };
+    const onChangeParent = (newValue: string) => {
+        console.log(newValue);
+        setParentValue(newValue);
+    };
 
     const { formProps, modalProps, close, onFinish } = useModalForm<IAccount, HttpError, FormValues
     >({
@@ -64,8 +80,15 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
         warnWhenUnsavedChanges: !isOverModal,
     });
 
-    // const { selectProps, queryResult } = useUsersSelect();
-
+    const { queryResult: typeQueryResult } = useAccountTypesSelect();
+    const { queryResult: parentQueryResult } = useAccountsSelect();
+    const { data, isLoading } = useAccountsSelectCustom();
+    console.log(data, 'custom');
+    // console.log(defaultValueQueryResult, "default values");
+    // console.log(queryResult, "query values");
+    // const treeData = queryResult.data?.data.map((type) => {
+    //     return
+    // })
     // const { mutateAsync: createManyMutateAsync } = useCreateMany();
 
     return (
@@ -144,28 +167,54 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 >
                     <Input placeholder="Please enter company name" />
                 </Form.Item>
-                {/* <Form.Item
-                    label="Sales owner"
-                    name="salesOwnerId"
+                <Form.Item
+                    label="Account Type"
+                    name="account_type"
                     rules={[{ required: true }]}
                 >
-                    <Select
+                    {/* <Select
                         placeholder="Please sales owner user"
                         {...selectProps}
-                        options={
-                            queryResult.data?.data?.map((user) => ({
-                                value: user.id,
-                                label: (
-                                    <SelectOptionWithAvatar
-                                        name={user.name}
-                                        avatarUrl={user.avatarUrl ?? undefined}
-                                    />
-                                ),
-                            })) ?? []
-                        }
-                    />
+                        // options={
+                        //     queryResult.data?.data?.map((user) => ({
+                        //         value: user.id,
+                        //         label: (
+                        //             <SelectOptionWithAvatar
+                        //                 name={user.name}
+                        //                 avatarUrl={user.avatarUrl ?? undefined}
+                        //             />
+                        //         ),
+                        //     })) ?? []
+                        // }
+                    /> */}
+                    <TreeSelect
+                        style={{ width: '100%' }}
+                        value={typeValue}
+                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                        treeData={typeQueryResult.data?.data}
+                        placeholder="Please select"
+                        treeDefaultExpandAll
+                        onChange={onChangeType}
+                        allowClear={true}
+                        />
+
                 </Form.Item>
-                <Form.List name="contacts">
+                <Form.Item
+                    label="Parent Account"
+                    name="parent_account"
+                >
+                    <TreeSelect
+                        style={{ width: '100%' }}
+                        value={parentValue}
+                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                        treeData={data?.data}
+                        placeholder="Please select"
+                        treeDefaultExpandAll
+                        onChange={onChangeParent}
+                        allowClear={true}
+                        />
+                </Form.Item>
+                {/* <Form.List name="contacts">
                     {(fields, { add, remove }) => (
                         <Space direction="vertical">
                             {fields.map(({ key, name, ...restField }) => (

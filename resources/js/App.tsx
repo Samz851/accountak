@@ -94,8 +94,16 @@ const App: React.FC = () => {
                         notificationProvider={useNotificationProvider}
                         resources={[
                             {
+                                name: "account_types",
+                                list: "/account_types",
+                                meta: {
+                                    dataProviderName: "laravel"
+                                }
+                            },
+                            {
                                 name: "accounts",
                                 list: "/accounts",
+                                create: "/accounts/create",
                                 meta: {
                                     label: "Accounts",
                                     icon: <DashboardOutlined />,
