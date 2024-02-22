@@ -51,6 +51,7 @@ import { ConfigProvider } from "./context";
 import { useAutoLoginForDemo } from "./hooks";
 
 import "@refinedev/antd/dist/reset.css";
+import { AccountCreatePage, AccountShow, AccountsList } from "./pages/accounts";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
@@ -58,6 +59,8 @@ const App: React.FC = () => {
     const { loading } = useAutoLoginForDemo();
 
     const API_URL = "https://api.finefoods.refine.dev";
+    const LARAVEL_API_URL = "http://localhost/api";
+    const laravelDataProvider = jsonServerDataProvider(LARAVEL_API_URL);
     const dataProvider = jsonServerDataProvider(API_URL);
 
     const { t, i18n } = useTranslation();
@@ -78,7 +81,10 @@ const App: React.FC = () => {
                 <RefineKbarProvider>
                     <Refine
                         routerProvider={routerProvider}
-                        dataProvider={dataProvider}
+                        dataProvider={{
+                            default: dataProvider,
+                            laravel: laravelDataProvider
+                        }}
                         authProvider={authProvider}
                         i18nProvider={i18nProvider}
                         options={{
@@ -87,6 +93,15 @@ const App: React.FC = () => {
                         }}
                         notificationProvider={useNotificationProvider}
                         resources={[
+                            {
+                                name: "accounts",
+                                list: "/accounts",
+                                meta: {
+                                    label: "Accounts",
+                                    icon: <DashboardOutlined />,
+                                    dataProviderName: "laravel"
+                                },
+                            },
                             {
                                 name: "dashboard",
                                 list: "/",
@@ -176,6 +191,18 @@ const App: React.FC = () => {
                                 }
                             >
                                 <Route index element={<DashboardPage />} />
+
+                                <Route path="/accounts">
+                                    <Route index element={<AccountsList />} />
+                                    <Route
+                                        path="show/:id"
+                                        element={<AccountShow />}
+                                    />
+                                     <Route
+                                        path="create"
+                                        element={<AccountCreatePage />}
+                                    />
+                                </Route>
 
                                 <Route path="/orders">
                                     <Route index element={<OrderList />} />

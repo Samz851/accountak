@@ -1,5 +1,26 @@
 import { Dayjs } from "dayjs";
 
+export interface IAccountType {
+    id: number;
+    name: string;
+    description: string;
+    parent_type?: IAccountType;
+    child_types?: IAccountType[];
+}
+export interface IAccount {
+    id: number;
+    account_name: string;
+    account_type: IAccountType;
+    parent_account?: IAccount;
+    child_accounts: IAccount[] | [];
+}
+
+export interface IAccountFilterVariables {
+    q: string;
+    account_name: string;
+    account_type: IAccountType;
+}
+
 export interface IOrderChart {
     count: number;
     status:
