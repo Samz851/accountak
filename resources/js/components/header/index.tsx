@@ -185,7 +185,7 @@ export const Header: React.FC = () => {
                     <Avatar size={16} src={`/images/flags/${lang}.svg`} />
                 </span>
             ),
-            label: lang === "en" ? "English" : "German",
+            label: lang === "en" ? "English" : "Arabic",
         }));
 
     return (
@@ -241,7 +241,7 @@ export const Header: React.FC = () => {
                                     <Text className={styles.languageSwitchText}>
                                         {currentLocale === "en"
                                             ? "English"
-                                            : "German"}
+                                            : "Arabic"}
                                     </Text>
                                     <DownOutlined
                                         className={styles.languageSwitchIcon}

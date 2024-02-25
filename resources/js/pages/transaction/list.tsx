@@ -27,14 +27,14 @@ import {
     Row,
 } from "antd";
 
-import { IAccount, IAccountFilterVariables } from "../../interfaces";
+import { IAccount, ITransaction, ITransactionFilterVariables } from "../../interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal, UserStatus } from "../../components";
 import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 
-export const AccountsList = ({ children }: PropsWithChildren) => {
+export const TransactionsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
     const { showUrl, createUrl } = useNavigation();
@@ -42,14 +42,14 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const { token } = theme.useToken();
 
     const { tableProps, filters, sorters } = useTable<
-        IAccount,
+        ITransaction,
         HttpError,
-        IAccountFilterVariables
+        ITransactionFilterVariables
     >({
         filters: {
             initial: [
                 {
-                    field: "account_name",
+                    field: "debit_account",
                     operator: "contains",
                     value: "",
                 },
@@ -66,7 +66,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         syncWithLocation: true,
     });
 
-    const { isLoading, triggerExport } = useExport<IAccount>({
+    const { isLoading, triggerExport } = useExport<ITransaction>({
         sorters,
         filters,
         pageSize: 50,
@@ -74,8 +74,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         mapData: (item) => {
             return {
                 id: item.id,
-                fullName: item.account_name,
-                account_type: item.account_type.name
+                fullName: item.id,
             };
         },
     });
@@ -91,7 +90,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => {
                         return go({
-                            to: `${createUrl("accounts")}`,
+                            to: `${createUrl("transactions")}`,
                             query: {
                                 to: pathname,
                             },
@@ -102,15 +101,9 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         });
                     }}
                 >
-                    {t("accounts.form.add")}
+                    {t("transactions.form.add")}
                 </CreateButton>,
             ]}
-            title={
-                <ListTitleButton
-                    toPath="accounts/create"
-                    buttonText="Add new account"
-                />
-            }
         >
             <Table
                 {...tableProps}
@@ -119,7 +112,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 pagination={{
                     ...tableProps.pagination,
                     showTotal: (total) => (
-                        <PaginationTotal total={total} entityName="accounts" />
+                        <PaginationTotal total={total} entityName="transactions" />
                     ),
                 }}
             >
@@ -161,11 +154,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="account_name"
-                    dataIndex="account_name"
-                    title={t("users.fields.name")}
+                    key="date"
+                    dataIndex="date"
+                    title={t("transactions.fields.date")}
                     defaultFilteredValue={getDefaultFilter(
-                        "account_name",
+                        "date",
                         filters,
                         "contains",
                     )}
@@ -179,11 +172,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="account_type"
-                    dataIndex={["account_type", "name"]}
-                    title={t("accounts.fields.account_type")}
+                    key="description"
+                    dataIndex={["description"]}
+                    title={t("trasnsactions.fields.description")}
                     defaultFilteredValue={getDefaultFilter(
-                        "account_type",
+                        "description",
                         filters,
                         "contains",
                     )}
@@ -195,48 +188,49 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                             />
                         </FilterDropdown>
                     )}
-                    // render={(value) => (
-                    //     <Typography.Text
-                    //     style={{
-                    //         whiteSpace: "nowrap",
-                    //     }}
-                    // >
-                    //     {value.name}
-                    // </Typography.Text>
-                    // )}
+                    render={(value) => (
+                        <Typography.Text
+                        style={{
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {value.name}
+                    </Typography.Text>
+                    )}
+                />
+                <Table.Column
+                    key="amount"
+                    dataIndex={["amount"]}
+                    title={t("transactions.fields.amount")}
                 />
                 <Table.Column<IAccount>
-                    key="parent_account"
-                    dataIndex={["parent_account", "account_name"]}
-                    title={t("accounts.fields.parent_account")}
-                    // render={(_, value) => (
-                    //     <Typography.Text
-                    //     style={{
-                    //         whiteSpace: "nowrap",
-                    //     }}
-                    // >
-                    //     {value?.parent_account?.account_name}
-                    // </Typography.Text>
-                    // )}
-                />
-                <Table.Column<IAccount>
-                    key="child_accounts"
-                    dataIndex={["child_accounts"]}
-                    title={t("accounts.fields.child_accounts")}
-                    render={(_, value) =>
-                        value.child_accounts.map(child => (
-                            <Row key={child?.id}>
+                    key="debit_account"
+                    dataIndex={["debit_account"]}
+                    title={t("transactions.fields.debit_account")}
+                    // render={(_, value) =>
+                    //     value.child_accounts.map(child => (
+                    //         <Row key={child?.id}>
 
-                                <Typography.Text
-                                    style={{
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    {child?.account_name}
-                                </Typography.Text>
-                            </Row>
-                        ))
-                    }
+                    //             <Typography.Text
+                    //                 style={{
+                    //                     whiteSpace: "nowrap",
+                    //                 }}
+                    //             >
+                    //                 {child?.account_name}
+                    //             </Typography.Text>
+                    //         </Row>
+                    //     ))
+                    // }
+                />
+                <Table.Column
+                    key="credit_account"
+                    dataIndex={["credit_account", "account_name"]}
+                    title={t("transactions.fields.credit_account")}
+                />
+                <Table.Column
+                    key="notes_pr"
+                    dataIndex={["notes_pr", "id"]}
+                    title={t("transactions.fields.notes_pr")}
                 />
                 {/* <Table.Column
                     key="createdAt"

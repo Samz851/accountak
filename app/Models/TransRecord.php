@@ -18,7 +18,7 @@ class TransRecord extends Model
         'credit_account_id',
     ];
 
-    public function notesPR(): MorphTo
+    public function notesPr(): MorphTo
     {
         return $this->morphTo();
     }

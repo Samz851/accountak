@@ -2,69 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ArrayFormatters;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class AccountController extends Controller
 {
-    private function renameAttributesForTreeData(array $array)
+    private function getAll(): array
     {
-        $keys = [
+        return Account::with(['parentAccount', 'childAccounts', 'accountType'])
+                        ->inRandomOrder()
+                        ->paginate(10)
+                        ->items();
+    }
+
+    private function getSelectOptions(): array
+    {
+        $accounts = Account::has('childAccounts')
+                            ->doesntHave('parentAccount')
+                            ->get()
+                            ->toArray();
+
+        return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
             "account_name" => "title",
             "id" => "value",
             "child_accounts" => "children"
-        ];
-        $newKeys = ["title", "value", "children"];
-        $newArray = [];
-        foreach ($array as $key => $value) {
-            if (array_key_exists($key, $keys)) {
-                if (is_array($value)) {
-                    $newArray[$keys[$key]] = array_map([$this, 'renameAttributesForTreeData'], $value);
-                } else {
-                    $newArray[$keys[$key]] = $value;
-                }
-
-            } else {
-                $newArray[$key] = $value;
-            }
-
-        }
-        return $newArray;
+        ]), $accounts);
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
-        $accounts = Account::with(['parentAccount', 'childAccounts', 'accountType'])
-                                    ->inRandomOrder()
-                                    ->paginate(10);
-        return response($accounts->items());
+        if ($request->has('selectOptions')) {
+            $result = $this->getSelectOptions();
+        } else {
+            $result = $this->getAll();
+        }
 
-
-    }
-
-    /**
-     * Get select options
-     */
-    public function getSelect(): Response
-    {
-        $results = Account::has('childAccounts')
-        ->doesntHave('parentAccount')
-        ->get()
-        ->toArray();
-    $resultsAdjusted = array_map(fn($result) => $this->renameAttributesForTreeData($result), $results);
-    // $this->rename_array_keys($results, ["name", "id", "child_types"], ["title", "value", "children"]);
-    return response($resultsAdjusted);
+        return response($result);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): Response
     {
-        //
+        $account = Account::create($request->all());
+        return response($account);
     }
 
     /**

@@ -1,8 +1,15 @@
 import { IAccountType } from "@/interfaces";
-import { useSelect } from "@refinedev/antd";
+import { useApiUrl, useCustom } from "@refinedev/core";
 
 export const useAccountTypesSelect = () => {
-    return useSelect<IAccountType>({
-        resource: "account_types",
+    const apiUrl = useApiUrl("laravel");
+    return useCustom<IAccountType[]>({
+        url: `${apiUrl}/account_types`,
+        method: "get",
+        config: {
+            query: {
+                selectOptions: true
+            }
+        }
     })
 }

@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { useModalForm } from "@refinedev/antd";
+import { useModalForm, useSelect } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
@@ -23,15 +23,17 @@ import {
     Col,
     Form,
     Input,
+    InputNumber,
     Modal,
     Row,
     Select,
     Space,
+    Switch,
     TreeSelect,
     Typography,
 } from "antd";
 
-import { IAccount } from "@/interfaces";
+import { IAccount, ITransaction } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
@@ -51,40 +53,48 @@ type Props = {
 };
 
 type FormValues = {
-    account_name: string;
-    account_type: number;
-    parent_account_id?: number;
+    description: string;
+    amount: number;
+    debit_account: number;
+    credit_account: number;
+    notes_pr?: number;
+    issue_payment: boolean;
 };
 
-export const AccountCreatePage = ({ isOverModal }: Props) => {
+export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
     const go = useGo();
-    const [typeValue, setTypeValue] = useState<string>();
-    const [parentValue, setParentValue] = useState<string>();
+    // const [typeValue, setTypeValue] = useState<string>();
+    // const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
 
-    const onChangeType = (newValue: string) => {
-        console.log(newValue);
-        setTypeValue(newValue);
-    };
-    const onChangeParent = (newValue: string) => {
-        console.log(newValue);
-        setParentValue(newValue);
-    };
+    // const onChangeType = (newValue: string) => {
+    //     console.log(newValue);
+    //     setTypeValue(newValue);
+    // };
+    // const onChangeParent = (newValue: string) => {
+    //     console.log(newValue);
+    //     setParentValue(newValue);
+    // };
 
-    const { formProps, modalProps, close, onFinish } = useModalForm<IAccount, HttpError, FormValues
+    const { formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
     >({
         action: "create",
         defaultVisible: true,
-        resource: "accounts",
+        resource: "transactions",
         redirect: false,
         warnWhenUnsavedChanges: !isOverModal,
     });
 
-    const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
+    // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
     const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
+    const { selectProps } = useSelect<IAccount>({
+        resource: "accounts",
+        optionLabel: "account_name",
+        optionValue: "id"
+    });
 
     return (
         <Modal
@@ -108,7 +118,7 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                     type: "replace",
                 });
             }}
-            title={t("accounts.form.add")}
+            title={t("transactions.form.add")}
             width={512}
             closeIcon={<LeftOutlined />}
         >
@@ -118,9 +128,12 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 onFinish={async (values) => {
                     try {
                         const data = await onFinish({
-                            account_name: values.account_name,
-                            account_type: values.account_type,
-                            parent_account_id: values.parent_account_id
+                            description: values.description,
+                            amount: values.amount,
+                            debit_account: values.debit_account,
+                            credit_account: values.credit_account,
+                            notes_pr: values.notes_pr,
+                            issue_payment: values.issue_payment,
                         });
                         close();
                         go({
@@ -173,43 +186,54 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 }}
             >
                 <Form.Item
-                    label={t("accounts.fields.account_name")}
-                    name="account_name"
+                    label={t("transactions.fields.description")}
+                    name="description"
                     rules={[{ required: true }]}
                 >
                     <Input placeholder="Please enter account name" />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_type")}
-                    name="account_type"
+                    label={t("transactions.fields.amount")}
+                    name="amount"
                     rules={[{ required: true }]}
                 >
-                    <TreeSelect
-                        style={{ width: '100%' }}
-                        value={typeValue}
-                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={typesData?.data}
-                        placeholder="Please select"
-                        treeDefaultExpandAll
-                        onChange={onChangeType}
-                        allowClear={true}
-                        />
-
+                    <InputNumber precision={2} />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.parent_account")}
-                    name="parent_account_id"
+                    label={t("transactions.fields.debit_account")}
+                    name="debit_account"
                 >
-                    <TreeSelect
-                        style={{ width: '100%' }}
-                        value={parentValue}
-                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountsData?.data}
-                        placeholder="Please select"
-                        treeDefaultExpandAll
-                        onChange={onChangeParent}
-                        allowClear={true}
-                        />
+                    <Select
+                        placeholder="Select a category"
+                        style={{ width: 300 }}
+                        {...selectProps}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label={t("transactions.fields.credit_account")}
+                    name="credit_account"
+                >
+                    <Select
+                        placeholder="Select a category"
+                        style={{ width: 300 }}
+                        {...selectProps}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label={t("transactions.fields.notes_pr")}
+                    name="notes_pr"
+                >
+                    <Select
+                        placeholder="Select a category"
+                        style={{ width: 300 }}
+                        {...selectProps}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label={t("transactions.fields.issue_payment")}
+                    name="issue_payment"
+                >
+                    <Switch />
                 </Form.Item>
                 {/* <Form.List name="contacts">
                     {(fields, { add, remove }) => (

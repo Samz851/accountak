@@ -22,7 +22,7 @@ import {
     TagsOutlined,
 } from "@ant-design/icons";
 import jsonServerDataProvider from "@refinedev/simple-rest";
-import { authProvider } from "./authProvider";
+import { authProvider } from "./providers/authProvider";
 
 import "dayjs/locale/de";
 
@@ -52,6 +52,7 @@ import { useAutoLoginForDemo } from "./hooks";
 
 import "@refinedev/antd/dist/reset.css";
 import { AccountCreatePage, AccountShow, AccountsList } from "./pages/accounts";
+import { TransactionCreatePage, TransactionsList } from "./pages/transaction";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
@@ -105,7 +106,17 @@ const App: React.FC = () => {
                                 list: "/accounts",
                                 create: "/accounts/create",
                                 meta: {
-                                    label: "Accounts",
+                                    label: t("accounts.accounts"),
+                                    icon: <DashboardOutlined />,
+                                    dataProviderName: "laravel"
+                                },
+                            },
+                            {
+                                name: "transactions",
+                                list: "/transactions",
+                                create: "/transactions/create",
+                                meta: {
+                                    label: t("transactions.transactions"),
                                     icon: <DashboardOutlined />,
                                     dataProviderName: "laravel"
                                 },
@@ -210,6 +221,12 @@ const App: React.FC = () => {
                                         path="create"
                                         element={<AccountCreatePage />}
                                     />
+                                </Route>
+                                <Route path="/transactions">
+                                    <Route index element={<TransactionsList />} />
+                                    <Route
+                                        path="create"
+                                        element={<TransactionCreatePage />} />
                                 </Route>
 
                                 <Route path="/orders">

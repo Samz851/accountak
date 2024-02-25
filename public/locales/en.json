@@ -9,6 +9,7 @@
         "email": "Email",
         "password": "Password"
       },
+
       "errors": {
         "validEmail": "Invalid email address"
       },
@@ -592,6 +593,33 @@
     "addresses": {
       "addresses": "Addresses",
       "address": "Address"
+    }
+  },
+  "accounts": {
+    "accounts": "Accounts",
+    "fields": {
+        "account_name": "Name",
+        "account_type": "Type",
+        "parent_account": "Parent Account",
+        "child_accounts": "Subaccounts"
+    },
+    "form": {
+        "add": "Add new account"
+    }
+  },
+  "transactions": {
+    "transactions": "Transactions",
+    "fields": {
+        "date": "Date",
+        "description": "Description",
+        "amount": "Amount",
+        "credit_account": "Credit Account",
+        "debit_account": "Debit Account",
+        "notes_pr": "Bill/Invoice",
+        "issue_payment": "Issue payment?"
+    },
+    "form": {
+        "add": "Add new transaction"
     }
   }
 }

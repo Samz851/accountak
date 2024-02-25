@@ -7,6 +7,7 @@ export interface IAccountType {
     parent_type?: IAccountType;
     child_types?: IAccountType[];
 }
+
 export interface IAccount {
     id: number;
     account_name: string;
@@ -15,6 +16,43 @@ export interface IAccount {
     child_accounts: IAccount[] | [];
 }
 
+export interface ITransaction {
+    id: number;
+    date: string;
+    description: string;
+    amount: number;
+    debit_account: IAccount;
+    credit_account: IAccount;
+    notes_pr: IInvoice | IBill;
+}
+
+export interface ITransactionFilterVariables {
+    q: string;
+    debit_account: IAccount;
+    credit_account: IAccount;
+}
+export interface IInvoice {
+    id: number;
+    issue_date: string;
+    due_date: string;
+    total_amount: number;
+    customer: IContact;
+}
+
+export interface IBill {
+    id: number;
+    date: string;
+    total_amount: number;
+    vendor: IContact;
+}
+
+export interface IContact {
+    id: number;
+    email: string;
+    phone_number: string;
+    type: string;
+    company_id?: number;
+}
 export interface IAccountFilterVariables {
     q: string;
     account_name: string;
