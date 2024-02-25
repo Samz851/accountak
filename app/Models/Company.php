@@ -16,23 +16,23 @@ class Company extends Model
         'contact_information',
     ];
 
-    public function Accounts()
+    public function accounts()
     {
         return $this->hasMany(Account::class);
     }
 
     public function contacts()
     {
-        return $this->belongsToMany(Contact::class);
+        return $this->hasMany(Contact::class, 'company_id');
     }
 
-    public function invoices()
-    {
-        return $this->hasMany(Invoice::class);
-    }
+    // public function invoices()
+    // {
+    //     return $this->hasMany(Invoice::class);
+    // }
 
-    public function bills()
-    {
-        return $this->hasMany(Bill::class);
-    }
+    // public function bills()
+    // {
+    //     return $this->hasMany(Bill::class);
+    // }
 }

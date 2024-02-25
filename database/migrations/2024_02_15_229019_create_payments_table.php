@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trans_records', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->string('description');
             $table->decimal('amount');
-            $table->foreignId('debit_account_id')->constrained('accounts');
-            $table->foreignId('credit_account_id')->constrained('accounts');
-            $table->nullableMorphs('noteable');
-            $table->foreignId('trans_id')
-                    ->nullable()
-                    ->constrained('accounts');
+            $table->string('payment_method')->nullable();
+            $table->foreignId('trans_id')->constrained('trans_records');
+            $table->boolean('approved')->default(true);
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trans_records');
+        Schema::dropIfExists('payments');
     }
 };

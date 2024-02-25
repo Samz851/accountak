@@ -53,6 +53,8 @@ import { useAutoLoginForDemo } from "./hooks";
 import "@refinedev/antd/dist/reset.css";
 import { AccountCreatePage, AccountShow, AccountsList } from "./pages/accounts";
 import { TransactionCreatePage, TransactionsList } from "./pages/transaction";
+import { TaxesList } from "./pages/taxes";
+import { TaxCreatePage } from "./pages/taxes/create";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
@@ -117,6 +119,16 @@ const App: React.FC = () => {
                                 create: "/transactions/create",
                                 meta: {
                                     label: t("transactions.transactions"),
+                                    icon: <DashboardOutlined />,
+                                    dataProviderName: "laravel"
+                                },
+                            },
+                            {
+                                name: "taxes",
+                                list: "/taxes",
+                                create: "/taxes/create",
+                                meta: {
+                                    label: t("taxes.taxes"),
                                     icon: <DashboardOutlined />,
                                     dataProviderName: "laravel"
                                 },
@@ -222,11 +234,19 @@ const App: React.FC = () => {
                                         element={<AccountCreatePage />}
                                     />
                                 </Route>
+
                                 <Route path="/transactions">
                                     <Route index element={<TransactionsList />} />
                                     <Route
                                         path="create"
                                         element={<TransactionCreatePage />} />
+                                </Route>
+
+                                <Route path="/taxes">
+                                    <Route index element={<TaxesList />} />
+                                    <Route
+                                        path="create"
+                                        element={<TaxCreatePage />} />
                                 </Route>
 
                                 <Route path="/orders">

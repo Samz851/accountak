@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Contact;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'issue_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'due_date' => $this->faker->dateTimeBetween('now', '1 year'),
+            'total_amount' => $this->faker->randomFloat(2, 100, 3000),
+            'customer_id' => Contact::get()->random()->id
         ];
     }
 }

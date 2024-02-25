@@ -13,7 +13,8 @@ class Payment extends Model
         'date',
         'amount',
         'payment_method',
-        'trans_id'
+        'trans_id',
+        'approved'
     ];
 
     public function transaction()

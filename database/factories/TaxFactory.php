@@ -17,7 +17,8 @@ class TaxFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name(),
+            'rate' => $this->faker->randomFloat(2, 0, 1)
         ];
     }
 }

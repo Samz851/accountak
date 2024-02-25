@@ -35,11 +35,16 @@ class TransRecord extends Model
 
     public function payment()
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasMany(Payment::class, 'trans_id');
     }
 
-    public function transactionTaxes()
+    public function relatedRecord()
     {
-        return $this->hasMany(TransTax::class);
+        return $this->belongsTo(TransRecord::class, 'trans_id');
+    }
+
+    public function tax()
+    {
+        return $this->belongsTo(Tax::class, 'tax_id');
     }
 }

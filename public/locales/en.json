@@ -616,10 +616,20 @@
         "credit_account": "Credit Account",
         "debit_account": "Debit Account",
         "notes_pr": "Bill/Invoice",
-        "issue_payment": "Issue payment?"
+        "issue_payment": "Issue payment?",
+        "tax": "Tax"
     },
     "form": {
         "add": "Add new transaction"
+    }
+  },
+  "taxes": {
+    "taxes": "Taxes",
+    "fields": {
+        "rate": "Rate"
+    },
+    "form": {
+        "add" : "Add new tax"
     }
   }
 }

@@ -22,7 +22,8 @@ class AccountFactory extends Factory
         return [
             'account_name' => $this->faker->name(),
             'account_type' => AccountType::doesntHave('childTypes')->get()->random()->id,
-            'parent_account_id' => null
+            'parent_account_id' => null,
+            'contact_id' => null
         ];
     }
 }

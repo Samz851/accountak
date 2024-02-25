@@ -33,8 +33,18 @@ class Account extends Model
         return $this->hasMany(Account::class, 'parent_account_id');
     }
 
-    public function transactions()
+    public function debitTransactions()
     {
-        return $this->hasMany(TransRecord::class, ['debit_account_id', 'credit_account_id']);
+        return $this->hasMany(TransRecord::class, 'debit_account_id');
+    }
+
+    public function creditTransactions()
+    {
+        return $this->hasMany(TransRecord::class, 'credit_account_id');
+    }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class, 'contact_id');
     }
 }

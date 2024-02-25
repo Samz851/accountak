@@ -23,7 +23,8 @@ export interface ITransaction {
     amount: number;
     debit_account: IAccount;
     credit_account: IAccount;
-    notes_pr: IInvoice | IBill;
+    notes_pr?: IInvoice | IBill;
+    tax: ITax;
 }
 
 export interface ITransactionFilterVariables {
@@ -46,6 +47,12 @@ export interface IBill {
     vendor: IContact;
 }
 
+export interface ITax {
+    id: number;
+    name: string;
+    rate: number;
+}
+
 export interface IContact {
     id: number;
     email: string;
@@ -53,6 +60,12 @@ export interface IContact {
     type: string;
     company_id?: number;
 }
+
+export interface ITaxFilterVariables {
+    q: string;
+    name: string;
+}
+
 export interface IAccountFilterVariables {
     q: string;
     account_name: string;
