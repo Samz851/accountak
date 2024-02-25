@@ -22,7 +22,8 @@ class TaxesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $tax = Tax::create($request->all());
+        return response($tax);
     }
 
     /**

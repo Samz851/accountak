@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TransRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class TransactionsController extends Controller
 {
@@ -23,7 +24,19 @@ class TransactionsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $data['date'] = now();
+        $createPayment = Arr::pull($data, 'issue_payment', false);
+        $transaction = TransRecord::create($data);
+        if ($createPayment) {
+            $payment = $transaction->payment()->create(['date' => now(), 'amount' => $data['amount']]);
+        }
+        // Reload model with children
+        $transaction = TransRecord::find($transaction->id)
+                                ->with(["notes_pr", "debit_account", "credit_account", "payment", "transaction_taxes"])
+                                ->get();
+
+        return response($transaction);
     }
 
     /**

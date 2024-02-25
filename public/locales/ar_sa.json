@@ -607,7 +607,9 @@
     }
   },
   "transactions": {
-    "transactions": "العمليات",
+    "transactions": "القيود",
+    "accruals": "الإستحقاقات",
+    "payments": "السداد",
     "fields": {
         "date": "التاريخ",
         "description": "الشرح",
@@ -624,6 +626,7 @@
   "taxes": {
     "taxes": "الضرائب",
     "fields": {
+        "name": "اسم",
         "rate": "النسبة"
     },
     "form": {

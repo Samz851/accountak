@@ -33,7 +33,7 @@ import {
     Typography,
 } from "antd";
 
-import { IAccount, ITransaction } from "@/interfaces";
+import { IAccount, ITax, ITransaction } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
@@ -59,7 +59,7 @@ type FormValues = {
     credit_account: number;
     notes_pr?: number;
     issue_payment: boolean;
-    tax: number;
+    tax_id: number;
 };
 
 export const TransactionCreatePage = ({ isOverModal }: Props) => {
@@ -96,6 +96,11 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
         optionLabel: "account_name",
         optionValue: "id"
     });
+    const { selectProps: taxesSelectProps } = useSelect<ITax>({
+        resource: "taxes",
+        optionLabel: "name",
+        optionValue: "id"
+    })
 
     return (
         <Modal
@@ -135,7 +140,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             credit_account: values.credit_account,
                             notes_pr: values.notes_pr,
                             issue_payment: values.issue_payment,
-                            tax: values.tax
+                            tax_id: values.tax_id
                         });
                         close();
                         go({
@@ -233,12 +238,12 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 </Form.Item>
                 <Form.Item
                     label={t("transactions.fields.tax")}
-                    name="tax"
+                    name="tax_id"
                 >
                     <Select
                         placeholder="Select a category"
                         style={{ width: 300 }}
-                        {...selectProps}
+                        {...taxesSelectProps}
                     />
                 </Form.Item>
                 <Form.Item

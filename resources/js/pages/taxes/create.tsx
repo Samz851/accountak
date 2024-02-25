@@ -108,7 +108,7 @@ export const TaxCreatePage = ({ isOverModal }: Props) => {
                     type: "replace",
                 });
             }}
-            title={t("accounts.form.add")}
+            title={t("taxes.form.add")}
             width={512}
             closeIcon={<LeftOutlined />}
         >
@@ -172,18 +172,19 @@ export const TaxCreatePage = ({ isOverModal }: Props) => {
                 }}
             >
                 <Form.Item
-                    label={t("accounts.fields.account_name")}
+                    label={t("taxes.fields.name")}
                     name="name"
                     rules={[{ required: true }]}
                 >
-                    <Input placeholder="Please enter account name" />
+                    <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_type")}
+                    label={t("taxes.fields.rate")}
                     name="rate"
                     rules={[{ required: true }]}
                 >
                     <InputNumber
+                        prefix="%"
                         min={0}
                         max={100}
                         step={1}

@@ -609,6 +609,8 @@
   },
   "transactions": {
     "transactions": "Transactions",
+    "accruals": "Accruals",
+    "payments": "Payments",
     "fields": {
         "date": "Date",
         "description": "Description",
@@ -626,6 +628,7 @@
   "taxes": {
     "taxes": "Taxes",
     "fields": {
+        "name": "Name",
         "rate": "Rate"
     },
     "form": {
