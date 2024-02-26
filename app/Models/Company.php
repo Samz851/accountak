@@ -16,10 +16,10 @@ class Company extends Model
         'contact_information',
     ];
 
-    public function accounts()
-    {
-        return $this->hasMany(Account::class);
-    }
+    // public function accounts()
+    // {
+    //     return $this->hasMany(Account::class);
+    // }
 
     public function contacts()
     {

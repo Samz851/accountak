@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ArrayFormatters;
 use App\Models\Account;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class AccountController extends Controller
 {
-    private function getAll(): array
+    private function getAll(): Collection | array
     {
         return Account::with(['parentAccount', 'childAccounts', 'accountType'])
-                        ->inRandomOrder()
-                        ->paginate(10)
-                        ->items();
+                        ->get();
     }
 
     private function getSelectOptions(): array

@@ -13,14 +13,7 @@ import routerProvider, {
     DocumentTitleHandler,
 } from "@refinedev/react-router-v6";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import {
-    ShoppingOutlined,
-    ShopOutlined,
-    DashboardOutlined,
-    UserOutlined,
-    UnorderedListOutlined,
-    TagsOutlined,
-} from "@ant-design/icons";
+
 import jsonServerDataProvider from "@refinedev/simple-rest";
 import { authProvider } from "./providers/authProvider";
 
@@ -52,9 +45,10 @@ import { useAutoLoginForDemo } from "./hooks";
 
 import "@refinedev/antd/dist/reset.css";
 import { AccountCreatePage, AccountShow, AccountsList } from "./pages/accounts";
-import { TransactionCreatePage, TransactionsList } from "./pages/transaction";
-import { TaxesList } from "./pages/taxes";
-import { TaxCreatePage } from "./pages/taxes/create";
+import { TransactionCreatePage, TransactionsList } from "./pages/transactions";
+import { TaxesList, TaxCreatePage } from "./pages/taxes";
+import { resources } from "./config/resources";
+import { routes } from "./config/routes";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
@@ -95,105 +89,7 @@ const App: React.FC = () => {
                             warnWhenUnsavedChanges: true,
                         }}
                         notificationProvider={useNotificationProvider}
-                        resources={[
-                            {
-                                name: "account_types",
-                                list: "/account_types",
-                                meta: {
-                                    dataProviderName: "laravel"
-                                }
-                            },
-                            {
-                                name: "accounts",
-                                list: "/accounts",
-                                create: "/accounts/create",
-                                meta: {
-                                    label: t("accounts.accounts"),
-                                    icon: <DashboardOutlined />,
-                                    dataProviderName: "laravel"
-                                },
-                            },
-                            {
-                                name: "transactions",
-                                list: "/transactions",
-                                create: "/transactions/create",
-                                meta: {
-                                    label: t("transactions.transactions"),
-                                    icon: <DashboardOutlined />,
-                                    dataProviderName: "laravel"
-                                },
-                            },
-                            {
-                                name: "taxes",
-                                list: "/taxes",
-                                create: "/taxes/create",
-                                meta: {
-                                    label: t("taxes.taxes"),
-                                    icon: <DashboardOutlined />,
-                                    dataProviderName: "laravel"
-                                },
-                            },
-                            {
-                                name: "dashboard",
-                                list: "/",
-                                meta: {
-                                    label: "Dashboard",
-                                    icon: <DashboardOutlined />,
-                                },
-                            },
-                            {
-                                name: "orders",
-                                list: "/orders",
-                                show: "/orders/show/:id",
-                                meta: {
-                                    icon: <ShoppingOutlined />,
-                                },
-                            },
-                            {
-                                name: "users",
-                                list: "/customers",
-                                show: "/customers/show/:id",
-                                meta: {
-                                    icon: <UserOutlined />,
-                                },
-                            },
-                            {
-                                name: "products",
-                                list: "/products",
-                                create: "/products/create",
-                                edit: "/products/edit/:id",
-                                show: "/products/show/:id",
-                                meta: {
-                                    icon: <UnorderedListOutlined />,
-                                },
-                            },
-                            {
-                                name: "categories",
-                                list: "/categories",
-                                meta: {
-                                    icon: <TagsOutlined />,
-                                },
-                            },
-                            {
-                                name: "stores",
-                                list: "/stores",
-                                create: "/stores/create",
-                                edit: "/stores/edit/:id",
-                                meta: {
-                                    icon: <ShopOutlined />,
-                                },
-                            },
-                            {
-                                name: "couriers",
-                                list: "/couriers",
-                                create: "/couriers/create",
-                                edit: "/couriers/edit/:id",
-                                show: "/couriers/show/:id",
-                                meta: {
-                                    icon: <BikeWhiteIcon />,
-                                },
-                            },
-                        ]}
+                        resources={resources}
                     >
                         <Routes>
                             <Route
@@ -221,7 +117,8 @@ const App: React.FC = () => {
                                     </Authenticated>
                                 }
                             >
-                                <Route index element={<DashboardPage />} />
+                                {...routes}
+                                {/* <Route index element={<DashboardPage />} />
 
                                 <Route path="/accounts">
                                     <Route index element={<AccountsList />} />
@@ -335,7 +232,7 @@ const App: React.FC = () => {
                                         path="show/:id"
                                         element={<CourierShow />}
                                     />
-                                </Route>
+                                </Route> */}
                             </Route>
 
                             <Route

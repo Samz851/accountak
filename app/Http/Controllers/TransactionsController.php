@@ -13,7 +13,7 @@ class TransactionsController extends Controller
      */
     public function index()
     {
-        $transactions = TransRecord::with(["notes_pr", "debit_account", "credit_account", "payment", "transaction_taxes"])
+        $transactions = TransRecord::with(["noteable", "debitAccount", "creditAccount", "payment"])
                                     ->paginate()
                                     ->items();
         return response($transactions);
@@ -33,7 +33,7 @@ class TransactionsController extends Controller
         }
         // Reload model with children
         $transaction = TransRecord::find($transaction->id)
-                                ->with(["notes_pr", "debit_account", "credit_account", "payment", "transaction_taxes"])
+                                ->with(["noteable", "debitAccount", "creditAccount", "payment"])
                                 ->get();
 
         return response($transaction);

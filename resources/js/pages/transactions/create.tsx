@@ -37,7 +37,7 @@ import { IAccount, ITax, ITransaction } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -55,8 +55,8 @@ type Props = {
 type FormValues = {
     description: string;
     amount: number;
-    debit_account: number;
-    credit_account: number;
+    debit_account_id: number;
+    credit_account_id: number;
     notes_pr?: number;
     issue_payment: boolean;
     tax_id: number;
@@ -67,9 +67,9 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
     const go = useGo();
-    // const [typeValue, setTypeValue] = useState<string>();
-    // const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
+    const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
+    const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
 
     // const onChangeType = (newValue: string) => {
     //     console.log(newValue);
@@ -90,12 +90,17 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     });
 
     // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
-    const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
-    const { selectProps } = useSelect<IAccount>({
+    const { queryResult: accountsQueryResult } = useSelect<IAccount>({
         resource: "accounts",
         optionLabel: "account_name",
         optionValue: "id"
     });
+
+    const accountsOptions = accountsQueryResult.data?.data.map((item) => ({
+        label: item.account_name,
+        value: item.id,
+    })) ?? [];
+
     const { selectProps: taxesSelectProps } = useSelect<ITax>({
         resource: "taxes",
         optionLabel: "name",
@@ -136,8 +141,8 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                         const data = await onFinish({
                             description: values.description,
                             amount: values.amount,
-                            debit_account: values.debit_account,
-                            credit_account: values.credit_account,
+                            debit_account_id: values.debit_account_id,
+                            credit_account_id: values.credit_account_id,
                             notes_pr: values.notes_pr,
                             issue_payment: values.issue_payment,
                             tax_id: values.tax_id
@@ -208,22 +213,26 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 </Form.Item>
                 <Form.Item
                     label={t("transactions.fields.debit_account")}
-                    name="debit_account"
+                    name="debit_account_id"
+                    rules={[{required: true}]}
                 >
                     <Select
-                        placeholder="Select a category"
                         style={{ width: 300 }}
-                        {...selectProps}
+                        onChange={value => setSelectedDebitAccount(value)}
+                        filterOption={true}
+                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
                     />
                 </Form.Item>
                 <Form.Item
                     label={t("transactions.fields.credit_account")}
-                    name="credit_account"
+                    name="credit_account_id"
+                    rules={[{required: true}]}
                 >
                     <Select
-                        placeholder="Select a category"
                         style={{ width: 300 }}
-                        {...selectProps}
+                        onChange={value => setSelectedCreditAccount(value)}
+                        filterOption={true}
+                        options={[...accountsOptions?.filter(item => item.value !== selectedDebitAccount)]}
                     />
                 </Form.Item>
                 <Form.Item
@@ -231,17 +240,17 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                     name="notes_pr"
                 >
                     <Select
-                        placeholder="Select a category"
                         style={{ width: 300 }}
-                        {...selectProps}
+                        filterOption={true}
+                        options={accountsOptions}
                     />
                 </Form.Item>
                 <Form.Item
                     label={t("transactions.fields.tax")}
                     name="tax_id"
+                    rules={[{required: true}]}
                 >
                     <Select
-                        placeholder="Select a category"
                         style={{ width: 300 }}
                         {...taxesSelectProps}
                     />

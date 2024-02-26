@@ -29,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import debounce from "lodash/debounce";
 
 import { useConfigProvider } from "../../context";
+import { showTranslations } from 'translation-check'
 import { IconMoon, IconSun } from "../../components/icons";
 import { IOrder, IStore, ICourier, IIdentity } from "../../interfaces";
 import { useStyles } from "./styled";
@@ -249,7 +250,11 @@ export const Header: React.FC = () => {
                                 </Space>
                             </Button>
                         </Dropdown>
-
+                        <Button
+                            className={styles.themeSwitch}
+                            type="primary"
+                            onClick={() => showTranslations(i18n)}
+                        />
                         <Button
                             className={styles.themeSwitch}
                             type="text"

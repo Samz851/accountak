@@ -31,4 +31,9 @@ class Contact extends Model
     {
         return $this->hasMany(Bill::class, 'vendor_id');
     }
+
+    public function accounts()
+    {
+        return $this->hasMany(Account::class, 'contact_id');
+    }
 }

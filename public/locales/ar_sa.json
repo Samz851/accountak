@@ -617,7 +617,8 @@
         "credit_account": "حساب دائن",
         "debit_account": "حساب مدين",
         "notes_pr": "الفاتورة",
-        "issue_payment": "اصدر قيد سداد؟"
+        "issue_payment": "اصدر قيد سداد؟",
+        "tax": "الضرائب"
     },
     "form": {
         "add": "إضافة قيد جديد"
@@ -631,6 +632,33 @@
     },
     "form": {
         "add" : "أضافة ضرائب جديدة"
+    }
+  },
+  "companies": {
+    "companies": "الشركات",
+    "fields": {
+        "name": "الأسم",
+        "address": "عنوان",
+        "currency": "العملة",
+        "contact_information": "التلفون",
+        "contacts": "الأفراد"
+    },
+    "form": {
+        "add" : "إضافة شركة جديدة"
+    }
+  },
+  "contacts": {
+    "contacts": "الأفراد",
+    "fields": {
+        "name": "الأسم",
+        "email": "الإيميل",
+        "phone_number": "التلفون",
+        "type": "النوع",
+        "company": "الشركة",
+        "accounts": "الحسابات"
+    },
+    "form": {
+        "add" : "أضافة فرد جديد"
     }
   }
 }

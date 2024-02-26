@@ -1,5 +1,15 @@
 import { Dayjs } from "dayjs";
 
+export interface ICompany {
+    id: number;
+    company_name: string;
+    address: string;
+    currency: string;
+    contact_information?: string;
+    contacts?: IContact[];
+    accounts?: IAccount[];
+}
+
 export interface IAccountType {
     id: number;
     name: string;
@@ -59,6 +69,9 @@ export interface IContact {
     phone_number: string;
     type: string;
     company_id?: number;
+    company: ICompany;
+    name: string;
+    accounts: IAccount[]
 }
 
 export interface ITaxFilterVariables {

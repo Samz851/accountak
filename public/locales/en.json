@@ -634,5 +634,32 @@
     "form": {
         "add" : "Add new tax"
     }
+  },
+  "companies": {
+    "companies": "Companies",
+    "fields": {
+        "name": "Name",
+        "address": "Address",
+        "currency": "Currency",
+        "contact_information": "Phone",
+        "contacts": "Contacts"
+    },
+    "form": {
+        "add" : "Add new company"
+    }
+  },
+  "contacts": {
+    "contacts": "Contacts",
+    "fields": {
+        "name": "Name",
+        "email": "Email",
+        "phone_number": "Phone",
+        "type": "Type",
+        "company": "Company",
+        "accounts": "Accounts"
+    },
+    "form": {
+        "add" : "Add new contact"
+    }
   }
 }

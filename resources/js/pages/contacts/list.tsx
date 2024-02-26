@@ -27,46 +27,37 @@ import {
     Row,
 } from "antd";
 
-import { IAccount, ITransaction, ITransactionFilterVariables } from "../../interfaces";
+import { IAccount, ICompany, IContact } from "@/interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal, UserStatus } from "../../components";
+import { PaginationTotal, UserStatus } from "@/components";
 import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 
-export const TransactionsList = ({ children }: PropsWithChildren) => {
+export const ContactsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl } = useNavigation();
+    const { showUrl, createUrl, show } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
     const { tableProps, filters, sorters } = useTable<
-        ITransaction,
-        HttpError,
-        ITransactionFilterVariables
+        IContact,
+        HttpError
     >({
         filters: {
-            initial: [
-                {
-                    field: "debit_account",
-                    operator: "contains",
-                    value: "",
-                },
-            ],
+            mode: "off",
         },
         sorters: {
-            initial: [
-                {
-                    field: "id",
-                    order: "desc",
-                },
-            ],
+            mode: "off",
         },
         syncWithLocation: true,
+        pagination: {
+            mode: "server",
+          },
     });
 
-    const { isLoading, triggerExport } = useExport<ITransaction>({
+    const { isLoading, triggerExport } = useExport<IContact>({
         sorters,
         filters,
         pageSize: 50,
@@ -90,7 +81,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => {
                         return go({
-                            to: `${createUrl("transactions")}`,
+                            to: `${createUrl("contacts")}`,
                             query: {
                                 to: pathname,
                             },
@@ -101,7 +92,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                         });
                     }}
                 >
-                    {t("transactions.form.add")}
+                    {t("contacts.form.add")}
                 </CreateButton>,
             ]}
         >
@@ -112,7 +103,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                 pagination={{
                     ...tableProps.pagination,
                     showTotal: (total) => (
-                        <PaginationTotal total={total} entityName="transactions" />
+                        <PaginationTotal total={total} entityName="contacts" />
                     ),
                 }}
             >
@@ -154,9 +145,9 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="date"
-                    dataIndex="date"
-                    title={t("transactions.fields.date")}
+                    key="name"
+                    dataIndex="name"
+                    title={t("contacts.fields.name")}
                     defaultFilteredValue={getDefaultFilter(
                         "date",
                         filters,
@@ -172,9 +163,9 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="description"
-                    dataIndex={["description"]}
-                    title={t("trasnsactions.fields.description")}
+                    key="email"
+                    dataIndex="email"
+                    title={t("contacts.fields.email")}
                     defaultFilteredValue={getDefaultFilter(
                         "description",
                         filters,
@@ -188,50 +179,72 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                             />
                         </FilterDropdown>
                     )}
+                />
+                <Table.Column
+                    key="phone_number"
+                    dataIndex="phone_number"
+                    title={t("contacts.fields.phone_number")}
+                />
+                <Table.Column
+                    key="type"
+                    dataIndex="type"
+                    title={t("contacts.fields.type")}
+                />
+                <Table.Column<ICompany>
+                    key="company"
+                    dataIndex={["company"]}
+                    title={t("contacts.fields.company")}
                     render={(value) => (
-                        <Typography.Text
+                        <Typography.Link
+                        strong
+                        onClick={() => show("companies", value.id)}
                         style={{
                             whiteSpace: "nowrap",
+                            color: token.colorTextHeading,
                         }}
                     >
-                        {value.name}
-                    </Typography.Text>
+                        #{value?.company_name}
+                    </Typography.Link>
                     )}
                 />
-                <Table.Column
-                    key="amount"
-                    dataIndex={["amount"]}
-                    title={t("transactions.fields.amount")}
-                />
-                <Table.Column<IAccount>
-                    key="debit_account"
-                    dataIndex={["debit_account"]}
-                    title={t("transactions.fields.debit_account")}
-                    // render={(_, value) =>
-                    //     value.child_accounts.map(child => (
-                    //         <Row key={child?.id}>
+                <Table.Column<IAccount[]>
+                    key="accounts"
+                    dataIndex={["accounts"]}
+                    title={t("contacts.fields.accounts")}
+                    render={(value: IAccount[]) =>
+                        value.map(child => (
+                            <Row key={child?.id}>
 
-                    //             <Typography.Text
-                    //                 style={{
-                    //                     whiteSpace: "nowrap",
-                    //                 }}
-                    //             >
-                    //                 {child?.account_name}
-                    //             </Typography.Text>
-                    //         </Row>
-                    //     ))
-                    // }
+                                <Typography.Text
+                                    style={{
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    ({child.id}) {child?.account_name}
+                                </Typography.Text>
+                            </Row>
+                        ))
+                    }
                 />
-                <Table.Column
-                    key="credit_account"
-                    dataIndex={["credit_account", "account_name"]}
-                    title={t("transactions.fields.credit_account")}
-                />
-                <Table.Column
-                    key="notes_pr"
-                    dataIndex={["notes_pr", "id"]}
-                    title={t("transactions.fields.notes_pr")}
-                />
+                {/* <Table.Column<IContact[]>
+                    key="contacts"
+                    dataIndex={["contacts"]}
+                    title={t("contacts.fields.contacts")}
+                    render={(value: IContact[]) =>
+                        value.map(child => (
+                            <Row key={child?.id}>
+
+                                <Typography.Text
+                                    style={{
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    ({child.id}) {child?.name}
+                                </Typography.Text>
+                            </Row>
+                        ))
+                    }
+                /> */}
                 {/* <Table.Column
                     key="createdAt"
                     dataIndex="createdAt"
@@ -266,7 +279,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                         </FilterDropdown>
                     )}
                 /> */}
-                <Table.Column<IAccount>
+                <Table.Column<ICompany>
                     fixed="right"
                     title={t("table.actions")}
                     render={(_, record) => (
@@ -274,7 +287,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                             icon={<EyeOutlined />}
                             onClick={() => {
                                 return go({
-                                    to: `${showUrl("accounts", record.id)}`,
+                                    to: `${showUrl("contacts", record.id)}`,
                                     query: {
                                         to: pathname,
                                     },

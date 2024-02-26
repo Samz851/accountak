@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountTypeController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TaxesController;
 use App\Http\Controllers\TransactionsController;
 use Illuminate\Http\Request;
@@ -26,5 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('/accounts', AccountController::class);
 Route::apiResource('/transactions', TransactionsController::class);
 Route::apiResource('/taxes', TaxesController::class);
+Route::apiResource('/companies', CompanyController::class);
+Route::apiResource('/contacts', ContactController::class);
 Route::get('/accounts/select', [AccountController::class, 'getSelect']);
 Route::get('/account_types', [AccountTypeController::class, 'index']);
