@@ -4,17 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ArrayFormatters;
 use App\Models\AccountType;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class AccountTypeController extends Controller
 {
-    private function getAll(): array
+    private function getAll(): Collection
     {
         return AccountType::with(['childTypes', 'parentType', 'accounts'])
-                            ->inRandomOrder()
-                            ->paginate(10)
-                            ->items();
+                            ->get();
+    }
+
+    private function getTree(): array
+    {
+        $accountTypes = AccountType::doesntHave('parentType')->get()->toArray();
+        return array_map(fn($record)=> ArrayFormatters::rename_array_keys($record, [
+            "name" => "title",
+            "id" => "key",
+            "child_types" => "children"
+        ]), $accountTypes);
+
     }
 
     private function getSelectOptions(): array
@@ -39,6 +49,8 @@ class AccountTypeController extends Controller
 
             $result = $this->getSelectOptions();
 
+        } else if ($request->has('tree')) {
+            $result = $this->getTree();
         } else {
             $result = $this->getAll();
         }

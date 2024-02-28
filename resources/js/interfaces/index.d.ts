@@ -61,6 +61,7 @@ export interface ITax {
     id: number;
     name: string;
     rate: number;
+    total?: number;
 }
 
 export interface IContact {

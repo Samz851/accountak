@@ -283,7 +283,7 @@ export const TaxesList = ({ children }: PropsWithChildren) => {
                                     options: {
                                         keepQuery: true,
                                     },
-                                    type: "replace",
+                                    type: "push",
                                 });
                             }}
                         />

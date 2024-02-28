@@ -629,7 +629,9 @@
     "taxes": "Taxes",
     "fields": {
         "name": "Name",
-        "rate": "Rate"
+        "rate": "Rate",
+        "total_collected": "Total Collected",
+        "total_paid": "Total Paid"
     },
     "form": {
         "add" : "Add new tax"

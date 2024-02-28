@@ -31,7 +31,8 @@ class TaxesController extends Controller
      */
     public function show(Tax $tax)
     {
-        //
+        $tax->total;
+        return response($tax);
     }
 
     /**

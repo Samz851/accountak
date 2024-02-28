@@ -29,7 +29,9 @@ class ContactController extends Controller
      */
     public function show(Contact $contact)
     {
-        //
+        $contact->accounts;
+        $contact->company;
+        return response($contact);
     }
 
     /**

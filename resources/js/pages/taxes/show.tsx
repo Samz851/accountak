@@ -5,24 +5,24 @@ import {
     useBack,
 } from "@refinedev/core";
 import { Flex, Grid } from "antd";
-import { IAccount, IContact } from "../../interfaces";
+import { IAccount, ITax } from "@/interfaces";
 import {
     CardWithContent,
     CustomerInfoList,
     CustomerInfoSummary,
     CustomerOrderHistory,
     Drawer,
-} from "../../components";
-import { ContactView } from "./components/contactView";
+} from "@/components";
+import { TaxView } from "./components/taxView";
 
-export const ContactShow: React.FC<IResourceComponentsProps> = () => {
+export const TaxShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
     const back = useBack();
     const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IContact>();
+    const { queryResult } = useShow<ITax>();
 
     const { data } = queryResult;
-    const contact = data?.data;
+    const tax = data?.data;
 
     return (
         <Drawer
@@ -30,7 +30,7 @@ export const ContactShow: React.FC<IResourceComponentsProps> = () => {
             onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <ContactView contact={contact} />
+            <TaxView tax={tax} />
         </Drawer>
     );
 };

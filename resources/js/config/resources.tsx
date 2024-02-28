@@ -27,6 +27,7 @@ export const resources: IResourceItem[] = [
     {
         name: "contacts",
         list: "/contacts",
+        show: "/contacts/show/:id",
         create: "/contacts/create",
         meta: {
             label: i18next.t("contacts.contacts"),
@@ -37,6 +38,7 @@ export const resources: IResourceItem[] = [
     {
         name: "taxes",
         list: "/taxes",
+        show: "/taxes/show/:id",
         create: "/taxes/create",
         meta: {
             label: i18next.t("taxes.taxes"),
@@ -49,7 +51,7 @@ export const resources: IResourceItem[] = [
         list: "/account_types",
         meta: {
             dataProviderName: "laravel",
-            hide: true
+            // hide: true
         }
     },
     {

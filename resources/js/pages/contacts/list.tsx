@@ -294,7 +294,7 @@ export const ContactsList = ({ children }: PropsWithChildren) => {
                                     options: {
                                         keepQuery: true,
                                     },
-                                    type: "replace",
+                                    type: "push",
                                 });
                             }}
                         />

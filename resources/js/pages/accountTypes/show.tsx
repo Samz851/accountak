@@ -2,10 +2,9 @@ import {
     useShow,
     IResourceComponentsProps,
     useNavigation,
-    useBack,
 } from "@refinedev/core";
 import { Flex, Grid } from "antd";
-import { IAccount, IContact } from "../../interfaces";
+import { IAccount } from "../../interfaces";
 import {
     CardWithContent,
     CustomerInfoList,
@@ -13,24 +12,30 @@ import {
     CustomerOrderHistory,
     Drawer,
 } from "../../components";
-import { ContactView } from "./components/contactView";
 
-export const ContactShow: React.FC<IResourceComponentsProps> = () => {
+export const AccountShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
-    const back = useBack();
     const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IContact>();
+    const { queryResult } = useShow<IAccount>();
 
     const { data } = queryResult;
-    const contact = data?.data;
+    const account = data?.data;
 
     return (
         <Drawer
             open
-            onClose={() => back()}
+            onClose={() => list("accounts")}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <ContactView contact={contact} />
+            <Flex
+                vertical
+                gap={32}
+                style={{
+                    padding: "32px",
+                }}
+            >
+                <CardWithContent title={account?.account_name} />
+            </Flex>
         </Drawer>
     );
 };

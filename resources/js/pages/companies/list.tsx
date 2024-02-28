@@ -64,7 +64,6 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
             };
         },
     });
-
     return (
         <List
             breadcrumb={false}
@@ -272,7 +271,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                                     options: {
                                         keepQuery: true,
                                     },
-                                    type: "replace",
+                                    type: "push",
                                 });
                             }}
                         />

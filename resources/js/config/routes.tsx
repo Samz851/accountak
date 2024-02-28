@@ -24,6 +24,9 @@ import { CategoryList } from "@/pages/categories";
 import { CompaniesList, CompanyCreatePage } from "@/pages/companies";
 import { ContactCreatePage, ContactsList } from "@/pages/contacts";
 import { CompanyShow } from "@/pages/companies/show";
+import { ContactShow } from "@/pages/contacts/show";
+import { TaxShow } from "@/pages/taxes/show";
+import { AccountTypesList } from "@/pages/accountTypes";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -41,7 +44,7 @@ export const routes: ReactElement[] = [
         <Route index element={<ContactsList />} />
         <Route
             path="show/:id"
-            element={<AccountShow />}
+            element={<ContactShow />}
         />
         <Route
         path="create"
@@ -68,8 +71,15 @@ export const routes: ReactElement[] = [
     <Route path="/taxes">
         <Route index element={<TaxesList />} />
         <Route
+            path="show/:id"
+            element={<TaxShow />}
+        />
+        <Route
             path="create"
             element={<TaxCreatePage />} />
+    </Route>,
+    <Route path="/account_types">
+        <Route index element={<AccountTypesList />} />
     </Route>,
     <Route path="/orders">
         <Route index element={<OrderList />} />

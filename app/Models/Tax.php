@@ -14,8 +14,22 @@ class Tax extends Model
         'rate',
     ];
 
-    public function transaction()
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'total'
+    ];
+
+    public function transactions()
     {
         return $this->hasMany(TransTax::class, 'tax_id');
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->transactions->sum('amount');
     }
 }

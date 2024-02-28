@@ -2,6 +2,7 @@ import {
     useShow,
     IResourceComponentsProps,
     useNavigation,
+    useBack,
 } from "@refinedev/core";
 import { Flex, Grid } from "antd";
 import { ICompany, IContact } from "@/interfaces";
@@ -12,36 +13,23 @@ import {
     CustomerOrderHistory,
     Drawer,
 } from "@/components";
+import { CompanyView } from "./components/companyView";
 
 export const CompanyShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
+    const back = useBack();
     const breakpoint = Grid.useBreakpoint();
     const { queryResult } = useShow<ICompany>();
 
     const { data } = queryResult;
     const company = data?.data;
-
     return (
         <Drawer
             open
-            onClose={() => list("companies")}
+            onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <Flex
-                vertical
-                gap={32}
-                style={{
-                    padding: "32px",
-                }}
-            >
-                <CardWithContent title={company?.company_name} />
-                <CardWithContent title={company?.address} />
-                {
-                    company?.contacts?.map(contact => (
-                        <CardWithContent title={contact?.name} />
-                    ))
-                }
-            </Flex>
+            <CompanyView company={company} />
         </Drawer>
     );
 };
