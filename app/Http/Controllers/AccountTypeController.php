@@ -63,7 +63,8 @@ class AccountTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $accountType = AccountType::create($request->all());
+        return response($accountType);
     }
 
     /**
@@ -71,7 +72,10 @@ class AccountTypeController extends Controller
      */
     public function show(AccountType $accountType)
     {
-        //
+        $accountType->accounts;
+        $accountType->child_types;
+        $accountType->parent_type;
+        return response($accountType);
     }
 
     /**

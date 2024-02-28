@@ -26,7 +26,7 @@ import { ContactCreatePage, ContactsList } from "@/pages/contacts";
 import { CompanyShow } from "@/pages/companies/show";
 import { ContactShow } from "@/pages/contacts/show";
 import { TaxShow } from "@/pages/taxes/show";
-import { AccountTypesList } from "@/pages/accountTypes";
+import { AccountTypeCreatePage, AccountTypesList } from "@/pages/accountTypes";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -80,6 +80,10 @@ export const routes: ReactElement[] = [
     </Route>,
     <Route path="/account_types">
         <Route index element={<AccountTypesList />} />
+        <Route
+            path="create"
+            element={<AccountTypeCreatePage />}
+        />
     </Route>,
     <Route path="/orders">
         <Route index element={<OrderList />} />

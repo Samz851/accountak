@@ -7,6 +7,7 @@ import {
     useCreateMany,
     useGetToPath,
     useGo,
+    useList,
     useTranslate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
@@ -31,7 +32,7 @@ import {
     Typography,
 } from "antd";
 
-import { IAccount } from "@/interfaces";
+import { IAccount, IAccountType } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
@@ -51,12 +52,12 @@ type Props = {
 };
 
 type FormValues = {
-    account_name: string;
-    account_type: number;
-    parent_account_id?: number;
+    name: string;
+    description: string;
+    parent_account_type?: number;
 };
-
-export const AccountCreatePage = ({ isOverModal }: Props) => {
+// type AccountTypesTree = IAccountType & DataNode;
+export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
@@ -74,18 +75,29 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
         setParentValue(newValue);
     };
 
-    const { formProps, modalProps, close, onFinish } = useModalForm<IAccount, HttpError, FormValues
+    const { formProps, modalProps, close, onFinish } = useModalForm<IAccountType, HttpError, FormValues
     >({
         action: "create",
         defaultVisible: true,
-        resource: "accounts",
+        resource: "account_types",
         redirect: false,
         warnWhenUnsavedChanges: !isOverModal,
     });
 
-    const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
-    const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
+    // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
+    // const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
+    const { data } = useList<IAccountType>({
+        resource: "account_types",
+        filters: [
+            {
+                field: 'tree',
+                operator: 'eq',
+                value: true
+            }
+        ]
+    });
 
+    const accountTypes = data?.data ?? [];
     return (
         <Modal
             {...modalProps}
@@ -118,9 +130,9 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 onFinish={async (values) => {
                     try {
                         const data = await onFinish({
-                            account_name: values.account_name,
-                            account_type: values.account_type,
-                            parent_account_id: values.parent_account_id
+                            name: values.name,
+                            description: values.description,
+                            parent_account_type: values.parent_account_type
                         });
                         close();
                         go({
@@ -174,29 +186,37 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
             >
                 <Form.Item
                     label={t("accounts.fields.account_name")}
-                    name="account_name"
+                    name="name"
                     rules={[{ required: true }]}
                 >
-                    <Input placeholder="Please enter account name" />
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    label={t("accounts.fields.account_name")}
+                    name="description"
+                    rules={[{ required: true }]}
+                >
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     label={t("accounts.fields.account_type")}
-                    name="account_type"
+                    name="parent_account_type"
                     rules={[{ required: true }]}
                 >
                     <TreeSelect
                         style={{ width: '100%' }}
-                        value={typeValue}
+                        // value={typeValue}
+                        fieldNames={{label: "title", "value": "key", children: "children"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={typesData?.data}
+                        treeData={accountTypes}
                         placeholder="Please select"
                         treeDefaultExpandAll
-                        onChange={onChangeType}
+                        // onChange={onChangeType}
                         allowClear={true}
                         />
 
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                     label={t("accounts.fields.parent_account")}
                     name="parent_account_id"
                 >
@@ -210,7 +230,7 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                         onChange={onChangeParent}
                         allowClear={true}
                         />
-                </Form.Item>
+                </Form.Item> */}
                 {/* <Form.List name="contacts">
                     {(fields, { add, remove }) => (
                         <Space direction="vertical">
