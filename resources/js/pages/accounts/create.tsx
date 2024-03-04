@@ -66,11 +66,9 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
     const t = useTranslate();
 
     const onChangeType = (newValue: string) => {
-        console.log(newValue);
         setTypeValue(newValue);
     };
     const onChangeParent = (newValue: string) => {
-        console.log(newValue);
         setParentValue(newValue);
     };
 

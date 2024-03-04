@@ -43,7 +43,7 @@ type AccountTypesTree = IAccountType & DataNode;
 export const AccountTypesList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl } = useNavigation();
+    const { show, createUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
     const { data } = useList<AccountTypesTree>({
@@ -58,8 +58,6 @@ export const AccountTypesList = ({ children }: PropsWithChildren) => {
     });
 
     const accountTypes = data?.data ?? [];
-
-    console.log(accountTypes);
 
 //     const { tableProps, filters, sorters } = useTable<
 //         IAccountType,
@@ -111,14 +109,27 @@ export const AccountTypesList = ({ children }: PropsWithChildren) => {
                         });
                     }}
                 >
-                    {t("accounts.form.add")}
+                    {t("account_types.form.add")}
                 </CreateButton>,
             ]}
         >
             <Tree
+                selectable={false}
                 defaultExpandAll={true}
                 showLine={true}
                 treeData={accountTypes}
+                titleRender={(item) =>
+                    <Typography.Link
+                    strong
+                    onClick={() => show("account_types", item.key as any, "push")}
+                    style={{
+                        whiteSpace: "nowrap",
+                        color: token.colorTextHeading,
+                    }}
+                    >
+                        {item?.title as any}
+                    </Typography.Link>
+                }
             />
             {children}
         </List>

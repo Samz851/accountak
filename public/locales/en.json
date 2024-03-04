@@ -663,5 +663,18 @@
     "form": {
         "add" : "Add new contact"
     }
+  },
+  "account_types": {
+    "account_types": "Account Types",
+    "fields": {
+        "name": "Name",
+        "description": "Description",
+        "parent_type": "Parent",
+        "child_types": "Subtypes",
+        "accounts": "Accounts"
+    },
+    "form": {
+        "add" : "Add new type"
+    }
   }
 }

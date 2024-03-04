@@ -49,6 +49,7 @@ export const resources: IResourceItem[] = [
     {
         name: "account_types",
         list: "/account_types",
+        show: "/account_types/show/:id",
         create: "/account_types/create",
         meta: {
             dataProviderName: "laravel",

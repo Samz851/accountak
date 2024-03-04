@@ -2,9 +2,10 @@ import {
     useShow,
     IResourceComponentsProps,
     useNavigation,
+    useBack,
 } from "@refinedev/core";
 import { Flex, Grid } from "antd";
-import { IAccount } from "../../interfaces";
+import { IAccount, IAccountType } from "../../interfaces";
 import {
     CardWithContent,
     CustomerInfoList,
@@ -12,30 +13,24 @@ import {
     CustomerOrderHistory,
     Drawer,
 } from "../../components";
+import { AccountTypeView } from "./components/accountTypeView";
 
-export const AccountShow: React.FC<IResourceComponentsProps> = () => {
+export const AccountTypeShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
     const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IAccount>();
+    const { queryResult } = useShow<IAccountType>();
+    const back = useBack();
 
     const { data } = queryResult;
-    const account = data?.data;
+    const accountType = data?.data;
 
     return (
         <Drawer
             open
-            onClose={() => list("accounts")}
+            onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <Flex
-                vertical
-                gap={32}
-                style={{
-                    padding: "32px",
-                }}
-            >
-                <CardWithContent title={account?.account_name} />
-            </Flex>
+            <AccountTypeView accountType={accountType} />
         </Drawer>
     );
 };

@@ -7,6 +7,7 @@ use App\Models\AccountType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class AccountTypeController extends Controller
 {
@@ -74,7 +75,8 @@ class AccountTypeController extends Controller
     {
         $accountType->accounts;
         $accountType->child_types;
-        $accountType->parent_type;
+        $accountType->parentType;
+        // Log::info($accountType->parentType, [__LINE__, __FILE__]);
         return response($accountType);
     }
 
@@ -92,5 +94,14 @@ class AccountTypeController extends Controller
     public function destroy(AccountType $accountType)
     {
         //
+    }
+
+
+
+    // DEV
+    public function getParents(Request $request): Response
+    {
+        $accountType = AccountType::with('parentType')->where('id', $request->query('id'))->get();
+        return response($accountType);
     }
 }

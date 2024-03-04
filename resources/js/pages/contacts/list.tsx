@@ -197,7 +197,7 @@ export const ContactsList = ({ children }: PropsWithChildren) => {
                     render={(value) => (
                         <Typography.Link
                         strong
-                        onClick={() => show("companies", value.id)}
+                        onClick={() => show("companies", value.id, "push")}
                         style={{
                             whiteSpace: "nowrap",
                             color: token.colorTextHeading,

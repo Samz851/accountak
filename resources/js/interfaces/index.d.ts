@@ -17,6 +17,7 @@ export interface IAccountType {
     parent_type?: IAccountType;
     child_types?: IAccountType[];
     parent_account_type?: number;
+    accounts: IAccount[];
 }
 
 export interface IAccount {

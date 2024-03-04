@@ -65,14 +65,6 @@ export const TaxCreatePage = ({ isOverModal }: Props) => {
     const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
 
-    const onChangeType = (newValue: string) => {
-        console.log(newValue);
-        setTypeValue(newValue);
-    };
-    const onChangeParent = (newValue: string) => {
-        console.log(newValue);
-        setParentValue(newValue);
-    };
 
     const { formProps, modalProps, close, onFinish } = useModalForm<ITax, HttpError, FormValues
     >({

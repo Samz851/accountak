@@ -67,12 +67,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
     const t = useTranslate();
 
     const onChangeType = (newValue: string) => {
-        console.log(newValue);
         setTypeValue(newValue);
-    };
-    const onChangeParent = (newValue: string) => {
-        console.log(newValue);
-        setParentValue(newValue);
     };
 
     const { formProps, modalProps, close, onFinish } = useModalForm<IAccountType, HttpError, FormValues
