@@ -37,7 +37,7 @@ import { ListTitleButton } from "@/components/listTitleButton/list-title-button"
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl } = useNavigation();
+    const { show, createUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -270,18 +270,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     render={(_, record) => (
                         <Button
                             icon={<EyeOutlined />}
-                            onClick={() => {
-                                return go({
-                                    to: `${showUrl("accounts", record.id)}`,
-                                    query: {
-                                        to: pathname,
-                                    },
-                                    options: {
-                                        keepQuery: true,
-                                    },
-                                    type: "replace",
-                                });
-                            }}
+                            onClick={() => show('accounts', record.id, "push")}
                         />
                     )}
                 />

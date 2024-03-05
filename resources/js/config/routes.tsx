@@ -89,86 +89,86 @@ export const routes: ReactElement[] = [
             element={<AccountTypeCreatePage />}
         />
     </Route>,
-    <Route path="/orders">
-        <Route index element={<OrderList />} />
-        <Route
-            path="show/:id"
-            element={<OrderShow />}
-        />
-    </Route>,
-    <Route
-        path="/customers"
-        element={
-            <CustomerList>
-                <Outlet />
-            </CustomerList>
-        }
-    >
-        <Route index element={null} />
-        <Route
-            path="show/:id"
-            element={<CustomerShow />}
-        />
-    </Route>,
-    <Route
-        path="/products"
-        element={
-            <ProductList>
-                <Outlet />
-            </ProductList>
-        }
-    >
-        <Route index element={null} />
-        <Route
-            path="create"
-            element={<ProductCreate />}
-        />
-        <Route
-            path="show/:id"
-            element={<ProductShow />}
-        />
-        <Route
-            path="edit/:id"
-            element={<ProductEdit />}
-        />
-    </Route>,
-    <Route path="/stores">
-        <Route index element={<StoreList />} />
-        <Route
-            path="create"
-            element={<StoreCreate />}
-        />
-        <Route
-            path="edit/:id"
-            element={<StoreEdit />}
-        />
-    </Route>,
-    <Route
-        path="/categories"
-        element={<CategoryList />}
-    />,
-    <Route path="/couriers">
-        <Route
-            element={
-                <CourierList>
-                    <Outlet />
-                </CourierList>
-            }
-        >
-            <Route index element={null} />
-            <Route
-                path="create"
-                element={<CourierCreate />}
-            />
-        </Route>
+    // <Route path="/orders">
+    //     <Route index element={<OrderList />} />
+    //     <Route
+    //         path="show/:id"
+    //         element={<OrderShow />}
+    //     />
+    // </Route>,
+    // <Route
+    //     path="/customers"
+    //     element={
+    //         <CustomerList>
+    //             <Outlet />
+    //         </CustomerList>
+    //     }
+    // >
+    //     <Route index element={null} />
+    //     <Route
+    //         path="show/:id"
+    //         element={<CustomerShow />}
+    //     />
+    // </Route>,
+    // <Route
+    //     path="/products"
+    //     element={
+    //         <ProductList>
+    //             <Outlet />
+    //         </ProductList>
+    //     }
+    // >
+    //     <Route index element={null} />
+    //     <Route
+    //         path="create"
+    //         element={<ProductCreate />}
+    //     />
+    //     <Route
+    //         path="show/:id"
+    //         element={<ProductShow />}
+    //     />
+    //     <Route
+    //         path="edit/:id"
+    //         element={<ProductEdit />}
+    //     />
+    // </Route>,
+    // <Route path="/stores">
+    //     <Route index element={<StoreList />} />
+    //     <Route
+    //         path="create"
+    //         element={<StoreCreate />}
+    //     />
+    //     <Route
+    //         path="edit/:id"
+    //         element={<StoreEdit />}
+    //     />
+    // </Route>,
+    // <Route
+    //     path="/categories"
+    //     element={<CategoryList />}
+    // />,
+    // <Route path="/couriers">
+    //     <Route
+    //         element={
+    //             <CourierList>
+    //                 <Outlet />
+    //             </CourierList>
+    //         }
+    //     >
+    //         <Route index element={null} />
+    //         <Route
+    //             path="create"
+    //             element={<CourierCreate />}
+    //         />
+    //     </Route>
 
-        <Route
-            path="edit/:id"
-            element={<CourierEdit />}
-        />
-        <Route
-            path="show/:id"
-            element={<CourierShow />}
-        />
-    </Route>
+    //     <Route
+    //         path="edit/:id"
+    //         element={<CourierEdit />}
+    //     />
+    //     <Route
+    //         path="show/:id"
+    //         element={<CourierShow />}
+    //     />
+    // </Route>
 ]

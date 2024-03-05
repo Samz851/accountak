@@ -14,6 +14,14 @@ import i18next from "i18next";
 
 export const resources: IResourceItem[] = [
     {
+        name: "dashboard",
+        list: "/",
+        meta: {
+            label: "Dashboard",
+            icon: <DashboardOutlined />,
+        },
+    },
+    {
         name: "companies",
         list: "/companies",
         create: "/companies/create",
@@ -60,6 +68,7 @@ export const resources: IResourceItem[] = [
         name: "accounts",
         list: "/accounts",
         create: "/accounts/create",
+        show: "/accounts/show/:id",
         meta: {
             label: i18next.t("accounts.accounts"),
             icon: <DashboardOutlined />,
@@ -76,64 +85,56 @@ export const resources: IResourceItem[] = [
             dataProviderName: "laravel"
         },
     },
-    {
-        name: "dashboard",
-        list: "/",
-        meta: {
-            label: "Dashboard",
-            icon: <DashboardOutlined />,
-        },
-    },
-    {
-        name: "orders",
-        list: "/orders",
-        show: "/orders/show/:id",
-        meta: {
-            icon: <ShoppingOutlined />,
-        },
-    },
-    {
-        name: "users",
-        list: "/customers",
-        show: "/customers/show/:id",
-        meta: {
-            icon: <UserOutlined />,
-        },
-    },
-    {
-        name: "products",
-        list: "/products",
-        create: "/products/create",
-        edit: "/products/edit/:id",
-        show: "/products/show/:id",
-        meta: {
-            icon: <UnorderedListOutlined />,
-        },
-    },
-    {
-        name: "categories",
-        list: "/categories",
-        meta: {
-            icon: <TagsOutlined />,
-        },
-    },
-    {
-        name: "stores",
-        list: "/stores",
-        create: "/stores/create",
-        edit: "/stores/edit/:id",
-        meta: {
-            icon: <ShopOutlined />,
-        },
-    },
-    {
-        name: "couriers",
-        list: "/couriers",
-        create: "/couriers/create",
-        edit: "/couriers/edit/:id",
-        show: "/couriers/show/:id",
-        meta: {
-            icon: <BikeWhiteIcon />,
-        },
-    },
+    // {
+    //     name: "orders",
+    //     list: "/orders",
+    //     show: "/orders/show/:id",
+    //     meta: {
+    //         icon: <ShoppingOutlined />,
+    //     },
+    // },
+    // {
+    //     name: "users",
+    //     list: "/customers",
+    //     show: "/customers/show/:id",
+    //     meta: {
+    //         icon: <UserOutlined />,
+    //     },
+    // },
+    // {
+    //     name: "products",
+    //     list: "/products",
+    //     create: "/products/create",
+    //     edit: "/products/edit/:id",
+    //     show: "/products/show/:id",
+    //     meta: {
+    //         icon: <UnorderedListOutlined />,
+    //     },
+    // },
+    // {
+    //     name: "categories",
+    //     list: "/categories",
+    //     meta: {
+    //         icon: <TagsOutlined />,
+    //     },
+    // },
+    // {
+    //     name: "stores",
+    //     list: "/stores",
+    //     create: "/stores/create",
+    //     edit: "/stores/edit/:id",
+    //     meta: {
+    //         icon: <ShopOutlined />,
+    //     },
+    // },
+    // {
+    //     name: "couriers",
+    //     list: "/couriers",
+    //     create: "/couriers/create",
+    //     edit: "/couriers/edit/:id",
+    //     show: "/couriers/show/:id",
+    //     meta: {
+    //         icon: <BikeWhiteIcon />,
+    //     },
+    // },
 ]

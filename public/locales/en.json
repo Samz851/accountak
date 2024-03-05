@@ -96,7 +96,8 @@
     "reject": "Reject",
     "rejectAll": "Reject All",
     "nextStep": "Next",
-    "previousStep": "Previous"
+    "previousStep": "Previous",
+    "return": "Return"
   },
   "loading": "Loading",
   "tags": {
@@ -598,14 +599,20 @@
   "accounts": {
     "accounts": "Accounts",
     "fields": {
+        "date": "Date",
         "account_name": "Name",
         "account_type": "Type",
         "parent_account": "Parent Account",
         "child_accounts": "Subaccounts"
     },
+    "show": {
+        "info": "Account Information"
+    },
     "form": {
         "add": "Add new account"
-    }
+    },
+    "debit": "Debit",
+    "credit": "Credit"
   },
   "transactions": {
     "transactions": "Transactions",

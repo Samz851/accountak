@@ -26,13 +26,16 @@ export interface IAccount {
     account_type: IAccountType;
     parent_account?: IAccount;
     child_accounts: IAccount[] | [];
+    parent_account_id?: number;
+    debit_transactions?: ITransaction[];
+    credit_transactions?: ITransaction[];
 }
 
 export interface ITransaction {
     id: number;
     date: string;
     description: string;
-    amount: number;
+    amount: number | string;
     debit_account: IAccount;
     credit_account: IAccount;
     notes_pr?: IInvoice | IBill;

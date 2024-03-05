@@ -597,14 +597,20 @@
   "accounts": {
     "accounts": "الحسابات",
     "fields": {
+        "date": "التاريخ",
         "account_name": "الأسم",
         "account_type": "النوع",
         "parent_account": "الحساب الرئيسي",
         "child_accounts": "حسابات متفرعه"
     },
+    "show": {
+        "info": "معلومات الحساب"
+    },
     "form": {
         "add": "إضافة حساب جديد"
-    }
+    },
+    "debit": "مدين",
+    "credit": "دائن"
   },
   "transactions": {
     "transactions": "القيود",
@@ -628,7 +634,9 @@
     "taxes": "الضرائب",
     "fields": {
         "name": "اسم",
-        "rate": "النسبة"
+        "rate": "النسبة",
+        "total_collected": "اجمالي المحصل",
+        "total_paid": "اجمالي المدفوع"
     },
     "form": {
         "add" : "أضافة ضرائب جديدة"
@@ -659,6 +667,19 @@
     },
     "form": {
         "add" : "أضافة فرد جديد"
+    }
+  },
+  "account_types": {
+    "account_types": "أنواع الحسابات",
+    "fields": {
+        "name": "الأسم",
+        "description": "الشرح",
+        "parent_type": "النوع الرئيسي",
+        "child_types": "انواع متفرعه",
+        "accounts": "الحسابات"
+    },
+    "form": {
+        "add" : "إضافة نوع جديد"
     }
   }
 }

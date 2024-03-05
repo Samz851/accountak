@@ -18,8 +18,7 @@ class AccountController extends Controller
 
     private function getSelectOptions(): array
     {
-        $accounts = Account::has('childAccounts')
-                            ->doesntHave('parentAccount')
+        $accounts = Account::doesntHave('parentAccount')
                             ->get()
                             ->toArray();
 
@@ -58,7 +57,12 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        //
+        $account->accountType;
+        $account->parentAccount;
+        $account->debitTransactions;
+        $account->creditTransactions;
+        $account->contact;
+        return response($account);
     }
 
     /**
