@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AccountTransactionTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,12 +36,20 @@ class Account extends Model
 
     public function debitTransactions()
     {
-        return $this->hasMany(TransRecord::class, 'debit_account_id');
+        // return $this->hasMany(TransRecord::class, 'debit_account_id');
+        return $this->belongsToMany(TransRecord::class, 'account_trans_record')
+                    ->using(AccountTransRecord::class)
+                    ->withPivot(['type', 'amount'])
+                    ->wherePivot('type', AccountTransactionTypes::DEBIT);
     }
 
     public function creditTransactions()
     {
-        return $this->hasMany(TransRecord::class, 'credit_account_id');
+        // return $this->hasMany(TransRecord::class, 'credit_account_id');
+        return $this->belongsToMany(TransRecord::class, 'account_trans_record')
+                    ->using(AccountTransRecord::class)
+                    ->withPivot(['type', 'amount'])
+                    ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
     public function contact()

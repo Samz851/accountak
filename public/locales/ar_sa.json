@@ -645,7 +645,7 @@
   "companies": {
     "companies": "الشركات",
     "fields": {
-        "name": "الأسم",
+        "company_name": "الأسم",
         "address": "عنوان",
         "currency": "العملة",
         "contact_information": "التلفون",
@@ -679,7 +679,8 @@
         "accounts": "الحسابات"
     },
     "form": {
-        "add" : "إضافة نوع جديد"
+        "add" : "إضافة نوع جديد",
+        "first" : "اضف اول نوع"
     }
   }
 }

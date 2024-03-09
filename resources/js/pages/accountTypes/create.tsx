@@ -65,6 +65,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
     const [typeValue, setTypeValue] = useState<string>();
     const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
+    const initValue = searchParams.get('parent') ?? '';
 
     const onChangeType = (newValue: string) => {
         setTypeValue(newValue);
@@ -115,7 +116,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                     type: "replace",
                 });
             }}
-            title={t("accounts.form.add")}
+            title={t("account_types.form.add")}
             width={512}
             closeIcon={<LeftOutlined />}
         >
@@ -180,23 +181,23 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                 }}
             >
                 <Form.Item
-                    label={t("accounts.fields.account_name")}
+                    label={t("account_types.fields.name")}
                     name="name"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_name")}
+                    label={t("account_types.fields.description")}
                     name="description"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_type")}
+                    label={t("account_types.fields.parent_type")}
                     name="parent_account_type"
-                    rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                 >
                     <TreeSelect
                         style={{ width: '100%' }}
@@ -208,6 +209,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                         treeDefaultExpandAll
                         // onChange={onChangeType}
                         allowClear={true}
+                        defaultValue={initValue}
                         />
 
                 </Form.Item>

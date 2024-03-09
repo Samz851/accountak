@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AccountTransactionTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -12,10 +13,9 @@ class TransRecord extends Model
 
     protected $fillable = [
         'date',
+        'name',
         'description',
         'amount',
-        'debit_account_id',
-        'credit_account_id',
         'tax_id'
     ];
 
@@ -24,14 +24,22 @@ class TransRecord extends Model
         return $this->morphTo();
     }
 
-    public function debitAccount()
+    public function debitAccounts()
     {
-        return $this->belongsTo(Account::class, 'debit_account_id');
+        // return $this->belongsTo(Account::class, 'debit_account_id');
+        return $this->belongsToMany(Account::class, 'account_trans_record')
+                    ->using(AccountTransRecord::class)
+                    ->withPivot(['type', 'amount'])
+                    ->wherePivot('type', AccountTransactionTypes::DEBIT);
     }
 
-    public function creditAccount()
+    public function creditAccounts()
     {
-        return $this->belongsTo(Account::class, 'credit_account_id');
+        // return $this->belongsTo(Account::class, 'credit_account_id');
+        return $this->belongsToMany(Account::class, 'account_trans_record')
+                    ->using(AccountTransRecord::class)
+                    ->withPivot(['type', 'amount'])
+                    ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
     public function payment()

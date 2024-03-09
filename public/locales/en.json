@@ -647,7 +647,7 @@
   "companies": {
     "companies": "Companies",
     "fields": {
-        "name": "Name",
+        "company_name": "Name",
         "address": "Address",
         "currency": "Currency",
         "contact_information": "Phone",
@@ -681,7 +681,8 @@
         "accounts": "Accounts"
     },
     "form": {
-        "add" : "Add new type"
+        "add" : "Add new type",
+        "first": "Create first type"
     }
   }
 }

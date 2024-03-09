@@ -49,6 +49,7 @@ import { TransactionCreatePage, TransactionsList } from "./pages/transactions";
 import { TaxesList, TaxCreatePage } from "./pages/taxes";
 import { resources } from "./config/resources";
 import { routes } from "./config/routes";
+import process from "process";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
@@ -56,7 +57,7 @@ const App: React.FC = () => {
     const { loading } = useAutoLoginForDemo();
 
     const API_URL = "https://api.finefoods.refine.dev";
-    const LARAVEL_API_URL = "http://localhost/api";
+    const LARAVEL_API_URL = `${import.meta.env.VITE_APP_URL}/api`;
     const laravelDataProvider = jsonServerDataProvider(LARAVEL_API_URL);
     const dataProvider = jsonServerDataProvider(API_URL);
 
