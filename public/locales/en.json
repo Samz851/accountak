@@ -619,6 +619,7 @@
     "accruals": "Accruals",
     "payments": "Payments",
     "fields": {
+        "name": "Name",
         "date": "Date",
         "description": "Description",
         "amount": "Amount",
@@ -629,7 +630,9 @@
         "tax": "Tax"
     },
     "form": {
-        "add": "Add new transaction"
+        "add": "Add new transaction",
+        "add_debit": "Add debit account",
+        "add_credit": "Add credit account"
     }
   },
   "taxes": {

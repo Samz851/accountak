@@ -15,7 +15,9 @@ import {
     DeleteOutlined,
     LeftOutlined,
     MailOutlined,
+    MinusCircleOutlined,
     PlusCircleOutlined,
+    PlusOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 import {
@@ -52,11 +54,16 @@ type Props = {
     isOverModal?: boolean;
 };
 
+type Accounts = {
+    id: number;
+    amount: number;
+}
 type FormValues = {
+    name: string;
     description: string;
     amount: number;
-    debit_account_id: number;
-    credit_account_id: number;
+    debit_accounts: Array<Accounts>;
+    credit_accounts: Array<Accounts>;
     notes_pr?: number;
     issue_payment: boolean;
     tax_id: number;
@@ -68,6 +75,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const { pathname } = useLocation();
     const go = useGo();
     const t = useTranslate();
+    const [ accountsBalanceError, setAccountsBalanceError ] = useState("")
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
 
@@ -80,7 +88,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     //     setParentValue(newValue);
     // };
 
-    const { formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
+    const { form, formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
     >({
         action: "create",
         defaultVisible: true,
@@ -137,16 +145,35 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 {...formProps}
                 layout="vertical"
                 onFinish={async (values) => {
+                    const soFar = form.getFieldsValue();
+                    console.log(soFar);
+                    let debits = soFar.debit_accounts.reduce((accumulator, current) => accumulator + current.amount, 0);
+                    let credits = soFar.credit_accounts.reduce((accumulator, current) => accumulator + current.amount, 0);
+                    console.log('totals', debits, credits);
+                    if (debits !== credits) {
+                        setAccountsBalanceError("error");
+                        Promise.reject("Accounts not balanced");
+                        // let fins = form.getFieldInstance(["debit_accounts"]);
+                        // console.log('f in', fins);
+                        // form.setFields({
+                        //     credit_accounts: {
+                        //         value: soFar.debit_accounts,
+                        //         errors: [new Error('Debit Credit not balances')]
+                        //     }
+                        // })
+                    }
                     try {
                         const data = await onFinish({
+                            name: values.name,
                             description: values.description,
                             amount: values.amount,
-                            debit_account_id: values.debit_account_id,
-                            credit_account_id: values.credit_account_id,
+                            debit_accounts: values.debit_accounts,
+                            credit_accounts: values.credit_accounts,
                             notes_pr: values.notes_pr,
                             issue_payment: values.issue_payment,
                             tax_id: values.tax_id
                         });
+
                         close();
                         go({
                             to:
@@ -164,56 +191,134 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             type: "replace",
                         });
 
-                        // const createdAccount = (data as CreateResponse<IAccount>)
-                        //     ?.data;
-
-                        // if ((values.contacts ?? [])?.length > 0) {
-                        //     await createManyMutateAsync({
-                        //         resource: "contacts",
-                        //         values:
-                        //             values.contacts?.map((contact) => ({
-                        //                 ...contact,
-                        //                 companyId: createdCompany.id,
-                        //                 salesOwnerId:
-                        //                     createdCompany.salesOwner.id,
-                        //             })) ?? [],
-                        //         successNotification: false,
-                        //     });
-                        // }
-
-                        // go({
-                        //     to: searchParams.get("to") ?? pathname,
-                        //     query: {
-                        //         companyId: createdCompany.id,
-                        //         to: undefined,
-                        //     },
-                        //     options: {
-                        //         keepQuery: true,
-                        //     },
-                        //     type: "replace",
-                        // });
                     } catch (error) {
                         Promise.reject(error);
                     }
                 }}
             >
+                    <Form.Item
+                    label={t("transactions.fields.name")}
+                    name="name"
+                    rules={[{ required: true }]}
+                >
+                    <Input />
+                </Form.Item>
                 <Form.Item
                     label={t("transactions.fields.description")}
                     name="description"
                     rules={[{ required: true }]}
                 >
-                    <Input placeholder="Please enter account name" />
+                    <Input />
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                     label={t("transactions.fields.amount")}
                     name="amount"
                     rules={[{ required: true }]}
                 >
                     <InputNumber precision={2} />
-                </Form.Item>
-                <Form.Item
+                </Form.Item> */}
+                <Form.List
+                    name="debit_accounts"
+                    rules={[
+                        {
+                          validator: async (_, debit_accounts) => {
+                            console.log(_, debit_accounts);
+                            if (!debit_accounts || debit_accounts.length < 1) {
+                              return Promise.reject(new Error('At least 1 Debit account'));
+                            }
+                          },
+                        },
+                    ]}
+                >
+                    {(fields, {add, remove}, {errors}) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                    <Form.Item
+                                        label={t("transactions.fields.debit_account")}
+                                        name={[name, 'id']}
+                                        rules={[{required: true}]}
+                                        validateStatus={accountsBalanceError as any}
+                                                >
+                                        <Select
+                                            style={{ width: 300 }}
+                                            onChange={value => setSelectedDebitAccount(value)}
+                                            filterOption={true}
+                                            options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={t("transactions.fields.amount")}
+                                        name={[name, "amount"]}
+                                        rules={[{ required: true }]}
+                                        validateStatus={accountsBalanceError as any}
+                                    >
+                                        <InputNumber precision={2} />
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)} />
+                                </Space>
+                            ))}
+                            <Form.Item>
+                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                    {t("transactions.form.add_debit")}
+                                </Button>
+                                <Form.ErrorList errors={errors} />
+                            </Form.Item>
+                        </>
+                    )}
+                </Form.List>
+                <Form.List
+                    name="credit_accounts"
+                    rules={[
+                        {
+                          validator: async (_, credit_accounts) => {
+                            if (!credit_accounts || credit_accounts.length < 1) {
+                              return Promise.reject(new Error('At least 1 Credit account'));
+                            }
+                          },
+                        },
+                    ]}
+                >
+                    {(fields, {add, remove}, {errors}) => (
+                        <>
+                            {fields.map(({ key, name, ...restField }) => (
+                                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                    <Form.Item
+                                        label={t("transactions.fields.credit_account")}
+                                        name={[name, 'id']}
+                                        rules={[{required: true}]}
+                                        validateStatus={accountsBalanceError as any}
+                                                >
+                                        <Select
+                                            style={{ width: 300 }}
+                                            onChange={value => setSelectedDebitAccount(value)}
+                                            filterOption={true}
+                                            options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={t("transactions.fields.amount")}
+                                        name={[name, "amount"]}
+                                        rules={[{ required: true }]}
+                                        validateStatus={accountsBalanceError as any}
+                                    >
+                                        <InputNumber precision={2} />
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(name)} />
+                                </Space>
+                            ))}
+                            <Form.Item>
+                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                    {t("transactions.form.add_credit")}
+                                </Button>
+                                <Form.ErrorList errors={errors} />
+                            </Form.Item>
+                        </>
+                    )}
+                </Form.List>
+                {/* <Form.Item
                     label={t("transactions.fields.debit_account")}
-                    name="debit_account_id"
+                    name="debit_accounts"
                     rules={[{required: true}]}
                 >
                     <Select
@@ -222,8 +327,8 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                         filterOption={true}
                         options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
                     />
-                </Form.Item>
-                <Form.Item
+                </Form.Item> */}
+                {/* <Form.Item
                     label={t("transactions.fields.credit_account")}
                     name="credit_account_id"
                     rules={[{required: true}]}
@@ -234,7 +339,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                         filterOption={true}
                         options={[...accountsOptions?.filter(item => item.value !== selectedDebitAccount)]}
                     />
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item
                     label={t("transactions.fields.notes_pr")}
                     name="notes_pr"
@@ -261,48 +366,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 >
                     <Switch />
                 </Form.Item>
-                {/* <Form.List name="contacts">
-                    {(fields, { add, remove }) => (
-                        <Space direction="vertical">
-                            {fields.map(({ key, name, ...restField }) => (
-                                <Row key={key} gutter={12} align="middle">
-                                    <Col span={11}>
-                                        <Form.Item
-                                            noStyle
-                                            {...restField}
-                                            name={[name, "name"]}
-                                        >
-                                            <Input
-                                                addonBefore={<UserOutlined />}
-                                                placeholder="Contact name"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={11}>
-                                        <Form.Item
-                                            noStyle
-                                            name={[name, "email"]}
-                                        >
-                                            <Input
-                                                addonBefore={<MailOutlined />}
-                                                placeholder="Contact email"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={2}>
-                                        <Button
-                                            icon={<DeleteOutlined />}
-                                            onClick={() => remove(name)}
-                                        />
-                                    </Col>
-                                </Row>
-                            ))}
-                            <Typography.Link onClick={() => add()}>
-                                <PlusCircleOutlined /> Add new contacts
-                            </Typography.Link>
-                        </Space>
-                    )}
-                </Form.List> */}
+                
             </Form>
         </Modal>
     );

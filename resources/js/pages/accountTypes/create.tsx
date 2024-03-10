@@ -54,7 +54,7 @@ type Props = {
 type FormValues = {
     name: string;
     description: string;
-    parent_account_type?: number;
+    parent_account_type?: any;
 };
 // type AccountTypesTree = IAccountType & DataNode;
 export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
@@ -65,7 +65,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
     const [typeValue, setTypeValue] = useState<string>();
     const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
-    const initValue = searchParams.get('parent') ?? '';
+    const initValues = {parent_account_type: searchParams.get('parent') ?? ''};
 
     const onChangeType = (newValue: string) => {
         setTypeValue(newValue);
@@ -179,6 +179,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                         Promise.reject(error);
                     }
                 }}
+                initialValues={initValues}
             >
                 <Form.Item
                     label={t("account_types.fields.name")}
@@ -209,7 +210,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                         treeDefaultExpandAll
                         // onChange={onChangeType}
                         allowClear={true}
-                        defaultValue={initValue}
+                        // defaultValue={initValue}
                         />
 
                 </Form.Item>

@@ -84,7 +84,7 @@ export const CustomerList = ({ children }: PropsWithChildren) => {
             breadcrumb={false}
             headerProps={{
                 extra: (
-                    <ExportButton onClick={triggerExport} loading={isLoading} />
+                    // <ExportButton onClick={triggerExport} loading={isLoading} />
                 ),
             }}
         >

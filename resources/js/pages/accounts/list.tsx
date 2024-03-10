@@ -76,7 +76,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         <List
             breadcrumb={false}
             headerButtons={(props) => [
-                <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+                // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
                 <CreateButton
                     {...props.createButtonProps}
                     key="create"
@@ -97,12 +97,6 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     {t("accounts.form.add")}
                 </CreateButton>,
             ]}
-            title={
-                <ListTitleButton
-                    toPath="accounts/create"
-                    buttonText="Add new account"
-                />
-            }
         >
             <Table
                 {...tableProps}

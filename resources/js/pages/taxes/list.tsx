@@ -83,7 +83,7 @@ export const TaxesList = ({ children }: PropsWithChildren) => {
         <List
             breadcrumb={false}
             headerButtons={(props) => [
-                <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+                // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
                 <CreateButton
                     {...props.createButtonProps}
                     key="create"

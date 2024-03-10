@@ -30,8 +30,9 @@ import {
     Flex,
 } from "antd";
 
+import { useStyles } from "./styled";
 import { IAccount, IAccountType } from "@/interfaces";
-import { EyeOutlined, PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { DownCircleOutlined, EyeOutlined, PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal, UserStatus } from "@/components";
 import { PropsWithChildren, ReactNode, useId } from "react";
 import { useLocation } from "react-router-dom";
@@ -43,6 +44,7 @@ const { TreeNode } = Tree;
 type AccountTypesTree = IAccountType & DataNode;
 export const AccountTypesList = ({ children }: PropsWithChildren) => {
     const go = useGo();
+    const { styles } = useStyles();
     const { pathname } = useLocation();
     const { show, createUrl } = useNavigation();
     const t = useTranslate();
@@ -124,7 +126,7 @@ export const AccountTypesList = ({ children }: PropsWithChildren) => {
         <List
             breadcrumb={false}
             headerButtons={(props) => [
-                <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+                // // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
                 <CreateButton
                     {...props.createButtonProps}
                     key="create"
@@ -136,10 +138,12 @@ export const AccountTypesList = ({ children }: PropsWithChildren) => {
             ]}
         >
             <Tree
+                className={styles.treeNode}
                 selectable={false}
                 defaultExpandAll={true}
                 blockNode={true}
-                showLine={true}
+                switcherIcon={<DownCircleOutlined />}
+                showLine={false}
                 treeData={accountTypes}
                 titleRender={(item) =>
                     <Flex justify="space-between">
