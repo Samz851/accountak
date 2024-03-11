@@ -199,6 +199,8 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                     name="parent_account_id"
                 >
                     <TreeSelect
+                        filterTreeNode={true}
+                        treeNodeFilterProp="title"
                         style={{ width: '100%' }}
                         value={parentValue}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}

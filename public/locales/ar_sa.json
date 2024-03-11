@@ -601,7 +601,8 @@
         "account_name": "الأسم",
         "account_type": "النوع",
         "parent_account": "الحساب الرئيسي",
-        "child_accounts": "حسابات متفرعه"
+        "child_accounts": "حسابات متفرعه",
+        "balance": "الرصيد"
     },
     "show": {
         "info": "معلومات الحساب"

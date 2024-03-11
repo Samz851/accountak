@@ -603,7 +603,8 @@
         "account_name": "Name",
         "account_type": "Type",
         "parent_account": "Parent Account",
-        "child_accounts": "Subaccounts"
+        "child_accounts": "Subaccounts",
+        "balance": "Balance"
     },
     "show": {
         "info": "Account Information"
@@ -632,7 +633,9 @@
     "form": {
         "add": "Add new transaction",
         "add_debit": "Add debit account",
-        "add_credit": "Add credit account"
+        "add_credit": "Add credit account",
+        "debit": "Debit",
+        "credit": "Credit"
     }
   },
   "taxes": {

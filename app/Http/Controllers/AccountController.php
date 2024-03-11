@@ -12,7 +12,13 @@ class AccountController extends Controller
 {
     private function getAll(): Collection | array
     {
-        return Account::with(['parentAccount', 'childAccounts', 'accountType'])
+        return Account::with([
+            'parentAccount',
+            'childAccounts',
+            'accountType',
+            'debitTransactions',
+            'creditTransactions',
+            ])
                         ->get();
     }
 
@@ -23,7 +29,7 @@ class AccountController extends Controller
                             ->toArray();
 
         return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
-            "account_name" => "title",
+            "code_label" => "title",
             "id" => "value",
             "child_accounts" => "children"
         ]), $accounts);

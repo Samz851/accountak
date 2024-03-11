@@ -15,14 +15,17 @@ export const AccountBalanceTable = ({transactions}: Props) => {
     const { Column, ColumnGroup } = Table;
     const totalDebit = transactions?.debit?.reduce((prev, current) => {
         console.log(typeof prev, typeof current.amount);
-        return prev + parseFloat(current.amount as string)
+        return prev + parseFloat(current.dbtrans.amount as string)
     }, 0);
-    const totalCredit = transactions?.credit?.reduce((prev, current) => prev + parseFloat(current.amount as string), 0);
+    const totalCredit = transactions?.credit?.reduce((prev, current) => {
+        return prev + parseFloat(current.crtrans.amount as string)
+    }, 0);
 
     return (
         <Row>
             <Col span={12}>
                 <Table
+                rowKey={(record) => record.id}
                     pagination={false}
                     bordered
                     dataSource={transactions?.debit}
@@ -33,7 +36,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                 {"Total"}
                             </Col>
                             <Col>
-                                { totalDebit }
+                                - { totalDebit }
                             </Col>
                         </Row>
                     )}
@@ -41,19 +44,23 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                     <Column
                         title={t("accounts.fields.date") as any}
                         dataIndex="date"
+                        key="date"
                     />
                     <Column
                         title={t("transactions.fields.credit_account") as any}
-                        dataIndex="credit_account_id"
+                        dataIndex="name"
+                        key="name"
                     />
                     <Column
                         title={t("transactions.fields.amount") as any}
-                        dataIndex="amount"
+                        dataIndex={["dbtrans","amount"]}
+                        key="dbtrans"
                     />
                 </Table>
             </Col>
             <Col span={12}>
                 <Table
+                rowKey={(record) => record.id}
                     pagination={false}
                     bordered
                     dataSource={transactions?.credit}
@@ -72,81 +79,20 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         <Column
                             title={t("accounts.fields.date") as any}
                             dataIndex="date"
+                            key="alpha"
                         />
                         <Column
                             title={t("transactions.fields.debit_account") as any}
                             dataIndex="debit_account_id"
+                            key="romeo"
                         />
                         <Column
                             title={t("transactions.fields.amount") as any}
                             dataIndex="amount"
+                            key="what"
                         />
                 </Table>
             </Col>
-        {/* <Table dataSource={transactions}>
-            <ColumnGroup<ITransaction[]>
-                title={t("accounts.debit") as any}
-            >
-                <Column
-                    title={t("accounts.fields.date") as any}
-                    dataIndex={["debit"]}
-                    render={(value, record) => (
-                        <div>
-                        <Row key={1}>
-                        <Typography.Text>
-                            {JSON.stringify(value)}
-                        </Typography.Text>
-                        </Row>
-                        <Row key={2}>
-                        <Typography.Text>
-                            {JSON.stringify(record)}
-                        </Typography.Text>
-                        </Row>
-                        </div>
-                    )}
-                />
-                <Column
-                    title={t("transactions.fields.credit_account") as any}
-                    dataIndex={["debit", "credit_account_id"]}
-                />
-                <Column
-                    title={t("transactions.fields.amount") as any}
-                    dataIndex={["debit", "amount"]}
-                />
-            </ColumnGroup>
-            <ColumnGroup<ITransaction[]>
-                title={t("accounts.credit") as any}
-            >
-                <Column<ITransaction[]>
-                    title={t("accounts.fields.date") as any}
-                    dataIndex={["credit"]}
-                    render={(value, record) => {
-                        console.log(value, record);
-                        return (
-                        <div>
-                        <Row key={1}>
-                        <Typography.Text>
-                            {JSON.stringify(value)}
-                        </Typography.Text>
-                        </Row>
-                        <Row key={2}>
-                        <Typography.Text>
-                            {JSON.stringify(record)}
-                        </Typography.Text>
-                        </Row>
-                        </div>
-                    )}}
-                />
-                <Column
-                    title={t("transactions.fields.debit_account") as any}
-                    dataIndex={["credit", "debit_account_id"]}
-                />
-                <Column
-                    title={t("transactions.fields.amount") as any}
-                    dataIndex={["credit", "amount"]}
-                />
-            </ColumnGroup>
-        </Table> */}
         </Row>
 
     )

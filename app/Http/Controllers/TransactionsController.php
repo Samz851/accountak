@@ -14,7 +14,7 @@ class TransactionsController extends Controller
      */
     public function index()
     {
-        $transactions = TransRecord::with(["noteable", "debitAccount", "creditAccount", "payment"])
+        $transactions = TransRecord::with(["noteable", "debitAccounts", "creditAccounts", "payment"])
                                     ->paginate()
                                     ->items();
         return response($transactions);

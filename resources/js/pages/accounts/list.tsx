@@ -111,7 +111,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             >
                 <Table.Column
                     key="id"
-                    dataIndex="id"
+                    dataIndex="code"
                     title="ID #"
                     render={(value) => (
                         <Typography.Text
@@ -119,7 +119,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                                 whiteSpace: "nowrap",
                             }}
                         >
-                            #{value}
+                            {value}
                         </Typography.Text>
                     )}
                     filterIcon={(filtered) => (
@@ -223,6 +223,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                             </Row>
                         ))
                     }
+                />
+                <Table.Column
+                    key="balance"
+                    dataIndex={["balance"]}
+                    title={t("accounts.fields.child_accounts")}
                 />
                 {/* <Table.Column
                     key="createdAt"
