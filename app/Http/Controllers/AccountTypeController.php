@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class AccountTypeController extends Controller
 {
@@ -93,7 +94,11 @@ class AccountTypeController extends Controller
      */
     public function destroy(AccountType $accountType)
     {
-        //
+        Schema::disableForeignKeyConstraints();
+        $delete = AccountType::truncate();
+        Schema::enableForeignKeyConstraints();
+        $types = AccountType::all();
+        return response([$delete, $types]);
     }
 
 

@@ -1,6 +1,7 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import { useModalForm, useSelect } from "@refinedev/antd";
+import dayjs from "dayjs";
 import {
     CreateResponse,
     HttpError,
@@ -15,13 +16,18 @@ import {
     DeleteOutlined,
     LeftOutlined,
     MailOutlined,
+    MinusCircleOutlined,
     PlusCircleOutlined,
+    PlusOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 import {
     Button,
     Col,
+    DatePicker,
+    Divider,
     Form,
+    Grid,
     Input,
     InputNumber,
     Modal,
@@ -38,6 +44,7 @@ import { IAccount, ITax, ITransaction } from "@/interfaces";
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect } from "react";
+import { useStyles } from "./styled";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -52,11 +59,17 @@ type Props = {
     isOverModal?: boolean;
 };
 
+type Accounts = {
+    id: number;
+    amount: number;
+}
 type FormValues = {
+    date: string;
+    name: string;
     description: string;
     amount: number;
-    debit_account_id: number;
-    credit_account_id: number;
+    debit_accounts: Array<Accounts>;
+    credit_accounts: Array<Accounts>;
     notes_pr?: number;
     issue_payment: boolean;
     tax_id: number;
@@ -68,19 +81,23 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const { pathname } = useLocation();
     const go = useGo();
     const t = useTranslate();
+    const [ totalDebit, setTotalDebit ] = useState(0);
+    const [ totalCredit, setTotalCredit ] = useState(0);
+    const [ accountsBalanceError, setAccountsBalanceError ] = useState(false)
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
 
+    const { styles } = useStyles();
     // const onChangeType = (newValue: string) => {
-    //     console.log(newValue);
+    //     // console.log(newValue);
     //     setTypeValue(newValue);
     // };
     // const onChangeParent = (newValue: string) => {
-    //     console.log(newValue);
+    //     // console.log(newValue);
     //     setParentValue(newValue);
     // };
 
-    const { formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
+    const { form, formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
     >({
         action: "create",
         defaultVisible: true,
@@ -107,6 +124,12 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
         optionValue: "id"
     })
 
+    const getErrors = () => {
+        let errs = form.getFieldsError();
+        let vals = form.getFieldsValue();
+        console.log('errors', vals);
+    }
+
     return (
         <Modal
             {...modalProps}
@@ -130,180 +153,314 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 });
             }}
             title={t("transactions.form.add")}
-            width={512}
+            width="90vw"
             closeIcon={<LeftOutlined />}
         >
             <Form
                 {...formProps}
-                layout="vertical"
+                // layout="vertical"
                 onFinish={async (values) => {
-                    try {
-                        const data = await onFinish({
-                            description: values.description,
-                            amount: values.amount,
-                            debit_account_id: values.debit_account_id,
-                            credit_account_id: values.credit_account_id,
-                            notes_pr: values.notes_pr,
-                            issue_payment: values.issue_payment,
-                            tax_id: values.tax_id
-                        });
-                        close();
-                        go({
-                            to:
-                                searchParams.get("to") ??
-                                getToPath({
-                                    action: "list",
-                                }) ??
-                                "",
-                            query: {
-                                to: undefined,
+                    if (totalDebit !== totalCredit) {
+                        setAccountsBalanceError(true);
+                        form.setFields([
+                            {
+                                name: ['credit_accounts'],
+                                errors: ["Accounts not balanced"]
                             },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
-
-                        // const createdAccount = (data as CreateResponse<IAccount>)
-                        //     ?.data;
-
-                        // if ((values.contacts ?? [])?.length > 0) {
-                        //     await createManyMutateAsync({
-                        //         resource: "contacts",
-                        //         values:
-                        //             values.contacts?.map((contact) => ({
-                        //                 ...contact,
-                        //                 companyId: createdCompany.id,
-                        //                 salesOwnerId:
-                        //                     createdCompany.salesOwner.id,
-                        //             })) ?? [],
-                        //         successNotification: false,
-                        //     });
-                        // }
-
-                        // go({
-                        //     to: searchParams.get("to") ?? pathname,
-                        //     query: {
-                        //         companyId: createdCompany.id,
-                        //         to: undefined,
-                        //     },
-                        //     options: {
-                        //         keepQuery: true,
-                        //     },
-                        //     type: "replace",
-                        // });
-                    } catch (error) {
-                        Promise.reject(error);
+                            {
+                                name: ['debit_accounts'],
+                                errors: ["Accounts not balanced"]
+                            }
+                        ])
+                    } else {
+                        try {
+                            const data = await onFinish({
+                                date: values.date.toString(),
+                                name: values.name,
+                                description: values.description,
+                                amount: totalDebit,
+                                debit_accounts: values.debit_accounts,
+                                credit_accounts: values.credit_accounts,
+                                notes_pr: values.notes_pr,
+                                issue_payment: values.issue_payment,
+                                tax_id: values.tax_id
+                            });
+    
+                            close();
+                            go({
+                                to:
+                                    searchParams.get("to") ??
+                                    getToPath({
+                                        action: "list",
+                                    }) ??
+                                    "",
+                                query: {
+                                    to: undefined,
+                                },
+                                options: {
+                                    keepQuery: true,
+                                },
+                                type: "replace",
+                            });
+    
+                        } catch (error) {
+                            Promise.reject(error);
+                        }
                     }
                 }}
             >
-                <Form.Item
-                    label={t("transactions.fields.description")}
-                    name="description"
-                    rules={[{ required: true }]}
-                >
-                    <Input placeholder="Please enter account name" />
-                </Form.Item>
-                <Form.Item
-                    label={t("transactions.fields.amount")}
-                    name="amount"
-                    rules={[{ required: true }]}
-                >
-                    <InputNumber precision={2} />
-                </Form.Item>
-                <Form.Item
-                    label={t("transactions.fields.debit_account")}
-                    name="debit_account_id"
-                    rules={[{required: true}]}
-                >
-                    <Select
-                        style={{ width: 300 }}
-                        onChange={value => setSelectedDebitAccount(value)}
-                        filterOption={true}
-                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
-                    />
-                </Form.Item>
-                <Form.Item
-                    label={t("transactions.fields.credit_account")}
-                    name="credit_account_id"
-                    rules={[{required: true}]}
-                >
-                    <Select
-                        style={{ width: 300 }}
-                        onChange={value => setSelectedCreditAccount(value)}
-                        filterOption={true}
-                        options={[...accountsOptions?.filter(item => item.value !== selectedDebitAccount)]}
-                    />
-                </Form.Item>
-                <Form.Item
-                    label={t("transactions.fields.notes_pr")}
-                    name="notes_pr"
-                >
-                    <Select
-                        style={{ width: 300 }}
-                        filterOption={true}
-                        options={accountsOptions}
-                    />
-                </Form.Item>
-                <Form.Item
-                    label={t("transactions.fields.tax")}
-                    name="tax_id"
-                    rules={[{required: true}]}
-                >
-                    <Select
-                        style={{ width: 300 }}
-                        {...taxesSelectProps}
-                    />
-                </Form.Item>
-                <Form.Item
-                    label={t("transactions.fields.issue_payment")}
-                    name="issue_payment"
-                >
-                    <Switch />
-                </Form.Item>
-                {/* <Form.List name="contacts">
-                    {(fields, { add, remove }) => (
-                        <Space direction="vertical">
-                            {fields.map(({ key, name, ...restField }) => (
-                                <Row key={key} gutter={12} align="middle">
-                                    <Col span={11}>
-                                        <Form.Item
-                                            noStyle
-                                            {...restField}
-                                            name={[name, "name"]}
-                                        >
-                                            <Input
-                                                addonBefore={<UserOutlined />}
-                                                placeholder="Contact name"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={11}>
-                                        <Form.Item
-                                            noStyle
-                                            name={[name, "email"]}
-                                        >
-                                            <Input
-                                                addonBefore={<MailOutlined />}
-                                                placeholder="Contact email"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={2}>
-                                        <Button
-                                            icon={<DeleteOutlined />}
-                                            onClick={() => remove(name)}
-                                        />
+                <Row justify={"space-between"} align={"middle"} gutter={18}>
+                    <Col span={16}>
+                        <Form.Item
+                            // labelCol={{span: 8}}
+                            label={t("transactions.fields.name")}
+                            name="name"
+                            rules={[{ required: true }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            // labelCol={{span: 8}}
+                            label={t("transactions.fields.description")}
+                            name="description"
+                            rules={[{ required: true }]}
+                        >
+                            <Input.TextArea rows={4} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            label={t("transactions.fields.date")}
+                            name="date"
+                            rules={[{required: true}]}
+                            initialValue={dayjs()}
+                        >
+                            <DatePicker />
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Divider />
+                <Row justify={"space-around"} gutter={8} style={{border: "1px solid black"}}>
+                    <Col span={12} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                        <Row justify={"center"}>
+                            <Typography.Title level={5}>
+                                {t("transactions.form.debit")}
+                            </Typography.Title>
+                        </Row>
+                        <Row>
+                            <Col span={2} />
+                            <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                                <Typography.Text>
+                                    {t("accounts.accounts")}
+                                </Typography.Text>
+                            </Col>
+                            <Col span={6}>
+                                <Typography.Text>
+                                    {t("transactions.fields.amount")}
+                                </Typography.Text>
+                            </Col>
+                        </Row>
+                        <Form.List
+                            name="debit_accounts"
+                            rules={[
+                                {
+                                validator: async (_, debit_accounts) => {
+                                    // console.log(_, debit_accounts);
+                                    if (!debit_accounts || debit_accounts.length < 1) {
+                                    return Promise.reject(new Error('At least 1 Debit account'));
+                                    }
+                                },
+                                },
+                            ]}
+                        >
+                            {(fields, {add, remove}, {errors}) => (
+                                <>
+                                    {fields.map(({ key, name, ...restField }) => (
+                                        <Row key={key} align={"stretch"}>
+                                            <Col span={2}>
+                                                <MinusCircleOutlined onClick={() => remove(name)} />
+                                            </Col>
+                                            <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                                                <Form.Item
+                                                    // label={t("transactions.fields.debit_account")}
+                                                    name={[name, 'id']}
+                                                    rules={[{required: true}]}
+                                                    validateStatus={accountsBalanceError as any}
+                                                            >
+                                                    <Select
+                                                        size="small"
+                                                        style={{ width: 300 }}
+                                                        onChange={value => setSelectedDebitAccount(value)}
+                                                        filterOption={true}
+                                                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={6}>
+                                                <Form.Item
+                                                    // label={t("transactions.fields.amount")}
+                                                    name={[name, "amount"]}
+                                                    rules={[{ required: true }]}
+                                                    validateStatus={accountsBalanceError as any}
+                                                >
+                                                    <InputNumber
+                                                        size="small"
+                                                        precision={2}
+                                                        onBlur={(e) => setTotalDebit( totalDebit + parseInt(e.target.value))}
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                    ))}
+                                    <Form.Item>
+                                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                            {t("transactions.form.add_debit")}
+                                        </Button>
+                                        <Form.ErrorList errors={errors} />
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                    </Col>
+                    <Col span={12} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                        <Row justify={"center"}>
+                            <Typography.Title level={5}>
+                                {t("transactions.form.credit")}
+                            </Typography.Title>
+                        </Row>
+                        <Row>
+                            <Col span={2} />
+                            <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                                <Typography.Text>
+                                    {t("accounts.accounts")}
+                                </Typography.Text>
+                            </Col>
+                            <Col span={6}>
+                                <Typography.Text>
+                                    {t("transactions.fields.amount")}
+                                </Typography.Text>
+                            </Col>
+                        </Row>
+                        <Form.List
+                            name="credit_accounts"
+                            rules={[
+                                {
+                                validator: async (_, credit_accounts) => {
+                                    // console.log(_, credit_accounts);
+                                    if (!credit_accounts || credit_accounts.length < 1) {
+                                    return Promise.reject(new Error('At least 1 Credit account'));
+                                    }
+                                },
+                                },
+                            ]}
+                        >
+                            {(fields, {add, remove}, {errors}) => (
+                                <>
+                                    {fields.map(({ key, name, ...restField }) => (
+                                        <Row key={key} align={"stretch"}>
+                                            <Col span={2}>
+                                                <MinusCircleOutlined onClick={() => remove(name)} />
+                                            </Col>
+                                            <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                                                <Form.Item
+                                                    // label={t("transactions.fields.debit_account")}
+                                                    name={[name, 'id']}
+                                                    rules={[{required: true}]}
+                                                    validateStatus={accountsBalanceError as any}
+                                                            >
+                                                    <Select
+                                                        size="small"
+                                                        style={{ width: 300 }}
+                                                        onChange={value => setSelectedDebitAccount(value)}
+                                                        filterOption={true}
+                                                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={6}>
+                                                <Form.Item
+                                                    // label={t("transactions.fields.amount")}
+                                                    name={[name, "amount"]}
+                                                    rules={[{ required: true }]}
+                                                    validateStatus={accountsBalanceError as any}
+                                                >
+                                                    <InputNumber 
+                                                        size="small" 
+                                                        precision={2}
+                                                        onBlur={(e) => setTotalCredit( totalCredit + parseInt(e.target.value))}
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                    ))}
+                                    <Form.Item>
+                                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                            {t("transactions.form.add_credit")}
+                                        </Button>
+                                        <Form.ErrorList errors={errors} />
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                    </Col>
+                    <Col span={24} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                        <Row justify={"space-around"} gutter={8} style={{minHeight: '50px'}}>
+                            <Col span={12} style={{textAlign: "center", borderRight: "1px solid grey"}}>
+                                <Row justify={"end"}>
+                                    <Col span={6} style={{textAlign: "center", borderLeft: "1px solid grey"}}>
+                                        <Typography.Title level={5} className={accountsBalanceError ? styles.errorBorder : ''}>
+                                            {totalDebit}
+                                        </Typography.Title>
                                     </Col>
                                 </Row>
-                            ))}
-                            <Typography.Link onClick={() => add()}>
-                                <PlusCircleOutlined /> Add new contacts
-                            </Typography.Link>
-                        </Space>
-                    )}
-                </Form.List> */}
+                            </Col>
+                            <Col span={12} style={{textAlign: "center"}}>
+                                <Row justify={"end"}>
+                                    <Col span={6} style={{textAlign: "center", borderLeft: "1px solid grey"}}>
+                                        <Typography.Title level={5} className={accountsBalanceError ? styles.errorBorder : ''}>
+                                            {totalCredit}
+                                        </Typography.Title>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+                <Divider />
+                <Row justify={"space-between"} align={"middle"} gutter={18}>
+                    <Col span={16}>
+                        <Form.Item
+                            label={t("transactions.fields.notes_pr")}
+                            name="notes_pr"
+                        >
+                            <Select
+                                style={{ width: 300 }}
+                                filterOption={true}
+                                options={accountsOptions}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            label={t("transactions.fields.tax")}
+                            name="tax_id"
+                            rules={[{required: true}]}
+                        >
+                            <Select
+                                style={{ width: 300 }}
+                                {...taxesSelectProps}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item
+                            label={t("transactions.fields.issue_payment")}
+                            name="issue_payment"
+                        >
+                            <Switch />
+                        </Form.Item>
+                    </Col>
+                </Row>
             </Form>
+            <Button onClick={getErrors}>Get errors</Button>
         </Modal>
     );
 };

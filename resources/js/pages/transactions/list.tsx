@@ -75,7 +75,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
         <List
             breadcrumb={false}
             headerButtons={(props) => [
-                <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+                // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
                 <CreateButton
                     {...props.createButtonProps}
                     key="create"
@@ -186,42 +186,43 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     dataIndex={["amount"]}
                     title={t("transactions.fields.amount")}
                 />
-                <Table.Column<IAccount>
+                <Table.Column<IAccount[]>
                     key="debit_account"
-                    dataIndex={["debit_account"]}
+                    dataIndex={["debit_accounts"]}
                     title={t("transactions.fields.debit_account")}
                     render={(value) =>
+                            value.map((account) => (
+                                <Row key={account?.id}>
+                                    <Typography.Text
+                                        style={{
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        ({account.id}) {account?.account_name}
+                                    </Typography.Text>
+                                </Row>
+                            ))
                         // value.child_accounts.map(child => (
-                            <Row key={value?.id}>
-
-                                <Typography.Text
-                                    style={{
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    ({value.id}) {value?.account_name}
-                                </Typography.Text>
-                            </Row>
+                            
                         // ))
                     }
                 />
                 <Table.Column<IAccount>
                     key="credit_account"
-                    dataIndex={["credit_account"]}
+                    dataIndex={["credit_accounts"]}
                     title={t("transactions.fields.credit_account")}
                     render={(value) =>
-                        // value.child_accounts.map(child => (
-                            <Row key={value?.id}>
-
+                        value.map((account) => (
+                            <Row key={account?.id}>
                                 <Typography.Text
                                     style={{
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    ({value.id}) {value?.account_name}
+                                    ({account.id}) {account?.account_name}
                                 </Typography.Text>
                             </Row>
-                        // ))
+                        ))
                     }
                 />
                 <Table.Column
@@ -229,40 +230,6 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     dataIndex={["noteable", "id"]}
                     title={t("transactions.fields.notes_pr")}
                 />
-                {/* <Table.Column
-                    key="createdAt"
-                    dataIndex="createdAt"
-                    title={t("users.fields.createdAt")}
-                    render={(value) => <DateField value={value} format="LLL" />}
-                    sorter
-                />
-                <Table.Column
-                    key="isActive"
-                    dataIndex="isActive"
-                    title={t("users.fields.isActive.label")}
-                    render={(value) => {
-                        return <UserStatus value={value} />;
-                    }}
-                    sorter
-                    defaultSortOrder={getDefaultSortOrder("isActive", sorters)}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={t(
-                                    "users.filter.isActive.placeholder",
-                                )}
-                            >
-                                <Select.Option value="true">
-                                    {t("users.fields.isActive.true")}
-                                </Select.Option>
-                                <Select.Option value="false">
-                                    {t("users.fields.isActive.false")}
-                                </Select.Option>
-                            </Select>
-                        </FilterDropdown>
-                    )}
-                /> */}
                 <Table.Column<IAccount>
                     fixed="right"
                     title={t("table.actions")}

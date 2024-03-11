@@ -603,7 +603,8 @@
         "account_name": "Name",
         "account_type": "Type",
         "parent_account": "Parent Account",
-        "child_accounts": "Subaccounts"
+        "child_accounts": "Subaccounts",
+        "balance": "Balance"
     },
     "show": {
         "info": "Account Information"
@@ -619,6 +620,7 @@
     "accruals": "Accruals",
     "payments": "Payments",
     "fields": {
+        "name": "Name",
         "date": "Date",
         "description": "Description",
         "amount": "Amount",
@@ -629,7 +631,11 @@
         "tax": "Tax"
     },
     "form": {
-        "add": "Add new transaction"
+        "add": "Add new transaction",
+        "add_debit": "Add debit account",
+        "add_credit": "Add credit account",
+        "debit": "Debit",
+        "credit": "Credit"
     }
   },
   "taxes": {
@@ -647,7 +653,7 @@
   "companies": {
     "companies": "Companies",
     "fields": {
-        "name": "Name",
+        "company_name": "Name",
         "address": "Address",
         "currency": "Currency",
         "contact_information": "Phone",
@@ -681,7 +687,8 @@
         "accounts": "Accounts"
     },
     "form": {
-        "add" : "Add new type"
+        "add" : "Add new type",
+        "first": "Create first type"
     }
   }
 }

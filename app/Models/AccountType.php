@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class AccountType extends Model
 {
@@ -15,6 +16,7 @@ class AccountType extends Model
         'name',
         'description',
         'parent_account_type',
+        'code'
     ];
 
     /**
@@ -23,6 +25,34 @@ class AccountType extends Model
      * @var array
      */
     protected $with = ['childTypes'];
+
+    protected static function booted(): void
+    {
+        static::creating(function($type) {
+            if ( isset($type->parent_account_type) ) {
+                $last = self::where('parent_account_type', $type->parent_account_type)
+                            ->latest('code')->first();
+                if ( $last ) {
+                    $codeParts = explode('.', $last->code);
+                    $popped = array_pop($codeParts);
+                    $popped += 1;
+                    array_push($codeParts, $popped);
+                    $newCode = implode('.', $codeParts);
+                } else {
+                    $parentCode = self::find($type->parent_account_type)->first();
+                    Log::info($parentCode, [__LINE__]);
+                    $newCode = $parentCode->code . '.' . '1';
+                }
+                // $newCode = $last ?  $last->code + 1 : $type->parent_account_type + 1;
+            } else {
+                $last = self::whereNull('parent_account_type')
+                            ->latest('code')->first();
+                $newCode = $last ? $last->code + 1 : 1;
+            }
+
+            $type->code = $newCode;
+        });
+    }
 
     public function parentType(): BelongsTo
     {

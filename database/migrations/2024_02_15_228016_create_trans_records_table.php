@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('trans_records', function (Blueprint $table) {
             $table->id();
             $table->date('date');
+            $table->string('name');
             $table->string('description');
             $table->decimal('amount');
-            $table->foreignId('debit_account_id')->constrained('accounts');
-            $table->foreignId('credit_account_id')->constrained('accounts');
+            // $table->foreignId('trans_type_id')->constrained('transaction_types');
             $table->nullableMorphs('noteable');
             $table->foreignId('trans_id')
                     ->nullable()

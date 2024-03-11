@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Account;
+use App\Models\TransRecord;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,14 +13,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('account_types', function (Blueprint $table) {
+        Schema::create('account_trans_record', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
-            $table->string('name');
-            $table->string('description');
-            $table->foreignId('parent_account_type')
-                ->nullable()
-                ->constrained(table: 'account_types');
+            $table->foreignIdFor(Account::class);
+            $table->foreignIdFor(TransRecord::class);
+            $table->enum('type', ['debit', 'credit']);
+            $table->decimal('amount');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('account_types');
+        Schema::dropIfExists('account_trans_record');
     }
 };

@@ -29,6 +29,7 @@ export interface IAccount {
     parent_account_id?: number;
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
+    balance: number;
 }
 
 export interface ITransaction {
@@ -36,8 +37,10 @@ export interface ITransaction {
     date: string;
     description: string;
     amount: number | string;
-    debit_account: IAccount;
-    credit_account: IAccount;
+    debit_accounts: IAccount[];
+    credit_accounts: IAccount[];
+    crtrans?: any;
+    dbtrans?: any;
     notes_pr?: IInvoice | IBill;
     tax: ITax;
 }

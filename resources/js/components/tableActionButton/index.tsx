@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import { useStyles } from "./styled";
 
@@ -6,10 +7,11 @@ type Props = {
     style?: React.CSSProperties;
 };
 
-export const TableActionButton = ({ onClick }: Props) => {
+export const TableActionButton = forwardRef<any, any>(({ onClick }: Props, ref) => {
     const { styles } = useStyles();
     return (
         <MoreOutlined
+            ref={ref}
             role="button"
             className={styles.button}
             onClick={(e) => {
@@ -18,4 +20,4 @@ export const TableActionButton = ({ onClick }: Props) => {
             }}
         />
     );
-};
+});

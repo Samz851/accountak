@@ -601,7 +601,8 @@
         "account_name": "الأسم",
         "account_type": "النوع",
         "parent_account": "الحساب الرئيسي",
-        "child_accounts": "حسابات متفرعه"
+        "child_accounts": "حسابات متفرعه",
+        "balance": "الرصيد"
     },
     "show": {
         "info": "معلومات الحساب"
@@ -617,6 +618,7 @@
     "accruals": "الإستحقاقات",
     "payments": "السداد",
     "fields": {
+        "name":"الأسم",
         "date": "التاريخ",
         "description": "الشرح",
         "amount": "القيمة",
@@ -627,7 +629,9 @@
         "tax": "الضرائب"
     },
     "form": {
-        "add": "إضافة قيد جديد"
+        "add": "إضافة قيد جديد",
+        "add_debit": "إضافة حساب مدين",
+        "add_credit": "إضافة حساب دائن"
     }
   },
   "taxes": {
@@ -645,7 +649,7 @@
   "companies": {
     "companies": "الشركات",
     "fields": {
-        "name": "الأسم",
+        "company_name": "الأسم",
         "address": "عنوان",
         "currency": "العملة",
         "contact_information": "التلفون",
@@ -679,7 +683,8 @@
         "accounts": "الحسابات"
     },
     "form": {
-        "add" : "إضافة نوع جديد"
+        "add" : "إضافة نوع جديد",
+        "first" : "اضف اول نوع"
     }
   }
 }

@@ -52,7 +52,7 @@ export const AccountShow: React.FC<IResourceComponentsProps> = () => {
         <List
             breadcrumb={false}
             headerButtons={(props) => [
-                // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+                // // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
                 <ButtonSuccess
                     key="back"
                     icon={<RollbackOutlined/>}
