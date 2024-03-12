@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Account;
-use App\Models\AccountType;
+use App\Models\AccountsBranch;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
-class AccountTypeSeeder extends Seeder
+class AccountsBranchSeeder extends Seeder
 {
 
     private function generate(array $children, ?Model $parent = null)
@@ -16,11 +16,11 @@ class AccountTypeSeeder extends Seeder
         if (! $parent) {
             foreach ($children as $childK => $childV) {
                 if (is_int($childK)) {
-                    AccountType::factory()
+                    AccountsBranch::factory()
                         ->state(['name' => $childV])
                         ->create();
                 } else {
-                    $parentType = AccountType::factory()
+                    $parentType = AccountsBranch::factory()
                         ->state(['name' => $childK])
                         ->create();
                     $this->generate($childV, $parentType);
@@ -31,17 +31,17 @@ class AccountTypeSeeder extends Seeder
         } else {
             foreach ($children as $childK => $childV) {
                 if (is_int($childK)) {
-                    AccountType::factory()
+                    AccountsBranch::factory()
                         ->state([
                             'name' => $childV,
-                            'parent_account_type' => $parent->id
+                            'parent_accounts_branch' => $parent->id
                         ])
                         ->create();
                 } else {
-                    $parentType = AccountType::factory()
+                    $parentType = AccountsBranch::factory()
                         ->state([
                             'name' => $childK,
-                            'parent_account_type' => $parent->id
+                            'parent_accounts_branch' => $parent->id
                         ])
                         ->create();
                     $this->generate($childV, $parentType);
@@ -55,7 +55,7 @@ class AccountTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $accountTypes = config('accounttypes');
-        $this->generate(children: $accountTypes);
+        $accountsBranches = config('accounts_branches.branches');
+        $this->generate(children: $accountsBranches);
     }
 }

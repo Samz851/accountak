@@ -15,54 +15,19 @@ class Account extends Model
 
     protected $fillable = [
         'account_name',
-        'account_type',
+        'account_branch',
         'code',
-        'parent_account_id',
     ];
-
-    protected $with = ['childAccounts'];
 
     protected $appends = ['balance', 'code_label'];
 
     protected static function booted(): void
     {
-        static::creating(function($account) {
-            if ( isset($account->parent_account_id) ) {
-                $last = self::where('parent_account_id', $account->parent_account_id)
-                            ->latest('code')->first();
-                if ( $last ) {
-                    $codeParts = explode('.', $last->code);
-                    $popped = array_pop($codeParts);
-                    $popped += 1;
-                    array_push($codeParts, $popped);
-                    $newCode = implode('.', $codeParts);
-                } else {
-                    $parentCode = self::find($account->parent_account_id)->first();
-                    $newCode = $parentCode->code . '.' . '1';
-                }
-            } else {
-                $last = self::whereNull('parent_account_id')
-                            ->latest('code')->first();
-                $newCode = $last ? $last->code + 1 : 1;
-            }
-
-            $account->code = $newCode;
-        });
     }
 
-    public function accountType(): BelongsTo
+    public function accountBranch(): BelongsTo
     {
-        return $this->belongsTo(AccountType::class, 'account_type');
-    }
-
-    public function parentAccount()
-    {
-        return $this->belongsTo(Account::class, 'parent_account_id');
-    }
-
-    public function childAccounts()
-    {
-        return $this->hasMany(Account::class, 'parent_account_id');
+        return $this->belongsTo(AccountsBranch::class, 'account_branch');
     }
 
     public function debitTransactions()

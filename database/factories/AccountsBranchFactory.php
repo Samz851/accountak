@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountType>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountsBranch>
  */
-class AccountTypeFactory extends Factory
+class AccountsBranchFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,7 +19,7 @@ class AccountTypeFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'description' => $this->faker->realTextBetween($minNbChars = 160, $maxNbChars = 200, $indexSize = 2),
-            'parent_account_type' => null
+            'parent_accounts_branch' => null
         ];
     }
 }

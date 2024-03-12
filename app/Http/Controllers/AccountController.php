@@ -13,9 +13,7 @@ class AccountController extends Controller
     private function getAll(): Collection | array
     {
         return Account::with([
-            'parentAccount',
-            'childAccounts',
-            'accountType',
+            'accountBranch',
             'debitTransactions',
             'creditTransactions',
             ])
@@ -24,14 +22,12 @@ class AccountController extends Controller
 
     private function getSelectOptions(): array
     {
-        $accounts = Account::doesntHave('parentAccount')
-                            ->get()
+        $accounts = Account::get()
                             ->toArray();
 
         return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
             "code_label" => "title",
-            "id" => "value",
-            "child_accounts" => "children"
+            "id" => "value"
         ]), $accounts);
     }
 
@@ -63,8 +59,7 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        $account->accountType;
-        $account->parentAccount;
+        $account->accountBranch;
         $account->debitTransactions;
         $account->creditTransactions;
         $account->contact;

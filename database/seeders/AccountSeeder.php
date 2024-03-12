@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Account;
-use App\Models\AccountType;
+use App\Models\AccountsBranch;
 use App\Models\Contact;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -27,11 +27,6 @@ class AccountSeeder extends Seeder
             ->create();
         Account::factory()
             ->count(20)
-            ->state(new Sequence(
-                fn (Sequence $sequence) => [
-                    'parent_account_id' => Account::doesntHave('parentAccount')->get()->random()->id,
-                ],
-            ))
             ->create();
 
         Account::factory()

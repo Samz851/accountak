@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ArrayFormatters;
-use App\Models\AccountType;
+use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,13 +14,13 @@ class AccountTypeController extends Controller
 {
     private function getAll(): Collection
     {
-        return AccountType::with(['childTypes', 'parentType', 'accounts'])
+        return AccountsBranch::with(['childTypes', 'parentType', 'accounts'])
                             ->get();
     }
 
     private function getTree(): array
     {
-        $accountTypes = AccountType::doesntHave('parentType')->get()->toArray();
+        $accountTypes = AccountsBranch::doesntHave('parentType')->get()->toArray();
         return array_map(fn($record)=> ArrayFormatters::rename_array_keys($record, [
             "name" => "title",
             "id" => "key",
@@ -31,7 +31,7 @@ class AccountTypeController extends Controller
 
     private function getSelectOptions(): array
     {
-        $accountTypes = AccountType::has('childTypes')
+        $accountTypes = AccountsBranch::has('childTypes')
                                     ->doesntHave('parentType')
                                     ->get()
                                     ->toArray();
@@ -65,26 +65,26 @@ class AccountTypeController extends Controller
      */
     public function store(Request $request)
     {
-        $accountType = AccountType::create($request->all());
-        return response($accountType);
+        $accountBranch = AccountsBranch::create($request->all());
+        return response($accountBranch);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(AccountType $accountType)
+    public function show(AccountsBranch $accountBranch)
     {
-        $accountType->accounts;
-        $accountType->child_types;
-        $accountType->parentType;
-        // Log::info($accountType->parentType, [__LINE__, __FILE__]);
-        return response($accountType);
+        $accountBranch->accounts;
+        $accountBranch->child_types;
+        $accountBranch->parentType;
+        // Log::info($accountBranch->parentType, [__LINE__, __FILE__]);
+        return response($accountBranch);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AccountType $accountType)
+    public function update(Request $request, AccountsBranch $accountBranch)
     {
         //
     }
@@ -92,12 +92,12 @@ class AccountTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AccountType $accountType)
+    public function destroy(AccountsBranch $accountBranch)
     {
         Schema::disableForeignKeyConstraints();
-        $delete = AccountType::truncate();
+        $delete = AccountsBranch::truncate();
         Schema::enableForeignKeyConstraints();
-        $types = AccountType::all();
+        $types = AccountsBranch::all();
         return response([$delete, $types]);
     }
 
@@ -106,7 +106,7 @@ class AccountTypeController extends Controller
     // DEV
     public function getParents(Request $request): Response
     {
-        $accountType = AccountType::with('parentType')->where('id', $request->query('id'))->get();
-        return response($accountType);
+        $accountBranch = AccountsBranch::with('parentType')->where('id', $request->query('id'))->get();
+        return response($accountBranch);
     }
 }
