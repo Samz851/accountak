@@ -1,6 +1,6 @@
 import { CardWithContent, Drawer } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { IAccount, IAccountType } from "@/interfaces";
+import { IAccount, IAccountsBranch } from "@/interfaces";
 import { IResourceComponentsProps, useNavigation, useShow } from "@refinedev/core";
 import { Flex, Grid, Typography, theme } from "antd";
 import React from "react";
@@ -83,7 +83,7 @@ export const AccountInfoView = ({account}: Props) => {
                 }
                 </CardWithContent>
             }
-            {/* <CardWithContent title={t('account_types.fields.accounts')}>
+            {/* <CardWithContent title={t('accounts_branches.fields.accounts')}>
             {
                 accountType?.accounts?.map(account => (
                     <Flex vertical key={account.id}>

@@ -10,37 +10,37 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
-class AccountTypeController extends Controller
+class AccountsBranchController extends Controller
 {
     private function getAll(): Collection
     {
-        return AccountsBranch::with(['childTypes', 'parentType', 'accounts'])
+        return AccountsBranch::with(['childBranches', 'parentBranch', 'accounts'])
                             ->get();
     }
 
     private function getTree(): array
     {
-        $accountTypes = AccountsBranch::doesntHave('parentType')->get()->toArray();
+        $accountTypes = AccountsBranch::doesntHave('parentBranch')->get()->toArray();
         return array_map(fn($record)=> ArrayFormatters::rename_array_keys($record, [
-            "name" => "title",
-            "id" => "key",
-            "child_types" => "children"
+            "name" => "label",
+            "id" => "value",
+            "child_branches" => "children"
         ]), $accountTypes);
 
     }
 
     private function getSelectOptions(): array
     {
-        $accountTypes = AccountsBranch::has('childTypes')
-                                    ->doesntHave('parentType')
+        $accountTypes = AccountsBranch::doesntHave('parentBranch')
                                     ->get()
                                     ->toArray();
 
+        $results = ArrayFormatters::removeLeafAccounts($accountTypes, 5);
         return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
             "name" => "title",
-            "id" => "value",
-            "child_types" => "children"
-        ]), $accountTypes);
+            "id" => "key",
+            "child_branches" => "children"
+        ]), $results);
     }
     /**
      * Display a listing of the resource.
@@ -76,8 +76,8 @@ class AccountTypeController extends Controller
     {
         $accountBranch->accounts;
         $accountBranch->child_types;
-        $accountBranch->parentType;
-        // Log::info($accountBranch->parentType, [__LINE__, __FILE__]);
+        $accountBranch->parentBranch;
+        // Log::info($accountBranch->parentBranch, [__LINE__, __FILE__]);
         return response($accountBranch);
     }
 
@@ -106,7 +106,7 @@ class AccountTypeController extends Controller
     // DEV
     public function getParents(Request $request): Response
     {
-        $accountBranch = AccountsBranch::with('parentType')->where('id', $request->query('id'))->get();
+        $accountBranch = AccountsBranch::with('parentBranch')->where('id', $request->query('id'))->get();
         return response($accountBranch);
     }
 }

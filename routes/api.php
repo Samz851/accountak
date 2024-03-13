@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\AccountTypeController;
+use App\Http\Controllers\AccountsBranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TaxesController;
@@ -31,6 +31,6 @@ Route::apiResource('/transactions', TransactionsController::class);
 Route::apiResource('/taxes', TaxesController::class);
 Route::apiResource('/companies', CompanyController::class);
 Route::apiResource('/contacts', ContactController::class);
-Route::apiResource('/account_branchs', AccountTypeController::class);
-Route::get('/get_parents', [AccountTypeController::class, 'getParents']);
+Route::apiResource('/accounts_branches', AccountsBranchController::class);
+Route::get('/get_parents', [AccountsBranchController::class, 'getParents']);
 Route::get('/accounts/select', [AccountController::class, 'getSelect']);

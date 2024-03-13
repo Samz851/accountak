@@ -55,10 +55,10 @@ export const resources: IResourceItem[] = [
         },
     },
     {
-        name: "account_types",
-        list: "/account_types",
-        show: "/account_types/show/:id",
-        create: "/account_types/create",
+        name: "accounts_branches",
+        list: "/accounts_branches",
+        show: "/accounts_branches/show/:id",
+        create: "/accounts_branches/create",
         meta: {
             dataProviderName: "laravel",
             // hide: true
