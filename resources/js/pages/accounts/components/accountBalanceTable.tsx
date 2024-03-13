@@ -29,14 +29,14 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                     pagination={false}
                     bordered
                     dataSource={transactions?.debit}
-                    title={() => t("accounts.debit") as any}
+                    title={() => <Typography.Title level={5}>{t("accounts.debit")}</Typography.Title>}
                     footer={() => (
-                        <Row>
+                        <Row justify={"space-between"} gutter={8}>
                             <Col span={16}>
                                 {"Total"}
                             </Col>
-                            <Col>
-                                - { totalDebit }
+                            <Col span={8}>
+                                { totalDebit }
                             </Col>
                         </Row>
                     )}
@@ -46,10 +46,55 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         dataIndex="date"
                         key="date"
                     />
-                    <Column
-                        title={t("transactions.fields.credit_account") as any}
-                        dataIndex="name"
+                    <Column<ITransaction["credit_accounts"]>
+                        // title={t("transactions.fields.credit_account") as any}
+                        title={() => 
+                            <Row justify={"space-between"} gutter={8}>
+                                <Col span={24}>
+                                    <Row justify={"center"}>
+                                        <Typography.Text>
+                                            {t("transactions.fields.credit_account")}
+                                        </Typography.Text>
+                                    </Row>
+                                    <Row justify={"space-between"} gutter={8}>
+                                        <Col span={16}>
+                                            <Typography.Text>
+                                                {"Name"}
+                                            </Typography.Text>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Typography.Text>
+                                                {"Amount"}
+                                            </Typography.Text>
+                                        </Col>
+                                    </Row>
+
+                                </Col>
+                            </Row>
+                        }
+                        dataIndex={['credit_accounts']}
                         key="name"
+                        // children={[]}
+                        render={(value) => 
+                            <>
+                            {
+                                value.map(account => (
+                                    <Row key={account.id} justify={"space-between"} gutter={8}>
+                                        <Col span={16}>
+                                            <Typography.Text>
+                                                {account.account_name}
+                                            </Typography.Text>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Typography.Text>
+                                                {account.pivot.amount}
+                                            </Typography.Text>
+                                        </Col>
+                                    </Row>
+                                ))
+                            }
+                            </>
+                        }
                     />
                     <Column
                         title={t("transactions.fields.amount") as any}
@@ -64,33 +109,77 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                     pagination={false}
                     bordered
                     dataSource={transactions?.credit}
-                    title={() => t("accounts.credit") as any}
+                    title={() => <Typography.Title level={5}>{t("accounts.credit")}</Typography.Title>}
                     footer={() => (
-                        <Row>
+                        <Row justify={"space-between"} gutter={8}>
                             <Col span={16}>
                                 {"Total"}
                             </Col>
-                            <Col>
+                            <Col span={8}>
                                 { totalCredit }
                             </Col>
                         </Row>
                     )}
                 >
-                        <Column
-                            title={t("accounts.fields.date") as any}
-                            dataIndex="date"
-                            key="alpha"
-                        />
-                        <Column
-                            title={t("transactions.fields.debit_account") as any}
-                            dataIndex="debit_account_id"
-                            key="romeo"
-                        />
-                        <Column
-                            title={t("transactions.fields.amount") as any}
-                            dataIndex="amount"
-                            key="what"
-                        />
+                    <Column
+                        title={t("accounts.fields.date") as any}
+                        dataIndex="date"
+                        key="alpha"
+                    />
+                    <Column<ITransaction["debit_accounts"]>
+                        // title={t("transactions.fields.debit_account") as any}
+                        title={() => 
+                            <Row justify={"space-between"} gutter={8}>
+                                <Col span={24}>
+                                    <Row justify={"center"}>
+                                        <Typography.Text>
+                                            {t("transactions.fields.debit_account")}
+                                        </Typography.Text>
+                                    </Row>
+                                    <Row justify={"space-between"} gutter={8}>
+                                        <Col span={16}>
+                                            <Typography.Text>
+                                                {"Name"}
+                                            </Typography.Text>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Typography.Text>
+                                                {"Amount"}
+                                            </Typography.Text>
+                                        </Col>
+                                    </Row>
+
+                                </Col>
+                            </Row>
+                        }
+                        dataIndex={['debit_accounts']}
+                        key="romeo"
+                        render={(value) => 
+                            <>
+                            {
+                                value.map(account => (
+                                    <Row key={account.id} justify={"space-between"} gutter={8}>
+                                        <Col span={16}>
+                                            <Typography.Text>
+                                                {account.account_name}
+                                            </Typography.Text>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Typography.Text>
+                                                {account.pivot.amount}
+                                            </Typography.Text>
+                                        </Col>
+                                    </Row>
+                                ))
+                            }
+                            </>
+                        }
+                    />
+                    <Column
+                        title={t("transactions.fields.amount") as any}
+                        dataIndex={["crtrans","amount"]}
+                        key="what"
+                    />
                 </Table>
             </Col>
         </Row>

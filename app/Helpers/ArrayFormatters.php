@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Log;
+
 class ArrayFormatters
 {
     public static function rename_array_keys(array $array, array $keys): array
@@ -17,6 +19,23 @@ class ArrayFormatters
                 }
 
             } else {
+                $newArray[$key] = $value;
+            }
+        }
+        return $newArray;
+    }
+
+    public static function removeLeafAccounts(array $array, int $level): array
+    {
+        $newArray = [];
+        foreach ($array as $key => $value) {
+            Log::info([$key, $value], [__LINE__, __FILE__]);
+            $pathLength = count(explode('->', $value['tree_path']));
+            if ( $pathLength < $level ) {
+                Log::info([$pathLength, $value], [__LINE__, __FILE__]);
+                if ( isset($value['child_branches']) && ! empty(isset($value['child_branches'])) ) {
+                    $value['child_branches'] = self::removeLeafAccounts($value['child_branches'], $level);
+                }
                 $newArray[$key] = $value;
             }
         }

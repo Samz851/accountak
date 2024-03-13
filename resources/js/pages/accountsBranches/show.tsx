@@ -5,7 +5,7 @@ import {
     useBack,
 } from "@refinedev/core";
 import { Flex, Grid } from "antd";
-import { IAccount, IAccountType } from "../../interfaces";
+import { IAccount, IAccountsBranch } from "../../interfaces";
 import {
     CardWithContent,
     CustomerInfoList,
@@ -13,16 +13,16 @@ import {
     CustomerOrderHistory,
     Drawer,
 } from "../../components";
-import { AccountTypeView } from "./components/accountTypeView";
+import { AccountsBranchView } from "./components/accountsBranchView";
 
-export const AccountTypeShow: React.FC<IResourceComponentsProps> = () => {
+export const AccountsBranchShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
     const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IAccountType>();
+    const { queryResult } = useShow<IAccountsBranch>();
     const back = useBack();
 
     const { data } = queryResult;
-    const accountType = data?.data;
+    const accountsBranch = data?.data;
 
     return (
         <Drawer
@@ -30,7 +30,7 @@ export const AccountTypeShow: React.FC<IResourceComponentsProps> = () => {
             onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <AccountTypeView accountType={accountType} />
+            <AccountsBranchView accountsBranch={accountsBranch} />
         </Drawer>
     );
 };

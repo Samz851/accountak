@@ -32,10 +32,8 @@ import {
     Typography,
 } from "antd";
 
-import { IAccount, IAccountType } from "@/interfaces";
+import { IAccount, IAccountsBranch } from "@/interfaces";
 
-import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
-import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState } from "react";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
@@ -54,10 +52,10 @@ type Props = {
 type FormValues = {
     name: string;
     description: string;
-    parent_account_type?: any;
+    parent_accounts_branch?: any;
 };
-// type AccountTypesTree = IAccountType & DataNode;
-export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
+// type AccountsBranchesTree = IAccountsBranch & DataNode;
+export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
@@ -65,35 +63,35 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
     const [typeValue, setTypeValue] = useState<string>();
     const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
-    const initValues = {parent_account_type: searchParams.get('parent') ?? ''};
+    const initValues = {parent_accounts_branch: searchParams.get('parent') ?? ''};
 
     const onChangeType = (newValue: string) => {
         setTypeValue(newValue);
     };
 
-    const { formProps, modalProps, close, onFinish } = useModalForm<IAccountType, HttpError, FormValues
+    const { formProps, modalProps, close, onFinish } = useModalForm<IAccountsBranch, HttpError, FormValues
     >({
         action: "create",
         defaultVisible: true,
-        resource: "account_types",
+        resource: "accounts_branches",
         redirect: false,
         warnWhenUnsavedChanges: !isOverModal,
     });
 
     // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
     // const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
-    const { data } = useList<IAccountType>({
-        resource: "account_types",
+    const { data } = useList<IAccountsBranch>({
+        resource: "accounts_branches",
         filters: [
             {
-                field: 'tree',
+                field: 'selectOptions',
                 operator: 'eq',
                 value: true
             }
         ]
     });
 
-    const accountTypes = data?.data ?? [];
+    const accountBranches = data?.data ?? [];
     return (
         <Modal
             {...modalProps}
@@ -116,7 +114,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                     type: "replace",
                 });
             }}
-            title={t("account_types.form.add")}
+            title={t("accounts_branches.form.add")}
             width={512}
             closeIcon={<LeftOutlined />}
         >
@@ -128,7 +126,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                         const data = await onFinish({
                             name: values.name,
                             description: values.description,
-                            parent_account_type: values.parent_account_type
+                            parent_accounts_branch: values.parent_accounts_branch
                         });
                         close();
                         go({
@@ -182,22 +180,22 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                 initialValues={initValues}
             >
                 <Form.Item
-                    label={t("account_types.fields.name")}
+                    label={t("accounts_branches.fields.name")}
                     name="name"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("account_types.fields.description")}
+                    label={t("accounts_branches.fields.description")}
                     name="description"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("account_types.fields.parent_type")}
-                    name="parent_account_type"
+                    label={t("accounts_branches.fields.parent_branch")}
+                    name="parent_accounts_branch"
                     // rules={[{ required: true }]}
                 >
                     <TreeSelect
@@ -205,7 +203,7 @@ export const AccountTypeCreatePage = ({ isOverModal }: Props) => {
                         // value={typeValue}
                         fieldNames={{label: "title", "value": "key", children: "children"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountTypes}
+                        treeData={accountBranches}
                         placeholder="Please select"
                         treeDefaultExpandAll
                         // onChange={onChangeType}

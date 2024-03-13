@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\AccountType;
+use App\Models\AccountsBranch;
 use App\Models\Invoice;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CompanySeeder::class,
             ContactSeeder::class,
-            AccountTypeSeeder::class,
+            AccountsBranchSeeder::class,
             AccountSeeder::class,
             InvoiceSeeder::class,
             BillSeeder::class,

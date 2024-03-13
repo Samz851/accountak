@@ -3,6 +3,10 @@ import { createStyles } from "antd-style";
 export const useStyles = createStyles(({ token }) => {
     return {
         treeNode: {
+            ".rs-tree-node-label, .rs-tree-node-label-content": {
+                width: '100%',
+                display: 'block'
+            },
             ".ant-tree-switcher": {
                 width: '32px',
                 color: '#c7c7c7'

@@ -15,54 +15,34 @@ class Account extends Model
 
     protected $fillable = [
         'account_name',
-        'account_type',
+        'account_branch_id',
         'code',
-        'parent_account_id',
     ];
-
-    protected $with = ['childAccounts'];
 
     protected $appends = ['balance', 'code_label'];
 
     protected static function booted(): void
     {
         static::creating(function($account) {
-            if ( isset($account->parent_account_id) ) {
-                $last = self::where('parent_account_id', $account->parent_account_id)
-                            ->latest('code')->first();
-                if ( $last ) {
-                    $codeParts = explode('.', $last->code);
-                    $popped = array_pop($codeParts);
-                    $popped += 1;
-                    array_push($codeParts, $popped);
-                    $newCode = implode('.', $codeParts);
-                } else {
-                    $parentCode = self::find($account->parent_account_id)->first();
-                    $newCode = $parentCode->code . '.' . '1';
-                }
+            $last = self::where('account_branch_id', $account->account_branch_id)
+                        ->latest('code')->first();
+            if ( $last ) {
+                $lastCode = str_split($last->code, 2);
+                $codePart = array_pop($lastCode);
+                $lastCode[] = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
+                $newCode = implode($lastCode);
             } else {
-                $last = self::whereNull('parent_account_id')
-                            ->latest('code')->first();
-                $newCode = $last ? $last->code + 1 : 1;
+                $branchCode = AccountsBranch::where('id', intval($account->account_branch_id))->first();
+                $newCode = $branchCode->code . str_pad('1', 10 - strlen($branchCode->code), "0", STR_PAD_LEFT);
             }
 
             $account->code = $newCode;
         });
     }
 
-    public function accountType(): BelongsTo
+    public function accountBranch(): BelongsTo
     {
-        return $this->belongsTo(AccountType::class, 'account_type');
-    }
-
-    public function parentAccount()
-    {
-        return $this->belongsTo(Account::class, 'parent_account_id');
-    }
-
-    public function childAccounts()
-    {
-        return $this->hasMany(Account::class, 'parent_account_id');
+        return $this->belongsTo(AccountsBranch::class, 'account_branch_id');
     }
 
     public function debitTransactions()

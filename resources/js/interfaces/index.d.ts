@@ -10,23 +10,21 @@ export interface ICompany {
     accounts?: IAccount[];
 }
 
-export interface IAccountType {
+export interface IAccountsBranch {
     id: number;
     name: string;
     description: string;
-    parent_type?: IAccountType;
-    child_types?: IAccountType[];
-    parent_account_type?: number;
+    parent_branch?: IAccountsBranch;
+    child_branches?: IAccountsBranch[];
+    parent_accounts_branch?: number;
     accounts: IAccount[];
 }
 
 export interface IAccount {
     id: number;
     account_name: string;
-    account_type: IAccountType;
-    parent_account?: IAccount;
-    child_accounts: IAccount[] | [];
-    parent_account_id?: number;
+    account_branch: IAccountsBranch;
+    account_branch_id: number;
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
     balance: number;
@@ -91,7 +89,7 @@ export interface ITaxFilterVariables {
 export interface IAccountFilterVariables {
     q: string;
     account_name: string;
-    account_type: IAccountType;
+    account_branch: IAccountsBranch;
 }
 
 export interface IOrderChart {
