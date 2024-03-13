@@ -29,18 +29,25 @@ class AccountsBranchController extends Controller
 
     }
 
-    private function getSelectOptions(): array
+    private function getSelectOptions(?bool $noChildren = null): array
     {
-        $accountTypes = AccountsBranch::doesntHave('parentBranch')
-                                    ->get()
-                                    ->toArray();
+        if ($noChildren) {
+            $accountTypes = AccountsBranch::doesntHave('childBranches')
+            ->get()
+            ->toArray();
+        } else {
+            $accountTypes = AccountsBranch::doesntHave('parentBranch')
+            ->get()
+            ->toArray();
 
-        $results = ArrayFormatters::removeLeafAccounts($accountTypes, 5);
+            $accountTypes = ArrayFormatters::removeLeafAccounts($accountTypes, 5);
+        }
+
         return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
             "name" => "title",
             "id" => "key",
             "child_branches" => "children"
-        ]), $results);
+        ]), $accountTypes);
     }
     /**
      * Display a listing of the resource.
@@ -53,7 +60,9 @@ class AccountsBranchController extends Controller
 
         } else if ($request->has('tree')) {
             $result = $this->getTree();
-        } else {
+        } else if ($request->has('noChildren')) {
+            $result = $this->getSelectOptions(true);
+        }else {
             $result = $this->getAll();
         }
 

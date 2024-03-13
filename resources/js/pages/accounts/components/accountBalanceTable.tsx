@@ -46,10 +46,19 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         dataIndex="date"
                         key="date"
                     />
-                    <Column
+                    <Column<IAccount[]>
                         title={t("transactions.fields.credit_account") as any}
-                        dataIndex="name"
+                        dataIndex={['credit_accounts']}
                         key="name"
+                        render={(_) => 
+                            <Typography.Text>
+                                {JSON.stringify(Object.keys(_))}
+                                -----
+                                {typeof _}
+                                ---
+                                {_[0].account_name}
+                            </Typography.Text>
+                        }
                     />
                     <Column
                         title={t("transactions.fields.amount") as any}
@@ -83,12 +92,12 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         />
                         <Column
                             title={t("transactions.fields.debit_account") as any}
-                            dataIndex="debit_account_id"
+                            dataIndex={['debit_accounts', 'account_name']}
                             key="romeo"
                         />
                         <Column
                             title={t("transactions.fields.amount") as any}
-                            dataIndex="amount"
+                            dataIndex={["crtrans","amount"]}
                             key="what"
                         />
                 </Table>

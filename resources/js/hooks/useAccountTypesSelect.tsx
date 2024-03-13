@@ -8,7 +8,7 @@ export const useAccountTypesSelect = () => {
         method: "get",
         config: {
             query: {
-                selectOptions: true
+                noChildren: true,
             }
         }
     })

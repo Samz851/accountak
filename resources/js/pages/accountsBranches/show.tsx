@@ -13,7 +13,7 @@ import {
     CustomerOrderHistory,
     Drawer,
 } from "../../components";
-import { AccountsBranchView } from "./components/accountTypeView";
+import { AccountsBranchView } from "./components/accountsBranchView";
 
 export const AccountsBranchShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
@@ -22,7 +22,7 @@ export const AccountsBranchShow: React.FC<IResourceComponentsProps> = () => {
     const back = useBack();
 
     const { data } = queryResult;
-    const accountType = data?.data;
+    const accountsBranch = data?.data;
 
     return (
         <Drawer
@@ -30,7 +30,7 @@ export const AccountsBranchShow: React.FC<IResourceComponentsProps> = () => {
             onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <AccountsBranchView accountType={accountType} />
+            <AccountsBranchView accountsBranch={accountsBranch} />
         </Drawer>
     );
 };

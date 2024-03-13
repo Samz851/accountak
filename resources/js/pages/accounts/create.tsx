@@ -7,6 +7,7 @@ import {
     useCreateMany,
     useGetToPath,
     useGo,
+    useList,
     useTranslate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
@@ -31,7 +32,7 @@ import {
     Typography,
 } from "antd";
 
-import { IAccount } from "@/interfaces";
+import { IAccount, IAccountsBranch } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
@@ -52,8 +53,7 @@ type Props = {
 
 type FormValues = {
     account_name: string;
-    account_type: number;
-    parent_account_id?: number;
+    account_branch_id: number;
 };
 
 export const AccountCreatePage = ({ isOverModal }: Props) => {
@@ -81,8 +81,18 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
         warnWhenUnsavedChanges: !isOverModal,
     });
 
-    const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
-    const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
+    const { data } = useList<IAccountsBranch>({
+        resource: "accounts_branches",
+        filters: [
+            {
+                field: 'noChildren',
+                operator: 'eq',
+                value: true
+            }
+        ]
+    });
+
+    const accountBranches = data?.data ?? [];
 
     return (
         <Modal
@@ -117,8 +127,7 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                     try {
                         const data = await onFinish({
                             account_name: values.account_name,
-                            account_type: values.account_type,
-                            parent_account_id: values.parent_account_id
+                            account_branch_id: values.account_branch_id,
                         });
                         close();
                         go({
@@ -178,15 +187,15 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                     <Input placeholder="Please enter account name" />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_type")}
-                    name="account_type"
+                    label={t("accounts.fields.account_branch")}
+                    name="account_branch_id"
                     rules={[{ required: true }]}
                 >
                     <TreeSelect
                         style={{ width: '100%' }}
-                        value={typeValue}
+                        fieldNames={{label: "title", "value": "key"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={typesData?.data}
+                        treeData={accountBranches}
                         placeholder="Please select"
                         treeDefaultExpandAll
                         onChange={onChangeType}
@@ -194,65 +203,6 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                         />
 
                 </Form.Item>
-                <Form.Item
-                    label={t("accounts.fields.parent_account")}
-                    name="parent_account_id"
-                >
-                    <TreeSelect
-                        filterTreeNode={true}
-                        treeNodeFilterProp="title"
-                        style={{ width: '100%' }}
-                        value={parentValue}
-                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountsData?.data}
-                        placeholder="Please select"
-                        treeDefaultExpandAll
-                        onChange={onChangeParent}
-                        allowClear={true}
-                        />
-                </Form.Item>
-                {/* <Form.List name="contacts">
-                    {(fields, { add, remove }) => (
-                        <Space direction="vertical">
-                            {fields.map(({ key, name, ...restField }) => (
-                                <Row key={key} gutter={12} align="middle">
-                                    <Col span={11}>
-                                        <Form.Item
-                                            noStyle
-                                            {...restField}
-                                            name={[name, "name"]}
-                                        >
-                                            <Input
-                                                addonBefore={<UserOutlined />}
-                                                placeholder="Contact name"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={11}>
-                                        <Form.Item
-                                            noStyle
-                                            name={[name, "email"]}
-                                        >
-                                            <Input
-                                                addonBefore={<MailOutlined />}
-                                                placeholder="Contact email"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={2}>
-                                        <Button
-                                            icon={<DeleteOutlined />}
-                                            onClick={() => remove(name)}
-                                        />
-                                    </Col>
-                                </Row>
-                            ))}
-                            <Typography.Link onClick={() => add()}>
-                                <PlusCircleOutlined /> Add new contacts
-                            </Typography.Link>
-                        </Space>
-                    )}
-                </Form.List> */}
             </Form>
         </Modal>
     );

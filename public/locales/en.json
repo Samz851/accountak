@@ -601,9 +601,7 @@
     "fields": {
         "date": "Date",
         "account_name": "Name",
-        "account_type": "Type",
-        "parent_account": "Parent Account",
-        "child_accounts": "Subaccounts",
+        "account_branch": "Branch",
         "balance": "Balance"
     },
     "show": {
@@ -682,8 +680,8 @@
     "fields": {
         "name": "Name",
         "description": "Description",
-        "parent_type": "Parent",
-        "child_types": "Subtypes",
+        "parent_branch": "Parent Branch",
+        "child_branches": "Child Branches",
         "accounts": "Accounts"
     },
     "form": {

@@ -93,7 +93,7 @@ class AccountsBranch extends Model
 
     public function accounts(): HasMany
     {
-        return $this->hasMany(Account::class, 'account_branch');
+        return $this->hasMany(Account::class, 'account_branch_id');
     }
 
     private function treePath($branch)

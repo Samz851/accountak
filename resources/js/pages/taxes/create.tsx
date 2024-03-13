@@ -59,10 +59,10 @@ type FormValues = {
 export const TaxCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
-    const { pathname } = useLocation();
+    // const { pathname } = useLocation();
     const go = useGo();
-    const [typeValue, setTypeValue] = useState<string>();
-    const [parentValue, setParentValue] = useState<string>();
+    // const [typeValue, setTypeValue] = useState<string>();
+    // const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
 
 
@@ -75,8 +75,8 @@ export const TaxCreatePage = ({ isOverModal }: Props) => {
         warnWhenUnsavedChanges: !isOverModal,
     });
 
-    const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
-    const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
+    // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
+    // const { data: accountsData, isLoading: accountsIsLoading } = useAccountsSelect();
 
     return (
         <Modal

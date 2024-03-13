@@ -15,7 +15,7 @@ class Account extends Model
 
     protected $fillable = [
         'account_name',
-        'account_branch',
+        'account_branch_id',
         'code',
     ];
 
@@ -23,11 +23,26 @@ class Account extends Model
 
     protected static function booted(): void
     {
+        static::creating(function($account) {
+            $last = self::where('account_branch_id', $account->account_branch_id)
+                        ->latest('code')->first();
+            if ( $last ) {
+                $lastCode = str_split($last->code, 2);
+                $codePart = array_pop($lastCode);
+                $lastCode[] = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
+                $newCode = implode($lastCode);
+            } else {
+                $branchCode = AccountsBranch::where('id', intval($account->account_branch_id))->first();
+                $newCode = $branchCode->code . str_pad('1', 10 - strlen($branchCode->code), "0", STR_PAD_LEFT);
+            }
+
+            $account->code = $newCode;
+        });
     }
 
     public function accountBranch(): BelongsTo
     {
-        return $this->belongsTo(AccountsBranch::class, 'account_branch');
+        return $this->belongsTo(AccountsBranch::class, 'account_branch_id');
     }
 
     public function debitTransactions()

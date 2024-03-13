@@ -67,7 +67,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             return {
                 id: item.id,
                 fullName: item.account_name,
-                account_type: item.account_type.name
+                account_branch: item.account_branch.name
             };
         },
     });
@@ -165,11 +165,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="account_type"
-                    dataIndex={["account_type", "name"]}
-                    title={t("accounts.fields.account_type")}
+                    key="account_branch"
+                    dataIndex={["account_branch", "name"]}
+                    title={t("accounts.fields.account_branch")}
                     defaultFilteredValue={getDefaultFilter(
-                        "account_type",
+                        "account_branch",
                         filters,
                         "contains",
                     )}
@@ -191,43 +191,10 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     // </Typography.Text>
                     // )}
                 />
-                <Table.Column<IAccount>
-                    key="parent_account"
-                    dataIndex={["parent_account", "account_name"]}
-                    title={t("accounts.fields.parent_account")}
-                    // render={(_, value) => (
-                    //     <Typography.Text
-                    //     style={{
-                    //         whiteSpace: "nowrap",
-                    //     }}
-                    // >
-                    //     {value?.parent_account?.account_name}
-                    // </Typography.Text>
-                    // )}
-                />
-                <Table.Column<IAccount>
-                    key="child_accounts"
-                    dataIndex={["child_accounts"]}
-                    title={t("accounts.fields.child_accounts")}
-                    render={(_, value) =>
-                        value.child_accounts.map(child => (
-                            <Row key={child?.id}>
-
-                                <Typography.Text
-                                    style={{
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    {child?.account_name}
-                                </Typography.Text>
-                            </Row>
-                        ))
-                    }
-                />
                 <Table.Column
                     key="balance"
                     dataIndex={["balance"]}
-                    title={t("accounts.fields.child_accounts")}
+                    title={t("accounts.fields.balance")}
                 />
                 {/* <Table.Column
                     key="createdAt"

@@ -74,6 +74,9 @@ type FormValues = {
     issue_payment: boolean;
     tax_id: number;
 };
+type totalAccounts = {
+    [key: number]: number;
+}
 
 export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
@@ -81,8 +84,8 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const { pathname } = useLocation();
     const go = useGo();
     const t = useTranslate();
-    const [ totalDebit, setTotalDebit ] = useState(0);
-    const [ totalCredit, setTotalCredit ] = useState(0);
+    const [ totalDebit, setTotalDebit ] = useState<totalAccounts>({});
+    const [ totalCredit, setTotalCredit ] = useState<totalAccounts>({});
     const [ accountsBalanceError, setAccountsBalanceError ] = useState(false)
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
@@ -124,6 +127,20 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
         optionValue: "id"
     })
 
+    const removeAccount = (key, type, name, cb) => {
+        if ( type === 'credit' ) {
+            const newTotal = {...totalCredit};
+            delete newTotal[key];
+            setTotalCredit({...newTotal}) 
+        } else {
+            const newTotal = {...totalDebit};
+            delete newTotal[key];
+            setTotalDebit({...newTotal}) 
+        }
+        cb(name);
+
+    }
+
     const getErrors = () => {
         let errs = form.getFieldsError();
         let vals = form.getFieldsValue();
@@ -160,7 +177,10 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 {...formProps}
                 // layout="vertical"
                 onFinish={async (values) => {
-                    if (totalDebit !== totalCredit) {
+                    const totalDebitAmount = Object.values(totalDebit).reduce((acc, cur) => acc + cur, 0);
+                    const totalCreditAmount = Object.values(totalCredit).reduce((acc, cur) => acc + cur, 0)
+                    console.log(totalCreditAmount, totalDebitAmount);
+                    if (totalDebitAmount !== totalCreditAmount) {
                         setAccountsBalanceError(true);
                         form.setFields([
                             {
@@ -178,7 +198,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                 date: values.date.toString(),
                                 name: values.name,
                                 description: values.description,
-                                amount: totalDebit,
+                                amount: totalDebitAmount,
                                 debit_accounts: values.debit_accounts,
                                 credit_accounts: values.credit_accounts,
                                 notes_pr: values.notes_pr,
@@ -235,7 +255,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             rules={[{required: true}]}
                             initialValue={dayjs()}
                         >
-                            <DatePicker />
+                            <DatePicker minDate={dayjs()}/>
                         </Form.Item>
                     </Col>
                 </Row>
@@ -278,7 +298,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                     {fields.map(({ key, name, ...restField }) => (
                                         <Row key={key} align={"stretch"}>
                                             <Col span={2}>
-                                                <MinusCircleOutlined onClick={() => remove(name)} />
+                                                <MinusCircleOutlined onClick={() => removeAccount(key, 'debit', name, remove)} />
                                             </Col>
                                             <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
                                                 <Form.Item
@@ -306,7 +326,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                     <InputNumber
                                                         size="small"
                                                         precision={2}
-                                                        onBlur={(e) => setTotalDebit( totalDebit + parseInt(e.target.value))}
+                                                        onBlur={(e) => setTotalDebit({...totalDebit, [key]: parseInt(e.target.value)})}
                                                     />
                                                 </Form.Item>
                                             </Col>
@@ -359,7 +379,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                     {fields.map(({ key, name, ...restField }) => (
                                         <Row key={key} align={"stretch"}>
                                             <Col span={2}>
-                                                <MinusCircleOutlined onClick={() => remove(name)} />
+                                                <MinusCircleOutlined onClick={() => removeAccount(key, 'credit', name, remove)} />
                                             </Col>
                                             <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
                                                 <Form.Item
@@ -387,7 +407,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                     <InputNumber 
                                                         size="small" 
                                                         precision={2}
-                                                        onBlur={(e) => setTotalCredit( totalCredit + parseInt(e.target.value))}
+                                                        onBlur={(e) => setTotalCredit( {...totalCredit, [key]: parseInt(e.target.value)})}
                                                     />
                                                 </Form.Item>
                                             </Col>
@@ -409,7 +429,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                 <Row justify={"end"}>
                                     <Col span={6} style={{textAlign: "center", borderLeft: "1px solid grey"}}>
                                         <Typography.Title level={5} className={accountsBalanceError ? styles.errorBorder : ''}>
-                                            {totalDebit}
+                                            {Object.values(totalDebit).reduce((acc, cur) => acc + cur, 0)}
                                         </Typography.Title>
                                     </Col>
                                 </Row>
@@ -418,7 +438,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                 <Row justify={"end"}>
                                     <Col span={6} style={{textAlign: "center", borderLeft: "1px solid grey"}}>
                                         <Typography.Title level={5} className={accountsBalanceError ? styles.errorBorder : ''}>
-                                            {totalCredit}
+                                            {Object.values(totalCredit).reduce((acc, cur) => acc + cur, 0)}
                                         </Typography.Title>
                                     </Col>
                                 </Row>

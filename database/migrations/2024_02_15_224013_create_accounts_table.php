@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->string('account_name');
-            $table->foreignId('account_branch')
+            $table->foreignId('account_branch_id')
                 ->constrained(table: 'accounts_branches');
             $table->foreignId('contact_id')
                 ->nullable()

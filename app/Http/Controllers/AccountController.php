@@ -63,7 +63,14 @@ class AccountController extends Controller
         $account->debitTransactions;
         $account->creditTransactions;
         $account->contact;
-        return response($account);
+        $acc = Account::where('id', $account->id)
+                        ->with([
+                            'accountBranch',
+                            'debitTransactions.creditAccounts:account_name',
+                            'creditTransactions.debitAccounts:account_name',
+                        ])
+                        ->first();
+        return response($acc);
     }
 
     /**

@@ -7,10 +7,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-    accountType?: IAccountsBranch;
+    accountsBranch?: IAccountsBranch;
 };
 
-export const AccountsBranchView = ({accountType}: Props) => {
+export const AccountsBranchView = ({accountsBranch}: Props) => {
     const { t } = useTranslation();
     const { show } = useNavigation();
     const { token } = theme.useToken();
@@ -30,7 +30,7 @@ export const AccountsBranchView = ({accountType}: Props) => {
                 <RandomAvatar />
                 <Flex vertical>
                     <Typography.Text type="secondary">
-                        #{accountType?.id}
+                        #{accountsBranch?.id}
                     </Typography.Text>
                     <Typography.Title
                         level={3}
@@ -38,45 +38,45 @@ export const AccountsBranchView = ({accountType}: Props) => {
                             margin: 0,
                         }}
                     >
-                        {accountType?.name}
+                        {accountsBranch?.name}
                     </Typography.Title>
                 </Flex>
             </Flex>
             <CardWithContent title={t('accounts_branches.fields.description')}>
                 <Typography.Text>
-                    {accountType?.description}
+                    {accountsBranch?.description}
                 </Typography.Text>
             </CardWithContent>
             {
-                accountType?.parent_account_type &&
-                <CardWithContent title={t('accounts_branches.fields.parent_type')}>
+                accountsBranch?.parent_accounts_branch &&
+                <CardWithContent title={t('accounts_branches.fields.parent_branch')}>
                     <Typography.Link
                         strong
-                        onClick={() => show('accounts_branches', accountType.parent_type?.id || 0, 'push')}
+                        onClick={() => show('accounts_branches', accountsBranch.parent_branch?.id || 0, 'push')}
                         style={{
                             whiteSpace: "nowrap",
                             color: token.colorTextHeading,
                         }}
                     >
-                        {accountType.parent_type?.name}
+                        {accountsBranch.parent_branch?.name}
                     </Typography.Link>
                 </CardWithContent>
             }
             {
-                accountType?.child_types &&
-                <CardWithContent title={t('accounts_branches.fields.child_types')}>
+                accountsBranch?.child_branches &&
+                <CardWithContent title={t('accounts_branches.fields.child_branches')}>
                 {
-                    accountType?.child_types?.map(type => (
-                        <Flex vertical key={type.id}>
+                    accountsBranch?.child_branches?.map(branch => (
+                        <Flex vertical key={branch.id}>
                             <Typography.Link
                                 strong
-                                onClick={() => show('accounts_branches', type.id, 'push')}
+                                onClick={() => show('accounts_branches', branch.id, 'push')}
                                 style={{
                                     whiteSpace: "nowrap",
                                     color: token.colorTextHeading,
                                 }}
                             >
-                                {type.name}
+                                {branch.name}
                             </Typography.Link>
                         </Flex>
                     ))
@@ -85,7 +85,7 @@ export const AccountsBranchView = ({accountType}: Props) => {
             }
             <CardWithContent title={t('accounts_branches.fields.accounts')}>
             {
-                accountType?.accounts?.map(account => (
+                accountsBranch?.accounts?.map(account => (
                     <Flex vertical key={account.id}>
                         <Typography.Link
                             strong

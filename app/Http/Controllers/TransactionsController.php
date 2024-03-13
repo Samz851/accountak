@@ -51,9 +51,9 @@ class TransactionsController extends Controller
             $payment = $transaction->payment()->create(['date' => now(), 'amount' => $data['amount']]);
         }
         // Reload model with children
-        $transaction = TransRecord::find($transaction->id)
+        $transaction = TransRecord::where('id', $transaction->id)
                                 ->with(["noteable", "debitAccounts", "creditAccounts", "payment"])
-                                ->get();
+                                ->first();
 
         return response($transaction);
     }

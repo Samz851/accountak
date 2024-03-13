@@ -91,7 +91,7 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
         ]
     });
 
-    const accountTypes = data?.data ?? [];
+    const accountBranches = data?.data ?? [];
     return (
         <Modal
             {...modalProps}
@@ -194,7 +194,7 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.parent_type")}
+                    label={t("accounts_branches.fields.parent_branch")}
                     name="parent_accounts_branch"
                     // rules={[{ required: true }]}
                 >
@@ -203,7 +203,7 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
                         // value={typeValue}
                         fieldNames={{label: "title", "value": "key", children: "children"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountTypes}
+                        treeData={accountBranches}
                         placeholder="Please select"
                         treeDefaultExpandAll
                         // onChange={onChangeType}
