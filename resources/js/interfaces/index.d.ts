@@ -28,6 +28,7 @@ export interface IAccount {
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
     balance: number;
+    code: string;
 }
 
 export interface ITransaction {

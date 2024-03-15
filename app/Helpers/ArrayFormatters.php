@@ -41,4 +41,16 @@ class ArrayFormatters
         }
         return $newArray;
     }
+
+    public static function removeEmptyItems(array $array): array
+    {
+        foreach ($array as $key => &$value) {
+            if (empty($value)) {
+                unset($array[$key]);
+            } else if (is_array($value)) {
+                $value = self::removeEmptyItems($value);
+            }
+        }
+        return $array;
+    }
 }

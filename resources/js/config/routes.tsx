@@ -28,6 +28,7 @@ import { ContactShow } from "@/pages/contacts/show";
 import { TaxShow } from "@/pages/taxes/show";
 import { AccountsBranchCreatePage, AccountsBranchShow, AccountsBranchesList } from "@/pages/accountsBranches";
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
+import { DisplayAccountsList } from "@/pages/accounts/newlist";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -53,7 +54,7 @@ export const routes: ReactElement[] = [
         />
     </Route>,
     <Route path="/accounts">
-        <Route index element={<AccountsList />} />
+        <Route index element={<DisplayAccountsList />} />
         <Route
             path="show/:id"
             element={<AccountShow />}

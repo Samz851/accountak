@@ -12,11 +12,7 @@ class AccountController extends Controller
 {
     private function getAll(): Collection | array
     {
-        return Account::with([
-            'accountBranch',
-            'debitTransactions',
-            'creditTransactions',
-            ])
+        return Account::with('accountBranch:id,name')
                         ->get();
     }
 

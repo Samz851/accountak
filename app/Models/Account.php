@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Number;
 
 class Account extends Model
 {
@@ -71,7 +72,7 @@ class Account extends Model
         Log::info($this->debitTransactions()->get()->pluck('dbtrans'), [__LINE__]);
         $totalCredit = $this->creditTransactions()->get()->pluck('crtrans')->sum("amount") ?? 0;
         $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum("amount") ?? 0;
-        return  $totalCredit - $totalDebit;
+        return  Number::currency(round($totalCredit - $totalDebit, 2), in: 'EGP');
         // return 'Hii';
     }
 

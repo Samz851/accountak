@@ -20,7 +20,7 @@ class AccountsBranchController extends Controller
 
     private function getTree(): array
     {
-        $accountTypes = AccountsBranch::doesntHave('parentBranch')->get()->toArray();
+        $accountTypes = ArrayFormatters::removeEmptyItems(AccountsBranch::doesntHave('parentBranch')->get()->toArray());
         return array_map(fn($record)=> ArrayFormatters::rename_array_keys($record, [
             "name" => "label",
             "id" => "value",

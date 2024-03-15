@@ -195,6 +195,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     key="balance"
                     dataIndex={["balance"]}
                     title={t("accounts.fields.balance")}
+                    render={(_, record) => _.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
                 />
                 {/* <Table.Column
                     key="createdAt"
