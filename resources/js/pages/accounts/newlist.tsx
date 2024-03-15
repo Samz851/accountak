@@ -36,6 +36,7 @@ import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 import { getColumns, getRows } from "./grid";
 import { ReactGrid } from "@silevis/reactgrid";
+import "@silevis/reactgrid/styles.css";
 
 export const DisplayAccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();

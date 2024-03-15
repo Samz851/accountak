@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ArrayFormatters;
 use App\Models\Account;
+use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,6 +15,11 @@ class AccountController extends Controller
     {
         return Account::with('accountBranch:id,name')
                         ->get();
+    }
+
+    private function getAllByBranch(): Collection | array
+    {
+        return AccountsBranch::with('childBranches');
     }
 
     private function getSelectOptions(): array
