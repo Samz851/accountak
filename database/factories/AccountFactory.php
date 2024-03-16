@@ -21,7 +21,11 @@ class AccountFactory extends Factory
     {
         return [
             'account_name' => $this->faker->name(),
-            'account_branch_id' => AccountsBranch::doesntHave('childBranches')->get()->random()->id,
+            'account_branch_id' => AccountsBranch::doesntHave('childBranches')
+                                                ->where('name', '<>', 'Tax Expense')
+                                                ->get()
+                                                ->random()
+                                                ->id,
             'contact_id' => null
         ];
     }

@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Route::get('/accounts', [AccountController::class, 'index']);
 Route::apiResource('/accounts', AccountController::class);
+Route::get('/test_accounts', [AccountController::class, 'testAccounts']);
 Route::apiResource('/transactions', TransactionsController::class);
 Route::apiResource('/taxes', TaxesController::class);
 Route::apiResource('/companies', CompanyController::class);

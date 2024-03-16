@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             InvoiceSeeder::class,
             BillSeeder::class,
             TaxSeeder::class,
+            TransRecordSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
 

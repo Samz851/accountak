@@ -19,7 +19,35 @@ class AccountController extends Controller
 
     private function getAllByBranch(): Collection | array
     {
-        return AccountsBranch::with('childBranches');
+        $array = [];
+
+        $lastBranches = AccountsBranch::doesntHave('childBranches')
+                                ->with('accounts')
+                                ->get();
+        
+        foreach ($lastBranches as $lastBranch) {
+            $parent = $lastBranch->parentBranch()->select('id', 'name', 'code', 'parent_accounts_branch')->first();
+            if ( isset($array[$parent->id]) ) {
+                $array[$parent->id]['children'][] = $lastBranch->toArray();
+                
+            } else {
+                $array[$parent->id] = [
+                    'id' => $parent->id,
+                    'name' => $parent->name,
+                    'code' => $parent->code,
+                    'parent_accounts_branch' => $parent->parentBranch()->select('id', 'name', 'code', 'parent_accounts_branch')->first(),
+                    'children' => [$lastBranch->toArray()]
+                ];
+            }
+            
+        }
+
+        foreach ($array as $key => $value) {
+            if ( isset($value['parent_accounts_branch'])) {
+                // $parent = $value
+            }
+        }
+        return $array;
     }
 
     private function getSelectOptions(): array
@@ -33,6 +61,10 @@ class AccountController extends Controller
         ]), $accounts);
     }
 
+    public function testAccounts(Request $request): Response
+    {
+        return response($this->getAllByBranch());
+    }
     /**
      * Display a listing of the resource.
      */
