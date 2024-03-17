@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\BaseAccountTaxonomy;
 use App\Models\Account;
 use App\Models\AccountsBranch;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -34,14 +35,16 @@ class AccountsBranchSeeder extends Seeder
                     AccountsBranch::factory()
                         ->state([
                             'name' => $childV,
-                            'parent_accounts_branch' => $parent->id
+                            'parent_id' => $parent->id,
+                            'taxonomy' => BaseAccountTaxonomy::LEAF,
+
                         ])
                         ->create();
                 } else {
                     $parentType = AccountsBranch::factory()
                         ->state([
                             'name' => $childK,
-                            'parent_accounts_branch' => $parent->id
+                            'parent_id' => $parent->id
                         ])
                         ->create();
                     $this->generate($childV, $parentType);

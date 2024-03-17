@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\BaseAccountTaxonomy;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountsBranch>
@@ -19,7 +20,8 @@ class AccountsBranchFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'description' => $this->faker->realTextBetween($minNbChars = 160, $maxNbChars = 200, $indexSize = 2),
-            'parent_accounts_branch' => null
+            'taxonomy' => BaseAccountTaxonomy::BRANCH,
+            'parent_id' => null
         ];
     }
 }

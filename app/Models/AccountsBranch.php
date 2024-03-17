@@ -8,30 +8,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
 
-class AccountsBranch extends Model
+class AccountsBranch extends BaseAccount
 {
     use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'description',
-        'parent_accounts_branch',
-        'code'
-    ];
 
     /**
      * The relationships that should always be loaded.
      *
      * @var array
      */
-    protected $with = ['childBranches'];
+    protected $with = ['children', 'accounts'];
     protected $appends = ['tree_path'];
 
     protected static function booted(): void
     {
         static::creating(function($branch) {
-            if ( isset($branch->parent_accounts_branch) ) {
-                $last = self::where('parent_accounts_branch', $branch->parent_accounts_branch)
+            if ( isset($branch->parent_id) ) {
+                $last = self::where('parent_id', $branch->parent_id)
                             ->latest('code')->first();
                 if ( $last ) {
                     $lastCode = str_split($last->code, 2);
@@ -41,7 +34,7 @@ class AccountsBranch extends Model
                     Log::info([$last->code, $newCode], [__LINE__, __FILE__]);
 
                 } else {
-                    $parentCode = self::where('id', intval($branch->parent_accounts_branch))->first();
+                    $parentCode = self::where('id', intval($branch->parent_id))->first();
                     Log::info([$parentCode, $branch], [__LINE__, __FILE__]);
 
                     $lastCode = str_split($parentCode->code, 2);
@@ -63,7 +56,7 @@ class AccountsBranch extends Model
                 }
                 // $newCode = $last ?  $last->code + 1 : $type->parent_account_type + 1;
             } else {
-                $last = self::whereNull('parent_accounts_branch')
+                $last = self::whereNull('parent_id')
                             ->latest('code')->first();
                 if ( $last ) {
                     $lastCode = str_split($last->code, 2);
@@ -81,19 +74,19 @@ class AccountsBranch extends Model
         });
     }
 
-    public function parentBranch(): BelongsTo
+    public function parent(): BelongsTo
     {
-        return $this->belongsTo(AccountsBranch::class, 'parent_accounts_branch');
+        return $this->belongsTo(AccountsBranch::class, 'parent_id');
     }
 
-    public function childBranches(): HasMany
+    public function children(): HasMany
     {
-        return $this->hasMany(AccountsBranch::class, 'parent_accounts_branch');
+        return $this->hasMany(AccountsBranch::class, 'parent_id');
     }
 
     public function accounts(): HasMany
     {
-        return $this->hasMany(Account::class, 'account_branch_id');
+        return $this->hasMany(Account::class, 'parent_id');
     }
 
     private function treePath($branch)
@@ -106,14 +99,14 @@ class AccountsBranch extends Model
     {
         $path = [];
         $path[] = $this->name;
-        $child = $this->parentBranch()->first() ;
+        $child = $this->parent()->first() ;
         $hasParent = true;
         while ($hasParent) {
             if ( ! $child ) {
                 $hasParent = false;
             } else {
                 $path[] = $child->name;
-                $child = $child->parentBranch()->first(); 
+                $child = $child->parent()->first(); 
             }
             
         }

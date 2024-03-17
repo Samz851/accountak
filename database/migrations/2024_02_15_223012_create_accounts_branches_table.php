@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('code');
             $table->string('name');
             $table->string('description');
-            $table->foreignId('parent_accounts_branch')
+            $table->enum('taxonomy', ['branch', 'leaf']);
+            $table->foreignId('parent_id')
                 ->nullable()
                 ->constrained(table: 'accounts_branches');
             $table->timestamps();

@@ -1,5 +1,5 @@
 import { IAccount } from "@/interfaces";
-import { ReactGrid, Column, Row } from "@silevis/reactgrid";
+import { ReactGrid, Column, Row, Uncertain } from "@silevis/reactgrid";
 
 // export interface IDisplayAccount {
 //     id: number;
@@ -28,14 +28,14 @@ import { ReactGrid, Column, Row } from "@silevis/reactgrid";
     ]
   };
 
-export const getRows = (displayAccounts: IAccount[]): Row[] => [
+export const getRows = (displayAccounts: IAccount[]): Row<Uncertain>[] => [
     headerRow, 
     ...displayAccounts.map<Row>((account, idx) => ({
         rowId: idx,
         cells: [
             {type: 'text', text: account.code},
-            {type: 'text', text: account.account_name},
-            {type: 'text', text: account.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
+            {type: 'text', text: account.name},
+            {type: 'text', text: account.balance?.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
         ]
     }))
 ]

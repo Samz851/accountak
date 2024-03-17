@@ -5,49 +5,30 @@ namespace App\Http\Controllers;
 use App\Helpers\ArrayFormatters;
 use App\Models\Account;
 use App\Models\AccountsBranch;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller
 {
     private function getAll(): Collection | array
     {
-        return Account::with('accountBranch:id,name')
+        return Account::with('parent:id,name')
                         ->get();
     }
 
     private function getAllByBranch(): Collection | array
     {
-        $array = [];
+        // $array = AccountsBranch::where('taxonomy', 'leaf')
+        // ->where('name', '<>', 'Tax Expense')
+        // ->get();
 
-        $lastBranches = AccountsBranch::doesntHave('childBranches')
-                                ->with('accounts')
-                                ->get();
+        $lastBranches = AccountsBranch::whereNull('parent_id')->get()->toArray();
         
-        foreach ($lastBranches as $lastBranch) {
-            $parent = $lastBranch->parentBranch()->select('id', 'name', 'code', 'parent_accounts_branch')->first();
-            if ( isset($array[$parent->id]) ) {
-                $array[$parent->id]['children'][] = $lastBranch->toArray();
-                
-            } else {
-                $array[$parent->id] = [
-                    'id' => $parent->id,
-                    'name' => $parent->name,
-                    'code' => $parent->code,
-                    'parent_accounts_branch' => $parent->parentBranch()->select('id', 'name', 'code', 'parent_accounts_branch')->first(),
-                    'children' => [$lastBranch->toArray()]
-                ];
-            }
-            
-        }
-
-        foreach ($array as $key => $value) {
-            if ( isset($value['parent_accounts_branch'])) {
-                // $parent = $value
-            }
-        }
-        return $array;
+        return ArrayFormatters::rename_array_keys($lastBranches, [
+            "balance" => "text"
+        ]);
     }
 
     private function getSelectOptions(): array
@@ -73,7 +54,7 @@ class AccountController extends Controller
         if ($request->has('selectOptions')) {
             $result = $this->getSelectOptions();
         } else {
-            $result = $this->getAll();
+            $result = $this->getAllByBranch();
         }
 
         return response($result);
@@ -93,15 +74,15 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        $account->accountBranch;
+        $account->parent;
         $account->debitTransactions;
         $account->creditTransactions;
         $account->contact;
         $acc = Account::where('id', $account->id)
                         ->with([
-                            'accountBranch',
-                            'debitTransactions.creditAccounts:account_name',
-                            'creditTransactions.debitAccounts:account_name',
+                            'parent',
+                            'debitTransactions.creditAccounts:name',
+                            'creditTransactions.debitAccounts:name',
                         ])
                         ->first();
         return response($acc);

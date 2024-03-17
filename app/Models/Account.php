@@ -10,22 +10,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
 
-class Account extends Model
+class Account extends BaseAccount
 {
     use HasFactory;
 
-    protected $fillable = [
-        'account_name',
-        'account_branch_id',
-        'code',
-    ];
+    protected $appends = ['balance', 'code_label', 'tree_path'];
 
-    protected $appends = ['balance', 'code_label'];
+    // protected $with = ['']
 
     protected static function booted(): void
     {
         static::creating(function($account) {
-            $last = self::where('account_branch_id', $account->account_branch_id)
+            $last = self::where('parent_id', $account->parent_id)
                         ->latest('code')->first();
             if ( $last ) {
                 $lastCode = str_split($last->code, 2);
@@ -33,7 +29,7 @@ class Account extends Model
                 $lastCode[] = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
                 $newCode = implode($lastCode);
             } else {
-                $branchCode = AccountsBranch::where('id', intval($account->account_branch_id))->first();
+                $branchCode = AccountsBranch::where('id', intval($account->parent_id))->first();
                 $newCode = $branchCode->code . str_pad('1', 10 - strlen($branchCode->code), "0", STR_PAD_LEFT);
             }
 
@@ -41,10 +37,11 @@ class Account extends Model
         });
     }
 
-    public function accountBranch(): BelongsTo
+    public function parent(): BelongsTo
     {
-        return $this->belongsTo(AccountsBranch::class, 'account_branch_id');
+        return $this->belongsTo(AccountsBranch::class, 'parent_id');
     }
+    
 
     public function debitTransactions()
     {
@@ -78,10 +75,30 @@ class Account extends Model
 
     public function getCodeLabelAttribute()
     {
-        return $this->code . ' - ' . $this->account_name;
+        return $this->code . ' - ' . $this->name;
     }
     public function contact()
     {
         return $this->belongsTo(Contact::class, 'contact_id');
+    }
+
+    public function getTreePathAttribute()
+    {
+        $path = [];
+        $path[] = $this->name;
+        $child = $this->parent()->first() ;
+        $hasParent = true;
+        while ($hasParent) {
+            if ( ! $child ) {
+                $hasParent = false;
+            } else {
+                $path[] = $child->name;
+                $child = $child->parent()->first(); 
+            }
+            
+        }
+        $treePath = implode('->', array_reverse($path));
+        return $treePath;
+
     }
 }

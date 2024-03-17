@@ -23,7 +23,7 @@ class AccountSeeder extends Seeder
         // Log::info($random, [__LINE__, __FILE__]);
         // Log::info($one, [__LINE__, __FILE__]);
         Account::factory()
-        ->state(['account_branch_id' => 42])
+        ->state(['parent_id' => 42])
         ->create();
         Account::factory()
             ->count(10)

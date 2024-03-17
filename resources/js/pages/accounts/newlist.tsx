@@ -64,8 +64,8 @@ export const DisplayAccountsList = ({ children }: PropsWithChildren) => {
         mapData: (item) => {
             return {
                 id: item.id,
-                fullName: item.account_name,
-                account_branch: item.account_branch.name
+                fullName: item.name,
+                account_branch: item.parent.name
             };
         },
     });
