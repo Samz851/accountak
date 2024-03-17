@@ -28,7 +28,7 @@ import { ReactGrid, Column, Row, Uncertain } from "@silevis/reactgrid";
     ]
   };
 
-export const getRows = (displayAccounts: IAccount[]): Row<Uncertain>[] => [
+export const getRows = (displayAccounts: IAccount[]): Row[] => [
     headerRow, 
     ...displayAccounts.map<Row>((account, idx) => ({
         rowId: idx,

@@ -28,6 +28,7 @@ export interface IBaseAccount {
     parent_id: number;
     description: string;
     code: string;
+    has_children?: boolean;
 }
 
 export interface ITransaction {

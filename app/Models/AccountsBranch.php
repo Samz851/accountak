@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BaseAccountTaxonomy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,8 +18,8 @@ class AccountsBranch extends BaseAccount
      *
      * @var array
      */
-    protected $with = ['children', 'accounts'];
-    protected $appends = ['tree_path'];
+    // protected $with = ['subbranches','accounts'];
+    protected $appends = ['tree_path', 'balance', 'has_children'];
 
     protected static function booted(): void
     {
@@ -79,8 +80,9 @@ class AccountsBranch extends BaseAccount
         return $this->belongsTo(AccountsBranch::class, 'parent_id');
     }
 
-    public function children(): HasMany
+    public function subbranches(): HasMany
     {
+        // Log::info([$this->taxonomy, $this->getAttributes(), $this->getAttribute('taxonomy'),$this->getAttributeValue('name')], [__FILE__, __LINE__]);
         return $this->hasMany(AccountsBranch::class, 'parent_id');
     }
 
@@ -94,6 +96,29 @@ class AccountsBranch extends BaseAccount
         $paths = [];
 
 
+    }
+
+    public function getChildrenAttribute()
+    {
+
+        if ($this->taxonomy === BaseAccountTaxonomy::BRANCH) {
+            
+            $children = $this->subbranches()->get();
+            // Log::info([$this->taxonomy, BaseAccountTaxonomy::BRANCH, $this->taxonomy == BaseAccountTaxonomy::BRANCH, $children], [__FILE__, __LINE__]);
+
+        } else {
+            $children = $this->accounts()->get();
+            // Log::info([$this->taxonomy, $this->taxonomy == BaseAccountTaxonomy::BRANCH, $children], [__FILE__, __LINE__]);
+
+        }
+
+        return $children;
+    }
+
+    public function getBalanceAttribute()
+    {
+        // Log::info([$this->children, $this->getAttributes(), $this->attributes], [__FILE__, __LINE__]);
+        return round($this->children->pluck('balance')->sum(), 2);
     }
     public function getTreePathAttribute()
     {
@@ -113,5 +138,18 @@ class AccountsBranch extends BaseAccount
         $treePath = implode('->', array_reverse($path));
         return $treePath;
 
+    }
+
+    public function getHasChildrenAttribute()
+    {
+        $this->children = [];
+        if ($this->subbranches()->exists()) {
+            return true;
+        }
+        if ( $this->accounts()->exists()) {
+            return true;
+        }
+        
+        return false;
     }
 }

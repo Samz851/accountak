@@ -25,7 +25,11 @@ class AccountController extends Controller
         // ->get();
 
         $lastBranches = AccountsBranch::whereNull('parent_id')->get()->toArray();
-        
+        foreach ($lastBranches as &$value) {
+            if ( $value['has_children'] && ! isset($value['children'])) {
+                $value['children'] = [];
+            }
+        }
         return ArrayFormatters::rename_array_keys($lastBranches, [
             "balance" => "text"
         ]);

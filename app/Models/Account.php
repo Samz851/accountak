@@ -69,7 +69,8 @@ class Account extends BaseAccount
         Log::info($this->debitTransactions()->get()->pluck('dbtrans'), [__LINE__]);
         $totalCredit = $this->creditTransactions()->get()->pluck('crtrans')->sum("amount") ?? 0;
         $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum("amount") ?? 0;
-        return  Number::currency(round($totalCredit - $totalDebit, 2), in: 'EGP');
+        // return  Number::currency(round($totalCredit - $totalDebit, 2), in: 'EGP');
+        return  round($totalCredit - $totalDebit, 2);
         // return 'Hii';
     }
 

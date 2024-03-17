@@ -38,13 +38,11 @@ class AccountsBranchController extends Controller
         $lastBranches = AccountsBranch::whereNull('parent_id')->get()->toArray();
         return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
             "name" => "label",
-            "code" => "value",
-            "children" => "children",
-            'accounts' => "children"
+            "code" => "value"
         ]), $lastBranches);
-        foreach ($lastBranches as $branch) {
-            // Log::info($branch, [__LINE__, __FILE__]);
-        }
+        // foreach ($lastBranches as $branch) {
+        //     // Log::info($branch, [__LINE__, __FILE__]);
+        // }
         // $lastBranches= $lastBranches->groupBy('parent_accounts_branch')
         //                             ->collapse();
         

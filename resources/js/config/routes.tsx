@@ -54,7 +54,7 @@ export const routes: ReactElement[] = [
         />
     </Route>,
     <Route path="/accounts">
-        <Route index element={<DisplayAccountsList />} />
+        <Route index element={<AccountsList />} />
         <Route
             path="show/:id"
             element={<AccountShow />}

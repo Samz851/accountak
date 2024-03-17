@@ -29,6 +29,10 @@ abstract class BaseAccount extends Model
         'taxonomy',
      ];
 
+    //  protected $appends = ['balance'];
+
+     protected $casts = ['taxonomy' => BaseAccountTaxonomy::class];
+
    //   protected $with = ['children', 'accounts'];
 
    //   public function parent(): BelongsTo
@@ -44,6 +48,8 @@ abstract class BaseAccount extends Model
    //              : $this->hasMany(Account::class, 'parent_id');
                 
    //   }
+
+   abstract public function getBalanceAttribute();
 
      public function scopeWithChildren(Builder $builder): void
      {

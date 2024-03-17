@@ -33,6 +33,7 @@ import { PaginationTotal, UserStatus } from "../../components";
 import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
+import { initial } from "lodash";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -47,14 +48,21 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         IAccountFilterVariables
     >({
         filters: {
-            mode: "off",
+            initial: [
+                {
+                    field: "code",
+                    operator: "contains",
+                    value: ""
+                }
+            ]
         },
         sorters: {
             mode: "off",
         },
         syncWithLocation: true,
         pagination: {
-            mode: "server",
+            mode: "client",
+            pageSize: 2
           },
     });
 
@@ -65,9 +73,9 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         maxItemCount: 50,
         mapData: (item) => {
             return {
-                id: item.id,
-                fullName: item.account_name,
-                account_branch: item.account_branch.name
+                code: item.code,
+                fullName: item.name,
+                account_branch: item.parent.name
             };
         },
     });
@@ -100,7 +108,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         >
             <Table
                 {...tableProps}
-                rowKey="id"
+                rowKey="code"
                 scroll={{ x: true }}
                 pagination={{
                     ...tableProps.pagination,
@@ -108,9 +116,10 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         <PaginationTotal total={total} entityName="accounts" />
                     ),
                 }}
+                expandable={{onExpand: (expanded, record) => {console.log(expanded, record);}}}
             >
                 <Table.Column
-                    key="id"
+                    key="code"
                     dataIndex="code"
                     title="ID #"
                     render={(value) => (
@@ -132,13 +141,13 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         />
                     )}
                     defaultFilteredValue={getDefaultFilter(
-                        "orderNumber",
+                        "code",
                         filters,
-                        "eq",
+                        "contains",
                     )}
                     filterDropdown={(props) => (
                         <FilterDropdown {...props}>
-                            <InputNumber
+                            <Input
                                 addonBefore="#"
                                 style={{ width: "100%" }}
                                 placeholder={t("orders.filter.id.placeholder")}
@@ -147,11 +156,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="account_name"
-                    dataIndex="account_name"
+                    key="name"
+                    dataIndex="name"
                     title={t("users.fields.name")}
                     defaultFilteredValue={getDefaultFilter(
-                        "account_name",
+                        "name",
                         filters,
                         "contains",
                     )}
@@ -165,11 +174,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="account_branch"
-                    dataIndex={["account_branch", "name"]}
+                    key="parent"
+                    dataIndex={["parent", "name"]}
                     title={t("accounts.fields.account_branch")}
                     defaultFilteredValue={getDefaultFilter(
-                        "account_branch",
+                        "parent",
                         filters,
                         "contains",
                     )}
