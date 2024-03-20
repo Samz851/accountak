@@ -34,6 +34,7 @@ import { PropsWithChildren, useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 import { chunk, forEach, initial } from "lodash";
+import { useStyles } from "./styled";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -41,6 +42,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const { show, createUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
+    const { styles} = useStyles();
 
     const { tableProps, filters, setFilters, sorters } = useTable<
         IAccount,
@@ -55,8 +57,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         },
         syncWithLocation: true,
         pagination: {
-            mode: "client",
-            pageSize: 10
+            mode: "off"
           },
     });
 
@@ -146,15 +147,13 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             <Table
                 {...tableProps}
                 dataSource={accounts}
+                className={styles.expanded}
                 rowKey="code"
                 scroll={{ x: true }}
-                pagination={{
-                    ...tableProps.pagination,
-                    showTotal: (total) => (
-                        <PaginationTotal total={total} entityName="accounts" />
-                    ),
+                expandable={{
+                    onExpand: onExpandAccount,
+                    indentSize: 30
                 }}
-                expandable={{onExpand: onExpandAccount, onExpandedRowsChange: (expandedKeys) => console.log(expandedKeys, 'expanded keys')}}
             >
                 <Table.Column
                     key="code"
