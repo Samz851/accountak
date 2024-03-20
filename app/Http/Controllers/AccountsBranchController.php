@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BaseAccountTaxonomy;
 use App\Helpers\ArrayFormatters;
+use App\Models\Account;
 use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -159,5 +161,18 @@ class AccountsBranchController extends Controller
     {
         $parent = AccountsBranch::with('parent')->where('id', $request->query('id'))->get();
         return response($parent);
+    }
+
+    public function removeLeafs()
+    {
+        $accounts = AccountsBranch::whereNull('parent_id')->get()->pluck('code', 'id');
+        $updatingAccounts = AccountsBranch::whereIn('id', $accounts->keys())
+                ->get();
+        foreach ($updatingAccounts as $account) {
+            $account->update(['code' => substr($account->code, 0, 2)]);
+        }
+
+        return response(AccountsBranch::whereIn('id', $accounts->keys())
+        ->get());
     }
 }

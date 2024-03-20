@@ -33,7 +33,7 @@ import { PaginationTotal, UserStatus } from "../../components";
 import { PropsWithChildren, useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
-import { initial } from "lodash";
+import { chunk, forEach, initial } from "lodash";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -78,19 +78,37 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const [ expandedAccount, setExpandedAccount ] = useState('');
 
     useEffect(()=>{
-        if ( expandedAccount !== '' ) {
-            setAccounts([...(accounts as any)?.map(account => {
-                if ( account.code === expandedAccount) {
-                    return {
-                        ...account,
-                        children: [...tableProps.dataSource as any]
+        if ( ! tableProps.loading ) {
+            if ( expandedAccount !== '' ) {
+                setAccounts((prevAccounts) => {
+                    const updateAccounts = (accounts) => {
+                        return [...(accounts as any)?.map(account => {
+                            if ( expandedAccount.startsWith(account.code) ) {
+                                if ( expandedAccount === account.code ) {
+                                    return {
+                                        ...account,
+                                        children: [...tableProps.dataSource as any]
+                                    }
+                                }
+                                if ( expandedAccount.length > account.code.length ) {
+                                    return {
+                                        ...account,
+                                        children: updateAccounts(account.children)
+                                    }
+                                }
+                            } else {
+                                return account;
+                            }
+                        })]
                     }
-                }
-                return account;
-            })])
-        } else {
-            setAccounts([...tableProps.dataSource as any]);
+                    return [...updateAccounts(prevAccounts)];
+    
+                })
+            } else {
+                setAccounts([...tableProps.dataSource as any]);
+            }
         }
+
     }, [tableProps.dataSource]);
 
 
@@ -136,7 +154,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         <PaginationTotal total={total} entityName="accounts" />
                     ),
                 }}
-                expandable={{onExpand: onExpandAccount}}
+                expandable={{onExpand: onExpandAccount, onExpandedRowsChange: (expandedKeys) => console.log(expandedKeys, 'expanded keys')}}
             >
                 <Table.Column
                     key="code"

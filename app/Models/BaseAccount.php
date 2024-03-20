@@ -29,41 +29,61 @@ abstract class BaseAccount extends Model
         'taxonomy',
      ];
 
-    //  protected $appends = ['balance'];
+     protected $appends = [
+        'balance', 
+        'code_label', 
+        'tree_path',
+        'has_children',
+      ];
 
      protected $casts = ['taxonomy' => BaseAccountTaxonomy::class];
 
-   //   protected $with = ['children', 'accounts'];
-
-   //   public function parent(): BelongsTo
-   //   {
-   //      return $this->taxonomy === BaseAccountTaxonomy::BRANCH
-   //              ? $this->belongsTo(class_basename($this), 'parent_id')
-   //              : $this->belongsTo(AccountsBranch::class, 'parent_id');
-   //   }
-   //   public function children(): HasMany
-   //   {
-   //      return $this->taxonomy === BaseAccountTaxonomy::BRANCH
-   //              ? $this->hasMany(class_basename($this), 'parent_id')
-   //              : $this->hasMany(Account::class, 'parent_id');
-                
-   //   }
-
-   abstract public function getBalanceAttribute();
-
-     public function scopeWithChildren(Builder $builder): void
+     public function getCodeLabelAttribute(): string
      {
-      Log::info(['tax' => class_basename($this), BaseAccountTaxonomy::BRANCH, BaseAccountTaxonomy::LEAF], [__LINE__, __FILE__]);
-         // if ($this->taxonomy === BaseAccountTaxonomy::BRANCH) {
-         //    $builder->with('children');
-         // } else {
-         //    $builder->with('accounts');
-         // }
-         // $builder->with(['children', 'accounts']);
+         return $this->code . ' - ' . $this->name;
      }
 
-     public function scopeWithParent(Builder $builder): void
+     public function getTaxonomy(): BaseAccountTaxonomy
      {
-         $builder->with('parent');
+         return $this->taxonomy;
      }
+ 
+     public function getTaxonomyLabel(): string
+     {
+         return $this->taxonomy->getLabel();
+     }
+ 
+     public function getTaxonomyLabelPlural(): string
+     {
+         return $this->taxonomy->getLabelPlural();
+     }
+
+     public function parent(): BelongsTo
+     {
+         return $this->belongsTo(AccountsBranch::class, 'parent_id');
+     }
+
+     public function getTreePathAttribute(): string
+     {
+         $path = [];
+         $path[] = $this->name;
+         $child = $this->parent()->first() ;
+         $hasParent = true;
+         while ($hasParent) {
+             if ( ! $child ) {
+                 $hasParent = false;
+             } else {
+                 $path[] = $child->name;
+                 $child = $child->parent()->first(); 
+             }
+             
+         }
+         $treePath = implode('->', array_reverse($path));
+         return $treePath;
+ 
+     }
+
+     abstract public function getHasChildrenAttribute(): bool;
+
+     abstract public function getBalanceAttribute(): float;
 }

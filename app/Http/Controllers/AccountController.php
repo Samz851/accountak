@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ArrayFormatters;
 use App\Models\Account;
 use App\Models\AccountsBranch;
+use App\Services\AccountServices;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,63 +13,17 @@ use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller
 {
-    private function getAll(): Collection | array
-    {
-        return Account::with('parent:id,name')
-                        ->get();
-    }
 
-    private function getAllByBranch(): Collection | array
-    {
-        // $array = AccountsBranch::where('taxonomy', 'leaf')
-        // ->where('name', '<>', 'Tax Expense')
-        // ->get();
+    public function __construct(private AccountServices $accountServices){}
 
-        $lastBranches = AccountsBranch::whereNull('parent_id')->get()->toArray();
-        foreach ($lastBranches as &$value) {
-            if ( $value['has_children'] && ! isset($value['children'])) {
-                $value['children'] = [];
-            }
-        }
-        return ArrayFormatters::rename_array_keys($lastBranches, [
-            "balance" => "text"
-        ]);
-    }
-
-    private function getByParent( int $parent): Collection | array
-    {
-        return AccountsBranch::where('id', $parent)->first()->append('children')->children->toArray();
-    }
-
-    private function getSelectOptions(): array
-    {
-        $accounts = Account::get()
-                            ->toArray();
-
-        return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
-            "code_label" => "title",
-            "id" => "value"
-        ]), $accounts);
-    }
-
-    public function testAccounts(Request $request): Response
-    {
-        return response($this->getAllByBranch());
-    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
-        if ($request->has('selectOptions')) {
-            $result = $this->getSelectOptions();
-        } else if ($request->has('parent') ) {
-            $result = $this->getByParent($request->get('parent'));
-        } else {
-            $result = $this->getAllByBranch();
-        }
+       $accounts = $this->accountServices->getAccounts($request->query());
 
-        return response($result);
+        return response($accounts);
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\AccountTransactionTypes;
+use App\Contracts\BaseAccount as BaseAccountContract;
+use App\Enums\BaseAccountTaxonomy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,13 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
 
-class Account extends BaseAccount
+class Account extends BaseAccount implements BaseAccountContract
 {
     use HasFactory;
-
-    protected $appends = ['balance', 'code_label', 'tree_path'];
-
-    // protected $with = ['']
 
     protected static function booted(): void
     {
@@ -36,12 +34,6 @@ class Account extends BaseAccount
             $account->code = $newCode;
         });
     }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(AccountsBranch::class, 'parent_id');
-    }
-    
 
     public function debitTransactions()
     {
@@ -63,43 +55,20 @@ class Account extends BaseAccount
                     ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
-    public function getBalanceAttribute()
+    public function getBalanceAttribute(): float
     {
-        Log::info($this->creditTransactions()->get()->pluck('crtrans'), [__LINE__]);
-        Log::info($this->debitTransactions()->get()->pluck('dbtrans'), [__LINE__]);
         $totalCredit = $this->creditTransactions()->get()->pluck('crtrans')->sum("amount") ?? 0;
         $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum("amount") ?? 0;
-        // return  Number::currency(round($totalCredit - $totalDebit, 2), in: 'EGP');
         return  round($totalCredit - $totalDebit, 2);
-        // return 'Hii';
     }
 
-    public function getCodeLabelAttribute()
-    {
-        return $this->code . ' - ' . $this->name;
-    }
     public function contact()
     {
         return $this->belongsTo(Contact::class, 'contact_id');
     }
 
-    public function getTreePathAttribute()
+    public function getHasChildrenAttribute(): bool
     {
-        $path = [];
-        $path[] = $this->name;
-        $child = $this->parent()->first() ;
-        $hasParent = true;
-        while ($hasParent) {
-            if ( ! $child ) {
-                $hasParent = false;
-            } else {
-                $path[] = $child->name;
-                $child = $child->parent()->first(); 
-            }
-            
-        }
-        $treePath = implode('->', array_reverse($path));
-        return $treePath;
-
+        return false;
     }
 }
