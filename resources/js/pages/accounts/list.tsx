@@ -30,7 +30,7 @@ import {
 import { IAccount, IAccountFilterVariables } from "../../interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal, UserStatus } from "../../components";
-import { PropsWithChildren, useId } from "react";
+import { PropsWithChildren, useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 import { initial } from "lodash";
@@ -42,19 +42,13 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const t = useTranslate();
     const { token } = theme.useToken();
 
-    const { tableProps, filters, sorters } = useTable<
+    const { tableProps, filters, setFilters, sorters } = useTable<
         IAccount,
         HttpError,
         IAccountFilterVariables
     >({
         filters: {
-            initial: [
-                {
-                    field: "code",
-                    operator: "contains",
-                    value: ""
-                }
-            ]
+            mode: "server"
         },
         sorters: {
             mode: "off",
@@ -62,7 +56,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         syncWithLocation: true,
         pagination: {
             mode: "client",
-            pageSize: 2
+            pageSize: 10
           },
     });
 
@@ -79,6 +73,31 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             };
         },
     });
+
+    const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
+    const [ expandedAccount, setExpandedAccount ] = useState('');
+
+    useEffect(()=>{
+        if ( expandedAccount !== '' ) {
+            setAccounts([...(accounts as any)?.map(account => {
+                if ( account.code === expandedAccount) {
+                    return {
+                        ...account,
+                        children: [...tableProps.dataSource as any]
+                    }
+                }
+                return account;
+            })])
+        } else {
+            setAccounts([...tableProps.dataSource as any]);
+        }
+    }, [tableProps.dataSource]);
+
+
+    const onExpandAccount = (expanded, record) => {
+        setExpandedAccount(record.code);
+        setFilters([{field: 'parent', operator: 'eq', value: record.id}], 'merge');
+    }
 
     return (
         <List
@@ -108,6 +127,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         >
             <Table
                 {...tableProps}
+                dataSource={accounts}
                 rowKey="code"
                 scroll={{ x: true }}
                 pagination={{
@@ -116,7 +136,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         <PaginationTotal total={total} entityName="accounts" />
                     ),
                 }}
-                expandable={{onExpand: (expanded, record) => {console.log(expanded, record);}}}
+                expandable={{onExpand: onExpandAccount}}
             >
                 <Table.Column
                     key="code"

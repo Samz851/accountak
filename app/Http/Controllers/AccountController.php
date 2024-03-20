@@ -35,6 +35,11 @@ class AccountController extends Controller
         ]);
     }
 
+    private function getByParent( int $parent): Collection | array
+    {
+        return AccountsBranch::where('id', $parent)->first()->append('children')->children->toArray();
+    }
+
     private function getSelectOptions(): array
     {
         $accounts = Account::get()
@@ -57,6 +62,8 @@ class AccountController extends Controller
     {
         if ($request->has('selectOptions')) {
             $result = $this->getSelectOptions();
+        } else if ($request->has('parent') ) {
+            $result = $this->getByParent($request->get('parent'));
         } else {
             $result = $this->getAllByBranch();
         }

@@ -29,6 +29,7 @@ export interface IBaseAccount {
     description: string;
     code: string;
     has_children?: boolean;
+    [Symbol.iterator](): IterableIterator<number>;
 }
 
 export interface ITransaction {
