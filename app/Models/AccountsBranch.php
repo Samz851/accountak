@@ -45,12 +45,10 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
                 $last = self::whereNull('parent_id')
                             ->latest('code')->first();
                 if ( $last ) {
-                    $lastCode = str_split($last->code, 2);
-                    $codePart = array_shift($lastCode);
-                    array_unshift($lastCode, str_pad($codePart+1, 2, "0", STR_PAD_LEFT));
-                    $newCode = implode($lastCode);
+                    $codePart = $last->code;
+                    $newCode = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
                 } else {
-                    $newCode = '0100';
+                    $newCode = '01';
                 }
             }
 

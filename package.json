@@ -15,6 +15,7 @@
         "@emotion/react": "^11.8.2",
         "@emotion/styled": "^11.8.1",
         "@googlemaps/react-wrapper": "^1.1.35",
+        "@measured/puck": "^0.13.1",
         "@refinedev/antd": "^5.37.4",
         "@refinedev/cli": "^2.16.26",
         "@refinedev/core": "^4.47.2",

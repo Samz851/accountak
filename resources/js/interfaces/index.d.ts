@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 
+export interface IStatement extends any {}
 export interface ICompany {
     id: number;
     company_name: string;

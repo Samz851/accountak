@@ -85,6 +85,17 @@ export const resources: IResourceItem[] = [
             dataProviderName: "laravel"
         },
     },
+    {
+        name: "statements",
+        list: "/statements",
+        create: "/statements/create",
+        show: "/statements/show/:id",
+        meta: {
+            label: i18next.t("companies.companies"),
+            icon: <DashboardOutlined />,
+            dataProviderName: "laravel"
+        },
+    },
     // {
     //     name: "orders",
     //     list: "/orders",
