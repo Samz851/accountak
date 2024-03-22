@@ -27,10 +27,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Route::get('/accounts', [AccountController::class, 'index']);
 Route::apiResource('/accounts', AccountController::class);
+Route::get('/test_accounts', [AccountController::class, 'testAccounts']);
 Route::apiResource('/transactions', TransactionsController::class);
 Route::apiResource('/taxes', TaxesController::class);
 Route::apiResource('/companies', CompanyController::class);
 Route::apiResource('/contacts', ContactController::class);
 Route::apiResource('/accounts_branches', AccountsBranchController::class);
-Route::get('/get_parents', [AccountsBranchController::class, 'getParents']);
+Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
 Route::get('/accounts/select', [AccountController::class, 'getSelect']);

@@ -220,7 +220,7 @@ export const ContactsList = ({ children }: PropsWithChildren) => {
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    ({child.id}) {child?.account_name}
+                                    ({child.id}) {child?.name}
                                 </Typography.Text>
                             </Row>
                         ))

@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 
+export interface IStatement extends any {}
 export interface ICompany {
     id: number;
     company_name: string;
@@ -10,24 +11,26 @@ export interface ICompany {
     accounts?: IAccount[];
 }
 
-export interface IAccountsBranch {
-    id: number;
-    name: string;
-    description: string;
-    parent_branch?: IAccountsBranch;
-    child_branches?: IAccountsBranch[];
-    parent_accounts_branch?: number;
+export interface IAccountsBranch extends IBaseAccount{
+    children?: IAccountsBranch[];
     accounts: IAccount[];
 }
 
-export interface IAccount {
-    id: number;
-    account_name: string;
-    account_branch: IAccountsBranch;
-    account_branch_id: number;
+export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
     balance: number;
+}
+
+export interface IBaseAccount {
+    id: number;
+    name: string;
+    parent: IAccountsBranch;
+    parent_id: number;
+    description: string;
+    code: string;
+    has_children?: boolean;
+    [Symbol.iterator](): IterableIterator<number>;
 }
 
 export interface ITransaction {

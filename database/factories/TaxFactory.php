@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class TaxFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'account_id' => Account::whereRelation('parent', 'name', 'Tax Expense')->first()->id,
             'rate' => $this->faker->randomFloat(2, 0, 1)
         ];
     }

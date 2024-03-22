@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Tax;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class TransRecordFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'date' => $this->faker->dateTimeBetween('-3 months', 'now'),
+            'name' => $this->faker->word(),
+            'description' => $this->faker->realTextBetween($minNbChars = 160, $maxNbChars = 200, $indexSize = 2),
+            'tax_id' => Tax::all()->random()->id,
         ];
     }
 }

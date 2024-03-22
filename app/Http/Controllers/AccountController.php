@@ -4,45 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ArrayFormatters;
 use App\Models\Account;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\AccountsBranch;
+use App\Services\AccountServices;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller
 {
-    private function getAll(): Collection | array
-    {
-        return Account::with([
-            'accountBranch',
-            'debitTransactions',
-            'creditTransactions',
-            ])
-                        ->get();
-    }
 
-    private function getSelectOptions(): array
-    {
-        $accounts = Account::get()
-                            ->toArray();
-
-        return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
-            "code_label" => "title",
-            "id" => "value"
-        ]), $accounts);
-    }
+    public function __construct(private AccountServices $accountServices){}
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): Response
     {
-        if ($request->has('selectOptions')) {
-            $result = $this->getSelectOptions();
-        } else {
-            $result = $this->getAll();
-        }
+       $accounts = $this->accountServices->getAccounts($request->query());
 
-        return response($result);
+        return response($accounts);
     }
 
     /**
@@ -59,15 +40,15 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        $account->accountBranch;
+        $account->parent;
         $account->debitTransactions;
         $account->creditTransactions;
         $account->contact;
         $acc = Account::where('id', $account->id)
                         ->with([
-                            'accountBranch',
-                            'debitTransactions.creditAccounts:account_name',
-                            'creditTransactions.debitAccounts:account_name',
+                            'parent',
+                            'debitTransactions.creditAccounts:name',
+                            'creditTransactions.debitAccounts:name',
                         ])
                         ->first();
         return response($acc);

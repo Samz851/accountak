@@ -10,7 +10,7 @@ class ArrayFormatters
     {
         $newArray = [];
         foreach ($array as $key => $value) {
-            if (array_key_exists($key, $keys)) {
+            if (array_key_exists($key, $keys) && !empty($value)) {
                 if (is_array($value)) {
                     $newArray[$keys[$key]] = array_map(fn($record) => self::rename_array_keys($record, $keys), $value);
                     // $newArray[$keys[$key]] = array_map([self::class, 'rename_array_keys'], $value, [$keys]);
@@ -18,7 +18,7 @@ class ArrayFormatters
                     $newArray[$keys[$key]] = $value;
                 }
 
-            } else {
+            } else if ( !empty($value)) {
                 $newArray[$key] = $value;
             }
         }
@@ -33,12 +33,24 @@ class ArrayFormatters
             $pathLength = count(explode('->', $value['tree_path']));
             if ( $pathLength < $level ) {
                 Log::info([$pathLength, $value], [__LINE__, __FILE__]);
-                if ( isset($value['child_branches']) && ! empty(isset($value['child_branches'])) ) {
-                    $value['child_branches'] = self::removeLeafAccounts($value['child_branches'], $level);
+                if ( isset($value['children']) && ! empty(isset($value['children'])) ) {
+                    $value['children'] = self::removeLeafAccounts($value['children'], $level);
                 }
                 $newArray[$key] = $value;
             }
         }
         return $newArray;
+    }
+
+    public static function removeEmptyItems(array $array): array
+    {
+        foreach ($array as $key => &$value) {
+            if (empty($value)) {
+                unset($array[$key]);
+            } else if (is_array($value)) {
+                $value = self::removeEmptyItems($value);
+            }
+        }
+        return $array;
     }
 }

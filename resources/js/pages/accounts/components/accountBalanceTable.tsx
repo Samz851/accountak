@@ -36,7 +36,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                 {"Total"}
                             </Col>
                             <Col span={8}>
-                                { totalDebit }
+                                { totalDebit?.toLocaleString('en-US', {style: 'currency', currency: 'EGP' }) }
                             </Col>
                         </Row>
                     )}
@@ -78,8 +78,8 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         render={(value) => 
                             <>
                             {
-                                value.map(account => (
-                                    <Row key={account.id} justify={"space-between"} gutter={8}>
+                                value.map((account, idx) => (
+                                    <Row key={idx} justify={"space-between"} gutter={8}>
                                         <Col span={16}>
                                             <Typography.Text>
                                                 {account.account_name}
@@ -87,7 +87,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                         </Col>
                                         <Col span={8}>
                                             <Typography.Text>
-                                                {account.pivot.amount}
+                                                {account.pivot.amount.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
                                             </Typography.Text>
                                         </Col>
                                     </Row>
@@ -116,7 +116,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                 {"Total"}
                             </Col>
                             <Col span={8}>
-                                { totalCredit }
+                                { totalCredit?.toLocaleString('en-US', {style: 'currency', currency: 'EGP' }) }
                             </Col>
                         </Row>
                     )}
@@ -157,8 +157,8 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         render={(value) => 
                             <>
                             {
-                                value.map(account => (
-                                    <Row key={account.id} justify={"space-between"} gutter={8}>
+                                value.map((account, idx) => (
+                                    <Row key={idx} justify={"space-between"} gutter={8}>
                                         <Col span={16}>
                                             <Typography.Text>
                                                 {account.account_name}
@@ -166,7 +166,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                         </Col>
                                         <Col span={8}>
                                             <Typography.Text>
-                                                {account.pivot.amount}
+                                                {account.pivot.amount.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
                                             </Typography.Text>
                                         </Col>
                                     </Row>

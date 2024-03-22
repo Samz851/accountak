@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('rate');
+            $table->foreignId('account_id')
+                ->nullable()
+                ->constrained(table: 'accounts');
             $table->timestamps();
         });
     }

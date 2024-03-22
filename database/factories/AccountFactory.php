@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BaseAccountTaxonomy;
 use App\Models\Account;
 use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,8 +21,14 @@ class AccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'account_name' => $this->faker->name(),
-            'account_branch' => AccountsBranch::doesntHave('childTypes')->get()->random()->id,
+            'name' => $this->faker->name(),
+            'description' => $this->faker->realTextBetween($minNbChars = 160, $maxNbChars = 200, $indexSize = 2),
+            'taxonomy' => BaseAccountTaxonomy::LEAF,
+            'parent_id' => AccountsBranch::where('taxonomy', 'leaf')
+                                                ->where('name', '<>', 'Tax Expense')
+                                                ->get()
+                                                ->random()
+                                                ->id,
             'contact_id' => null
         ];
     }

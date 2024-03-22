@@ -9,115 +9,61 @@ import {
 import {
     List,
     useTable,
-    DateField,
     FilterDropdown,
-    getDefaultSortOrder,
     ExportButton,
     CreateButton,
 } from "@refinedev/antd";
 import {
     Table,
-    Avatar,
     Typography,
     theme,
     InputNumber,
     Input,
-    Select,
     Button,
     Row,
 } from "antd";
 
-import { IAccount, IAccountFilterVariables } from "../../interfaces";
+import { ICompany, IContact } from "@/interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal, UserStatus } from "../../components";
-import { PropsWithChildren, useEffect, useId, useState } from "react";
+import { PaginationTotal } from "@/components";
+import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
-import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
-import { chunk, forEach, initial } from "lodash";
-import { useStyles } from "./styled";
 
-export const AccountsList = ({ children }: PropsWithChildren) => {
+export const CompaniesList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { show, createUrl } = useNavigation();
+    const { showUrl, createUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
-    const { styles} = useStyles();
 
-    const { tableProps, filters, setFilters, sorters } = useTable<
-        IAccount,
-        HttpError,
-        IAccountFilterVariables
+    const { tableProps, filters, sorters } = useTable<
+        ICompany,
+        HttpError
     >({
         filters: {
-            mode: "server"
+            mode: "off",
         },
         sorters: {
             mode: "off",
         },
         syncWithLocation: true,
         pagination: {
-            mode: "off"
+            mode: "server",
           },
     });
 
-    const { isLoading, triggerExport } = useExport<IAccount>({
+    const { isLoading, triggerExport } = useExport<ICompany>({
         sorters,
         filters,
         pageSize: 50,
         maxItemCount: 50,
         mapData: (item) => {
             return {
-                code: item.code,
-                fullName: item.name,
-                account_branch: item.parent.name
+                id: item.id,
+                fullName: item.id,
             };
         },
     });
-
-    const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
-    const [ expandedAccount, setExpandedAccount ] = useState('');
-
-    useEffect(()=>{
-        if ( ! tableProps.loading ) {
-            if ( expandedAccount !== '' ) {
-                setAccounts((prevAccounts) => {
-                    const updateAccounts = (accounts) => {
-                        return [...(accounts as any)?.map(account => {
-                            if ( expandedAccount.startsWith(account.code) ) {
-                                if ( expandedAccount === account.code ) {
-                                    return {
-                                        ...account,
-                                        children: [...tableProps.dataSource as any]
-                                    }
-                                }
-                                if ( expandedAccount.length > account.code.length ) {
-                                    return {
-                                        ...account,
-                                        children: updateAccounts(account.children)
-                                    }
-                                }
-                            } else {
-                                return account;
-                            }
-                        })]
-                    }
-                    return [...updateAccounts(prevAccounts)];
-    
-                })
-            } else {
-                setAccounts([...tableProps.dataSource as any]);
-            }
-        }
-
-    }, [tableProps.dataSource]);
-
-
-    const onExpandAccount = (expanded, record) => {
-        setExpandedAccount(record.code);
-        setFilters([{field: 'parent', operator: 'eq', value: record.id}], 'merge');
-    }
-
     return (
         <List
             breadcrumb={false}
@@ -129,7 +75,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => {
                         return go({
-                            to: `${createUrl("accounts")}`,
+                            to: `${createUrl("companies")}`,
                             query: {
                                 to: pathname,
                             },
@@ -140,24 +86,24 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         });
                     }}
                 >
-                    {t("accounts.form.add")}
+                    {t("companies.form.add")}
                 </CreateButton>,
             ]}
         >
             <Table
                 {...tableProps}
-                dataSource={accounts}
-                className={styles.expanded}
-                rowKey="code"
+                rowKey="id"
                 scroll={{ x: true }}
-                expandable={{
-                    onExpand: onExpandAccount,
-                    indentSize: 30
+                pagination={{
+                    ...tableProps.pagination,
+                    showTotal: (total) => (
+                        <PaginationTotal total={total} entityName="companies" />
+                    ),
                 }}
             >
                 <Table.Column
-                    key="code"
-                    dataIndex="code"
+                    key="id"
+                    dataIndex="id"
                     title="ID #"
                     render={(value) => (
                         <Typography.Text
@@ -165,7 +111,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                                 whiteSpace: "nowrap",
                             }}
                         >
-                            {value}
+                            #{value}
                         </Typography.Text>
                     )}
                     filterIcon={(filtered) => (
@@ -178,13 +124,13 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         />
                     )}
                     defaultFilteredValue={getDefaultFilter(
-                        "code",
+                        "orderNumber",
                         filters,
-                        "contains",
+                        "eq",
                     )}
                     filterDropdown={(props) => (
                         <FilterDropdown {...props}>
-                            <Input
+                            <InputNumber
                                 addonBefore="#"
                                 style={{ width: "100%" }}
                                 placeholder={t("orders.filter.id.placeholder")}
@@ -193,11 +139,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="name"
-                    dataIndex="name"
-                    title={t("users.fields.name")}
+                    key="company_name"
+                    dataIndex="company_name"
+                    title={t("companies.fields.name")}
                     defaultFilteredValue={getDefaultFilter(
-                        "name",
+                        "date",
                         filters,
                         "contains",
                     )}
@@ -211,11 +157,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="parent"
-                    dataIndex={["parent", "name"]}
-                    title={t("accounts.fields.account_branch")}
+                    key="currency"
+                    dataIndex="currency"
+                    title={t("companies.fields.currency")}
                     defaultFilteredValue={getDefaultFilter(
-                        "parent",
+                        "description",
                         filters,
                         "contains",
                     )}
@@ -227,21 +173,54 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                             />
                         </FilterDropdown>
                     )}
-                    // render={(value) => (
-                    //     <Typography.Text
-                    //     style={{
-                    //         whiteSpace: "nowrap",
-                    //     }}
-                    // >
-                    //     {value.name}
-                    // </Typography.Text>
-                    // )}
                 />
                 <Table.Column
-                    key="balance"
-                    dataIndex={["balance"]}
-                    title={t("accounts.fields.balance")}
-                    render={(_, record) => _.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
+                    key="contact_information"
+                    dataIndex="contact_information"
+                    title={t("companies.fields.contact_information")}
+                />
+                <Table.Column
+                    key="address"
+                    dataIndex="address"
+                    title={t("companies.fields.address")}
+                />
+                {/* <Table.Column<IAccount[]>
+                    key="accounts"
+                    dataIndex={["contacts", "accounts"]}
+                    title={t("companies.fields.accounts")}
+                    render={(_,value) =>
+                        value.map(child => (
+                            <Row key={child?.id}>
+
+                                <Typography.Text
+                                    style={{
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    ({child.id}) {child?.account_name}
+                                </Typography.Text>
+                            </Row>
+                        ))
+                    }
+                /> */}
+                <Table.Column<IContact[]>
+                    key="contacts"
+                    dataIndex={["contacts"]}
+                    title={t("companies.fields.contacts")}
+                    render={(value: IContact[]) =>
+                        value.map(child => (
+                            <Row key={child?.id}>
+
+                                <Typography.Text
+                                    style={{
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    ({child.id}) {child?.name}
+                                </Typography.Text>
+                            </Row>
+                        ))
+                    }
                 />
                 {/* <Table.Column
                     key="createdAt"
@@ -277,13 +256,24 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         </FilterDropdown>
                     )}
                 /> */}
-                <Table.Column<IAccount>
+                <Table.Column<ICompany>
                     fixed="right"
                     title={t("table.actions")}
                     render={(_, record) => (
                         <Button
                             icon={<EyeOutlined />}
-                            onClick={() => show('accounts', record.id, "push")}
+                            onClick={() => {
+                                return go({
+                                    to: `${showUrl("companies", record.id)}`,
+                                    query: {
+                                        to: pathname,
+                                    },
+                                    options: {
+                                        keepQuery: true,
+                                    },
+                                    type: "push",
+                                });
+                            }}
                         />
                     )}
                 />

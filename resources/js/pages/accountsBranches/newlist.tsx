@@ -32,6 +32,8 @@ export const AccountsBranchesListPage = () => {
 
     const branches = data?.data ?? [];
 
+    console.log(branches.length, branches)
+
     const addType = (parent?) => {
         return go({
             to: `${createUrl("accounts_branches")}`,
