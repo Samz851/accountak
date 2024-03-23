@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { useModalForm, useSelect } from "@refinedev/antd";
+import { useForm, Edit, useSelect, List, useThemedLayoutContext } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
@@ -16,7 +16,10 @@ import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect } from "react";
 import { IStatement } from "@/interfaces";
 import { Config, Puck } from "@measured/puck";
-import "@measured/puck/puck.css";
+import "./puck.css";
+import { Flex, Form } from "antd";
+import { PageContainer } from "@ant-design/pro-layout";
+import { useStyles } from "./styled";
 
 
 export const StatementCreatePage = () => {
@@ -27,15 +30,32 @@ export const StatementCreatePage = () => {
     const t = useTranslate();
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
-
-    const { formProps, modalProps, close, onFinish } = useModalForm<IStatement, HttpError
+    const { styles } = useStyles();
+    const { formProps, saveButtonProps, queryResult, onFinish } = useForm<IStatement, HttpError
     >({
         action: "create",
-        defaultVisible: true,
+        warnWhenUnsavedChanges: true,
         resource: "statements",
         redirect: false,
     });
+    const { form } = formProps;
+    const statement = Form.useWatch('statement', form)
+    const {
+        mobileSiderOpen,
+        setMobileSiderOpen,
+        siderCollapsed,
+        setSiderCollapsed,
+    } = useThemedLayoutContext();
 
+    useEffect(() => {
+        console.log(formProps);
+        console.log(statement)
+    },[formProps, statement]);
+
+    useEffect(() => {
+        setMobileSiderOpen(false);
+        setSiderCollapsed(true);
+    },[]);
     type Components = {
         HeadingBlock: {
             title: string;
@@ -61,6 +81,15 @@ export const StatementCreatePage = () => {
     };
 
     return (
-        <Puck config={config} data={defaultData} onPublish={(data) => console.log(data)} />
+        <PageContainer
+            className={styles.acPageContainer}
+        >
+            <Puck 
+                config={config} 
+                data={defaultData} 
+                onPublish={(data) => console.log(data)} 
+            />
+        </PageContainer>
+
     );
 };

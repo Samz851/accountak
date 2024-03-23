@@ -267,3 +267,16 @@ export interface ITrendingProducts {
     product: IProduct;
     orderCount: number;
 }
+
+export interface IStatementFieldsData {
+    name: string | number | (string | number)[];
+    value?: any;
+    touched?: boolean;
+    validating?: boolean;
+    errors?: string[];
+}
+
+export interface IStatementFormProps {
+    onChange: (fields: FieldData[]) => void;
+    fields: FieldData[];
+  }
