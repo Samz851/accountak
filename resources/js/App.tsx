@@ -82,15 +82,15 @@ const App: React.FC = () => {
                                             Header={Header}
                                             Title={Title}
                                         >
-                                            <div
+                                            {/* <div
                                                 style={{
                                                     // maxWidth: "1200px",
                                                     marginLeft: "auto",
                                                     marginRight: "auto",
                                                 }}
-                                            >
+                                            > */}
                                                 <Outlet />
-                                            </div>
+                                            {/* </div> */}
                                         </ThemedLayoutV2>
                                     </Authenticated>
                                 }

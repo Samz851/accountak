@@ -16,10 +16,11 @@ import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect } from "react";
 import { IStatement } from "@/interfaces";
 import { Config, Puck } from "@measured/puck";
-import "./puck.css";
+import "@/components/pageBuilder/puck.css";
 import { Flex, Form } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useStyles } from "./styled";
+import { EditorConfig } from "@/components";
 
 
 export const StatementCreatePage = () => {
@@ -47,46 +48,42 @@ export const StatementCreatePage = () => {
         setSiderCollapsed,
     } = useThemedLayoutContext();
 
-    useEffect(() => {
-        console.log(formProps);
-        console.log(statement)
-    },[formProps, statement]);
+    // useEffect(() => {
+    //     console.log(formProps);
+    //     console.log(statement)
+    // },[formProps, statement]);
 
     useEffect(() => {
         setMobileSiderOpen(false);
         setSiderCollapsed(true);
     },[]);
-    type Components = {
-        HeadingBlock: {
-            title: string;
-        };
-    };
 
     const defaultData = {
         content: [],
         root: {},
     }
 
-    const config: Config<Components> = {
-        components: {
-            HeadingBlock: {
-                fields: {
-                    title: {
-                      type: "text",
-                    }
-                },
-                render: ({title}) => (<h1>{title}</h1>)
-            }
-        },
-    };
+    const Header = ({ actions, children }) => {
+        console.log('Header', actions, children);
+
+        return (
+            <>
+                {actions}
+                {children}
+            </>
+        )
+    }
 
     return (
         <PageContainer
             className={styles.acPageContainer}
         >
             <Puck 
-                config={config} 
-                data={defaultData} 
+                config={EditorConfig} 
+                data={defaultData}
+                overrides={{
+                    header: Header
+                }}
                 onPublish={(data) => console.log(data)} 
             />
         </PageContainer>
