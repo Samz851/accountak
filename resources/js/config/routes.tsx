@@ -30,7 +30,7 @@ import { AccountsBranchCreatePage, AccountsBranchShow, AccountsBranchesList } fr
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
 import { DisplayAccountsList } from "@/pages/accounts/newlist";
 import { StatementCreatePage } from "@/pages/statements";
-import { FortuneSheetComponent, FortuneBSheetComponent } from "@/pages/devSamples/fortuneSheet";
+import { FortuneSheetComponent, FortuneBSheetComponent, PuckPageBuilderComponent } from "@/pages/devSamples/fortuneSheet";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -97,7 +97,7 @@ export const routes: ReactElement[] = [
         />
     </Route>,
     <Route path="/dev_sample">
-        <Route index element={<FortuneBSheetComponent />} />
+        <Route index element={<PuckPageBuilderComponent />} />
     </Route>,
     // <Route path="/orders">
     //     <Route index element={<OrderList />} />

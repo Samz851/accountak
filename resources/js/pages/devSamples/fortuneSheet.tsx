@@ -5,8 +5,11 @@ import "@fortune-sheet/react/dist/index.css"
 import { useStyles } from "./styled";
 import { Flex } from "antd";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { useThemedLayoutContext } from "@refinedev/antd";
+import "@/components/pageBuilder/puck.css";
+import { EditorConfig } from "@/components";
+import { Puck } from "@measured/puck";
 export const FortuneSheetComponent = () => {
 
     const { styles } = useStyles();
@@ -40,5 +43,31 @@ export const FortuneBSheetComponent = () => {
 
         </div>
         // </PageContainer>
+    )
+}
+
+export const PuckPageBuilderComponent = () => {
+    const { setMobileSiderOpen, setSiderCollapsed } = useThemedLayoutContext();
+    
+    const { styles } = useStyles();
+
+    const defaultData = {
+        content: [],
+        root: {},
+    }
+
+    useEffect(() => {
+        setMobileSiderOpen(false);
+        setSiderCollapsed(true);
+    },[]);
+
+    return (
+        <PageContainer>
+            <Puck
+                config={EditorConfig} 
+                data={defaultData}
+                onPublish={(data) => console.log(data)} 
+            ></Puck>
+        </PageContainer>
     )
 }

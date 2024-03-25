@@ -1,21 +1,87 @@
-import { Config, DropZone } from "@measured/puck";
+import { Config, DropZone, PuckComponent } from "@measured/puck";
 import { Card } from "antd/lib";
+import { ReactElement, ReactNode } from "react";
 
-type ComponentsProps = {
-    HeadingBlock: {
-        title: string;
-    };
-    CardBlock?: {
-        title?: string;
-        bordered?: {};
-    }
-};
+type ComponentsProps = {};
 
 type RootProps = {
     title: string;
     description: string;
 }
 
+type DrawerItem = {
+    el: (props) => ReactElement;
+    name: string;
+}
+export type DrawerItemProps = {
+    name: string;
+    index: number;
+    Children: PuckComponent;
+}
+
+export const DrawerItems: DrawerItem[] = [
+    {
+        name: 'HeadingBlock',
+        el: (name) => (<h1>{`The Name is: ${name}`}</h1>)
+    },
+    {
+        name: 'HeadingBlock1',
+        el: (name) => (<h2>{`The Name is: ${name}`}</h2>)
+    },
+    {
+        name: 'HeadingBlock2',
+        el: (name) => (<h3 >{`The Name is: ${name}`}</h3>)
+    },
+];
+
+const components = DrawerItems.reduce((acc, curr, i) => {
+    acc[curr.name] = {
+        fields: {
+            title: {
+                type: "text"
+            }
+        },
+        defaultProps: {title: curr.name},
+        render: ({title}) => curr.el(title)
+    }
+    return acc;
+}, {});
+
+// DrawerItems.forEach(item => {
+//     components[item.name] = {
+//         fields: {
+//             title: {
+//                 type: "text"
+//             }
+//         },
+//         render: ({title}) => (item.el?.replace('%%', title))
+//     }
+// });
+
+export const SampleConfig: Config<ComponentsProps, RootProps> = {
+    components: components,
+    // root: {
+    //     fields: {
+    //         title: {
+    //             type: "text"
+    //         },
+    //         description: {
+    //             type: "text"
+    //         }
+    //     },
+    //     render: ({title, description}) => (
+    //         <>
+    //             <h1>{title}</h1>
+    //             <p>{description}</p>
+    //         </>
+    //     )
+    // }
+    root: {
+        defaultProps: {
+            title: 'Default Title'
+        }
+    }
+}
 export const EditorConfig: Config<ComponentsProps, RootProps> = {
     components: {
         HeadingBlock: {
@@ -65,11 +131,11 @@ export const EditorConfig: Config<ComponentsProps, RootProps> = {
         defaultProps: {
             title: ''
         }
-        // render: ({children, title, description}) => (
+        // render: ({Children, title, description}) => (
         //     <div>
         //         <h1>{title}</h1>
         //         <p>{description}</p>
-        //         {children}
+        //         {Children}
         //     </div>
         // )
     }
