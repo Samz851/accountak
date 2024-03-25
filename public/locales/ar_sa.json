@@ -598,7 +598,7 @@
     "accounts": "الحسابات",
     "fields": {
         "date": "التاريخ",
-        "account_name": "الأسم",
+        "name": "الأسم",
         "account_type": "النوع",
         "parent_account": "الحساب الرئيسي",
         "child_accounts": "حسابات متفرعه",

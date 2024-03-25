@@ -48,25 +48,25 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
                 </Typography.Text>
             </CardWithContent>
             {
-                accountsBranch?.parent_accounts_branch &&
-                <CardWithContent title={t('accounts_branches.fields.parent_branch')}>
+                accountsBranch?.parent &&
+                <CardWithContent title={t('accounts_branches.fields.parent')}>
                     <Typography.Link
                         strong
-                        onClick={() => show('accounts_branches', accountsBranch.parent_branch?.id || 0, 'push')}
+                        onClick={() => show('accounts_branches', accountsBranch.parent?.id || 0, 'push')}
                         style={{
                             whiteSpace: "nowrap",
                             color: token.colorTextHeading,
                         }}
                     >
-                        {accountsBranch.parent_branch?.name}
+                        {accountsBranch.parent?.name}
                     </Typography.Link>
                 </CardWithContent>
             }
             {
-                accountsBranch?.child_branches &&
-                <CardWithContent title={t('accounts_branches.fields.child_branches')}>
+                accountsBranch?.children &&
+                <CardWithContent title={t('accounts_branches.fields.children')}>
                 {
-                    accountsBranch?.child_branches?.map(branch => (
+                    accountsBranch?.children?.map(branch => (
                         <Flex vertical key={branch.id}>
                             <Typography.Link
                                 strong
@@ -95,7 +95,7 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
                                 color: token.colorTextHeading,
                             }}
                         >
-                            {account.account_name}
+                            {account.name}
                         </Typography.Link>
                     </Flex>
                 ))

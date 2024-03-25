@@ -203,7 +203,7 @@ export const TaxesList = ({ children }: PropsWithChildren) => {
                 />
                 {/* <Table.Column<IAccount>
                     key="parent_account"
-                    dataIndex={["parent_account", "account_name"]}
+                    dataIndex={["parent_account", "name"]}
                     title={t("accounts.fields.parent_account")}
                     // render={(_, value) => (
                     //     <Typography.Text
@@ -211,7 +211,7 @@ export const TaxesList = ({ children }: PropsWithChildren) => {
                     //         whiteSpace: "nowrap",
                     //     }}
                     // >
-                    //     {value?.parent_account?.account_name}
+                    //     {value?.parent_account?.name}
                     // </Typography.Text>
                     // )}
                 />
@@ -228,7 +228,7 @@ export const TaxesList = ({ children }: PropsWithChildren) => {
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    {child?.account_name}
+                                    {child?.name}
                                 </Typography.Text>
                             </Row>
                         ))

@@ -52,7 +52,7 @@ type Props = {
 type FormValues = {
     name: string;
     description: string;
-    parent_accounts_branch?: any;
+    parent?: any;
 };
 // type AccountsBranchesTree = IAccountsBranch & DataNode;
 export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
@@ -63,7 +63,7 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
     const [typeValue, setTypeValue] = useState<string>();
     const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
-    const initValues = {parent_accounts_branch: searchParams.get('parent') ?? ''};
+    const initValues = {parent: searchParams.get('parent') ?? ''};
 
     const onChangeType = (newValue: string) => {
         setTypeValue(newValue);
@@ -126,7 +126,7 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
                         const data = await onFinish({
                             name: values.name,
                             description: values.description,
-                            parent_accounts_branch: values.parent_accounts_branch
+                            parent: values.parent
                         });
                         close();
                         go({
@@ -194,8 +194,8 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.parent_branch")}
-                    name="parent_accounts_branch"
+                    label={t("accounts_branches.fields.parent")}
+                    name="parent"
                     // rules={[{ required: true }]}
                 >
                     <TreeSelect

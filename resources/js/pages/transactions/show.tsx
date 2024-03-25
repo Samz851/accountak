@@ -34,7 +34,7 @@ export const AccountShow: React.FC<IResourceComponentsProps> = () => {
                     padding: "32px",
                 }}
             >
-                <CardWithContent title={account?.account_name} />
+                <CardWithContent title={account?.name} />
             </Flex>
         </Drawer>
     );

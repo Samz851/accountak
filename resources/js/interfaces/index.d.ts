@@ -13,7 +13,7 @@ export interface ICompany {
 
 export interface IAccountsBranch extends IBaseAccount{
     children?: IAccountsBranch[];
-    accounts: IAccount[];
+    accounts?: IAccount[];
 }
 
 export interface IAccount extends IBaseAccount{
@@ -25,12 +25,12 @@ export interface IAccount extends IBaseAccount{
 export interface IBaseAccount {
     id: number;
     name: string;
-    parent: IAccountsBranch;
-    parent_id: number;
+    parent?: IAccountsBranch;
+    parent_id?: number;
     description: string;
     code: string;
     has_children?: boolean;
-    [Symbol.iterator](): IterableIterator<number>;
+    [Symbol.iterator]?(): IterableIterator<number>;
 }
 
 export interface ITransaction {
@@ -91,8 +91,8 @@ export interface ITaxFilterVariables {
 
 export interface IAccountFilterVariables {
     q: string;
-    account_name: string;
-    account_branch: IAccountsBranch;
+    name: string;
+    parent: IAccountsBranch;
 }
 
 export interface IOrderChart {

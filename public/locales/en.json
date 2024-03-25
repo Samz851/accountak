@@ -600,8 +600,8 @@
     "accounts": "Accounts",
     "fields": {
         "date": "Date",
-        "account_name": "Name",
-        "account_branch": "Branch",
+        "name": "Name",
+        "parent": "Branch",
         "balance": "Balance"
     },
     "show": {
@@ -680,8 +680,8 @@
     "fields": {
         "name": "Name",
         "description": "Description",
-        "parent_branch": "Parent Branch",
-        "child_branches": "Child Branches",
+        "parent": "Parent Branch",
+        "children": "Child Branches",
         "accounts": "Accounts"
     },
     "form": {

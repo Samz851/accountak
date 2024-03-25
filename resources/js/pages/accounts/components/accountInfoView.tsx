@@ -38,13 +38,13 @@ export const AccountInfoView = ({account}: Props) => {
                             margin: 0,
                         }}
                     >
-                        {account?.account_name}
+                        {account?.name}
                     </Typography.Title>
                 </Flex>
             </Flex>
-            <CardWithContent title={t('accounts.fields.account_branch')}>
+            <CardWithContent title={t('accounts.fields.parent')}>
                 <Typography.Text>
-                    {account?.account_branch.name}
+                    {account?.parent.name}
                 </Typography.Text>
             </CardWithContent>
         </Flex>

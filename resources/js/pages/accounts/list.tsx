@@ -70,7 +70,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             return {
                 code: item.code,
                 fullName: item.name,
-                account_branch: item.parent.name
+                parent: item.parent.name
             };
         },
     });
@@ -213,7 +213,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 <Table.Column
                     key="parent"
                     dataIndex={["parent", "name"]}
-                    title={t("accounts.fields.account_branch")}
+                    title={t("accounts.fields.parent")}
                     defaultFilteredValue={getDefaultFilter(
                         "parent",
                         filters,

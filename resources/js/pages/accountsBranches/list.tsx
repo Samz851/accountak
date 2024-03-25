@@ -65,7 +65,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
         id: 1,
         name: '',
         description: '',
-        accounts: []
+        code: '0000'
     }];
 
     // const accountTypesone = (data?.data == undefined ||  ! data?.data.length) ? [{

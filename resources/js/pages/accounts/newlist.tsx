@@ -71,7 +71,7 @@ export const DisplayAccountsList = ({ children }: PropsWithChildren) => {
     //         return {
     //             id: item.id,
     //             fullName: item.name,
-    //             account_branch: item.parent.name
+    //             parent: item.parent.name
     //         };
     //     },
     // });

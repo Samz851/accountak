@@ -89,12 +89,12 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
     // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
     // const { queryResult: accountsQueryResult } = useSelect<IAccount>({
     //     resource: "accounts",
-    //     optionLabel: "account_name",
+    //     optionLabel: "name",
     //     optionValue: "id"
     // });
 
     // const accountsOptions = accountsQueryResult.data?.data.map((item) => ({
-    //     label: item.account_name,
+    //     label: item.name,
     //     value: item.id,
     // })) ?? [];
 

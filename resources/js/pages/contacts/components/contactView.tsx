@@ -81,7 +81,7 @@ export const ContactView = ({contact}: Props) => {
                                     color: token.colorTextHeading,
                                 }}
                             >
-                                {account.account_name}
+                                {account.name}
                             </Typography.Link>
                         </Flex>
 

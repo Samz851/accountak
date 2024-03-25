@@ -52,7 +52,7 @@ type Props = {
 };
 
 type FormValues = {
-    account_name: string;
+    name: string;
     account_branch_id: number;
 };
 
@@ -126,7 +126,7 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 onFinish={async (values) => {
                     try {
                         const data = await onFinish({
-                            account_name: values.account_name,
+                            name: values.name,
                             account_branch_id: values.account_branch_id,
                         });
                         close();
@@ -180,14 +180,14 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 }}
             >
                 <Form.Item
-                    label={t("accounts.fields.account_name")}
-                    name="account_name"
+                    label={t("accounts.fields.name")}
+                    name="name"
                     rules={[{ required: true }]}
                 >
                     <Input placeholder="Please enter account name" />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_branch")}
+                    label={t("accounts.fields.parent")}
                     name="account_branch_id"
                     rules={[{ required: true }]}
                 >

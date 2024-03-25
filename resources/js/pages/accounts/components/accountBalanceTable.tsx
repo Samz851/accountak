@@ -82,7 +82,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                     <Row key={idx} justify={"space-between"} gutter={8}>
                                         <Col span={16}>
                                             <Typography.Text>
-                                                {account.account_name}
+                                                {account.name}
                                             </Typography.Text>
                                         </Col>
                                         <Col span={8}>
@@ -161,7 +161,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                     <Row key={idx} justify={"space-between"} gutter={8}>
                                         <Col span={16}>
                                             <Typography.Text>
-                                                {account.account_name}
+                                                {account.name}
                                             </Typography.Text>
                                         </Col>
                                         <Col span={8}>

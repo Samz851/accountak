@@ -198,7 +198,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                                             whiteSpace: "nowrap",
                                         }}
                                     >
-                                        ({account.id}) {account?.account_name}
+                                        ({account.id}) {account?.name}
                                     </Typography.Text>
                                 </Row>
                             ))
@@ -219,7 +219,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    ({account.id}) {account?.account_name}
+                                    ({account.id}) {account?.name}
                                 </Typography.Text>
                             </Row>
                         ))
