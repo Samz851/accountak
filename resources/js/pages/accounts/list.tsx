@@ -70,7 +70,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             return {
                 code: item.code,
                 fullName: item.name,
-                parent: item.parent.name
+                parent: item.parent?.name
             };
         },
     });

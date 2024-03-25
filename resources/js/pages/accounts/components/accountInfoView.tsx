@@ -44,7 +44,7 @@ export const AccountInfoView = ({account}: Props) => {
             </Flex>
             <CardWithContent title={t('accounts.fields.parent')}>
                 <Typography.Text>
-                    {account?.parent.name}
+                    {account?.parent?.name}
                 </Typography.Text>
             </CardWithContent>
         </Flex>

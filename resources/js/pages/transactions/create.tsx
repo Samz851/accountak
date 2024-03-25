@@ -110,16 +110,16 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     });
 
     // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
-    const { queryResult: accountsQueryResult } = useSelect<IAccount>({
+    const { selectProps: AccountselectProps } = useSelect<IAccount>({
         resource: "accounts",
-        optionLabel: "name",
-        optionValue: "id"
+        optionLabel: "code_label" as any,
+        optionValue: "id" as any
     });
 
-    const accountsOptions = accountsQueryResult.data?.data.map((item) => ({
-        label: item.name,
-        value: item.id,
-    })) ?? [];
+    // const accountsOptions = accountsQueryResult.data?.data.map((item) => ({
+    //     label: item.name,
+    //     value: item.id,
+    // })) ?? [];
 
     const { selectProps: taxesSelectProps } = useSelect<ITax>({
         resource: "taxes",
@@ -312,7 +312,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                         style={{ width: 300 }}
                                                         onChange={value => setSelectedDebitAccount(value)}
                                                         filterOption={true}
-                                                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                                        options={AccountselectProps.options}
                                                     />
                                                 </Form.Item>
                                             </Col>
@@ -393,7 +393,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                         style={{ width: 300 }}
                                                         onChange={value => setSelectedDebitAccount(value)}
                                                         filterOption={true}
-                                                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                                        options={AccountselectProps.options}
                                                     />
                                                 </Form.Item>
                                             </Col>
@@ -456,7 +456,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             <Select
                                 style={{ width: 300 }}
                                 filterOption={true}
-                                options={accountsOptions}
+                                options={AccountselectProps.options}
                             />
                         </Form.Item>
                         <Form.Item
