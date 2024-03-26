@@ -107,6 +107,10 @@ export const resources: IResourceItem[] = [
             dataProviderName: "laravel"
         }
     },
+    {
+        name: "create_general",
+        list: "/create_general",
+    },
     // {
     //     name: "orders",
     //     list: "/orders",

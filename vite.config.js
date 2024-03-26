@@ -10,14 +10,16 @@ export default defineConfig({
         }),
         react()
     ],
-    server: {
-        host: '0.0.0.0',
-        hmr: {
-          host: 'localhost'
-        },
-     },
+    // server: {
+    //     host: '0.0.0.0',
+    //     hmr: {
+    //       host: 'localhost'
+    //     },
+    //  },
      build: {
         sourcemap: true,
-        manifest: true
+        manifest: true,
+        outDir: './public/build',
+        emptyOutDir: false
      }
 });

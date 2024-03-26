@@ -31,6 +31,7 @@ import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
 import { DisplayAccountsList } from "@/pages/accounts/newlist";
 import { StatementCreatePage } from "@/pages/statements";
 import { FortuneSheetComponent, FortuneBSheetComponent } from "@/pages/devSamples/fortuneSheet";
+import { CreateGeneralPage } from "@/pages/create";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -99,6 +100,9 @@ export const routes: ReactElement[] = [
     <Route path="/dev_sample">
         <Route index element={<FortuneBSheetComponent />} />
     </Route>,
+    <Route path="/create_general">
+        <Route index element={<CreateGeneralPage />} />
+    </Route>
     // <Route path="/orders">
     //     <Route index element={<OrderList />} />
     //     <Route

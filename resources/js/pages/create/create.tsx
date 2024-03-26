@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { useModalForm, useSelect, useStepsForm } from "@refinedev/antd";
+import { Create, SaveButton, useModalForm, useSelect, useStepsForm } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
@@ -28,6 +28,7 @@ import {
     Row,
     Select,
     Space,
+    Steps,
     Switch,
     TreeSelect,
     Typography,
@@ -38,6 +39,7 @@ import { ICompany, ITransaction } from "@/interfaces";
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect } from "react";
+import { FormList } from "./formList";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -59,7 +61,7 @@ type FormValues = {
     contact_information?: string;
 };
 
-export const CreateTransactionPage = ({ isOverModal }: Props) => {
+export const CreateGeneralPage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
@@ -107,164 +109,50 @@ export const CreateTransactionPage = ({ isOverModal }: Props) => {
     // })
 
     return (
-        // <Modal
-        //     {...modalProps}
-        //     mask={!isOverModal}
-        //     onCancel={() => {
-        //         close();
-        //         go({
-        //             to:
-        //                 searchParams.get("to") ??
-        //                 getToPath({
-        //                     action: "list",
-        //                 }) ??
-        //                 "",
-        //             query: {
-        //                 to: undefined,
-        //             },
-        //             options: {
-        //                 keepQuery: true,
-        //             },
-        //             type: "replace",
-        //         });
-        //     }}
-        //     title={t("companies.form.add")}
-        //     width={512}
-        //     closeIcon={<LeftOutlined />}
-        // >
-        //     <Form
-        //         {...formProps}
-        //         layout="vertical"
-        //         onFinish={async (values) => {
-        //             try {
-        //                 const data = await onFinish({
-        //                     company_name: values.company_name,
-        //                     currency: values.currency,
-        //                     contact_information: values.contact_information,
-        //                     address: values.address
-        //                 });
-        //                 close();
-        //                 go({
-        //                     to:
-        //                         searchParams.get("to") ??
-        //                         getToPath({
-        //                             action: "list",
-        //                         }) ??
-        //                         "",
-        //                     query: {
-        //                         to: undefined,
-        //                     },
-        //                     options: {
-        //                         keepQuery: true,
-        //                     },
-        //                     type: "replace",
-        //                 });
-
-        //                 // const createdAccount = (data as CreateResponse<IAccount>)
-        //                 //     ?.data;
-
-        //                 // if ((values.contacts ?? [])?.length > 0) {
-        //                 //     await createManyMutateAsync({
-        //                 //         resource: "contacts",
-        //                 //         values:
-        //                 //             values.contacts?.map((contact) => ({
-        //                 //                 ...contact,
-        //                 //                 companyId: createdCompany.id,
-        //                 //                 salesOwnerId:
-        //                 //                     createdCompany.salesOwner.id,
-        //                 //             })) ?? [],
-        //                 //         successNotification: false,
-        //                 //     });
-        //                 // }
-
-        //                 // go({
-        //                 //     to: searchParams.get("to") ?? pathname,
-        //                 //     query: {
-        //                 //         companyId: createdCompany.id,
-        //                 //         to: undefined,
-        //                 //     },
-        //                 //     options: {
-        //                 //         keepQuery: true,
-        //                 //     },
-        //                 //     type: "replace",
-        //                 // });
-        //             } catch (error) {
-        //                 Promise.reject(error);
-        //             }
-        //         }}
-        //     >
-        //         <Form.Item
-        //             label={t("companies.fields.company_name")}
-        //             name="company_name"
-        //             rules={[{ required: true }]}
-        //         >
-        //             <Input placeholder="Please enter company name" />
-        //         </Form.Item>
-        //         <Form.Item
-        //             label={t("companies.fields.currency")}
-        //             name="currency"
-        //             rules={[{ required: true }]}
-        //         >
-        //             <Input />
-        //         </Form.Item>
-        //         <Form.Item
-        //             label={t("companies.fields.contact_information")}
-        //             name="contact_information"
-        //             rules={[{required: true}]}
-        //         >
-        //             <Input />
-        //         </Form.Item>
-        //         <Form.Item
-        //             label={t("companies.fields.address")}
-        //             name="address"
-        //             rules={[{required: true}]}
-        //         >
-        //             <Input />
-        //         </Form.Item>
-        //         {/* <Form.List name="contacts">
-        //             {(fields, { add, remove }) => (
-        //                 <Space direction="vertical">
-        //                     {fields.map(({ key, name, ...restField }) => (
-        //                         <Row key={key} gutter={12} align="middle">
-        //                             <Col span={11}>
-        //                                 <Form.Item
-        //                                     noStyle
-        //                                     {...restField}
-        //                                     name={[name, "name"]}
-        //                                 >
-        //                                     <Input
-        //                                         addonBefore={<UserOutlined />}
-        //                                         placeholder="Contact name"
-        //                                     />
-        //                                 </Form.Item>
-        //                             </Col>
-        //                             <Col span={11}>
-        //                                 <Form.Item
-        //                                     noStyle
-        //                                     name={[name, "email"]}
-        //                                 >
-        //                                     <Input
-        //                                         addonBefore={<MailOutlined />}
-        //                                         placeholder="Contact email"
-        //                                     />
-        //                                 </Form.Item>
-        //                             </Col>
-        //                             <Col span={2}>
-        //                                 <Button
-        //                                     icon={<DeleteOutlined />}
-        //                                     onClick={() => remove(name)}
-        //                                 />
-        //                             </Col>
-        //                         </Row>
-        //                     ))}
-        //                     <Typography.Link onClick={() => add()}>
-        //                         <PlusCircleOutlined /> Add new contacts
-        //                     </Typography.Link>
-        //                 </Space>
-        //             )}
-        //         </Form.List> */}
-        //     </Form>
-        // </Modal>
-        <h1>Hello</h1>
+        <Create 
+            saveButtonProps={saveButtonProps}
+            footerButtons={
+                <>
+                  {current > 0 && (
+                    <Button
+                      onClick={() => {
+                        gotoStep(current - 1);
+                      }}
+                    >
+                      Previous
+                    </Button>
+                  )}
+                  {current < FormList.length - 1 && (
+                    <Button
+                      onClick={() => {
+                        gotoStep(current + 1);
+                      }}
+                    >
+                      Next
+                    </Button>
+                  )}
+                  {current === FormList.length - 1 && (
+                    <SaveButton {...saveButtonProps} />
+                  )}
+                </>
+              }
+        >
+            <Steps {...stepsProps}>
+                <Steps.Step
+                    title="transaction"
+                />
+                <Steps.Step
+                    title="Branch"
+                />
+                <Steps.Step
+                    title="account"
+                />
+            </Steps>
+            <Form {...formProps} layout="vertical">
+                {FormList[current]}
+            </Form>
+        </Create>
+        
+        // <h1>Hello</h1>
     );
 };

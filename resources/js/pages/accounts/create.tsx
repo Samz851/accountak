@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { useModalForm } from "@refinedev/antd";
+import { useModalForm, useTable } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
@@ -29,14 +29,16 @@ import {
     Select,
     Space,
     TreeSelect,
+    TreeSelectProps,
     Typography,
 } from "antd";
 
-import { IAccount, IAccountsBranch } from "@/interfaces";
+import { IAccount, IAccountFilterVariables, IAccountsBranch } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useTraceUpdate } from "@/hooks/dev";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -56,7 +58,9 @@ type FormValues = {
     account_branch_id: number;
 };
 
-export const AccountCreatePage = ({ isOverModal }: Props) => {
+export const AccountCreatePage = (props) => {
+    useTraceUpdate(props);
+    console.log(`Create Account`, props);
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
@@ -65,12 +69,15 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
     const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
 
-    const onChangeType = (newValue: string) => {
-        setTypeValue(newValue);
-    };
-    const onChangeParent = (newValue: string) => {
-        setParentValue(newValue);
-    };
+    // const onChangeType = (newValue: string) => {
+    //     setTypeValue(newValue);
+    // };
+    // const onChangeParent = (newValue: string) => {
+    //     setParentValue(newValue);
+    // };
+
+    const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
+    const [ expandedAccount, setExpandedAccount ] = useState('');
 
     const { formProps, modalProps, close, onFinish } = useModalForm<IAccount, HttpError, FormValues
     >({
@@ -78,26 +85,83 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
         defaultVisible: true,
         resource: "accounts",
         redirect: false,
-        warnWhenUnsavedChanges: !isOverModal,
+        warnWhenUnsavedChanges: !props.isOverModal,
     });
 
-    const { data } = useList<IAccountsBranch>({
-        resource: "accounts_branches",
-        filters: [
-            {
-                field: 'noChildren',
-                operator: 'eq',
-                value: true
+    const { tableProps: AccountselectProps, filters, setFilters, sorters } = useTable<
+        IAccount,
+        HttpError,
+        IAccountFilterVariables
+    >({
+        filters: {
+            mode: "server",
+        },
+        sorters: {
+            mode: "off",
+        },
+        syncWithLocation: true,
+        pagination: {
+            mode: "off"
+          },
+    });
+
+    const loadMoreAccounts = useCallback((record) => {
+        console.log('keys', record)
+            setFilters([{field: 'parent', operator: 'eq', value: record.value}], 'merge');
+
+        
+    }, [expandedAccount])
+
+    const onExpandAccount = (keys) => {
+        console.log('keys', keys)
+        let parentID = keys.pop();
+        setExpandedAccount(parentID);
+        setFilters([{field: 'parent', operator: 'eq', value: parentID}], 'merge');
+    }
+
+    useEffect(() => {console.log(accountsOptions)}, [accountsOptions])
+    useEffect(()=>{
+        console.log('state', accountsOptions, AccountselectProps);
+        if ( ! AccountselectProps.loading ) {
+            console.log('account not loading', AccountselectProps)
+            if ( accountsOptions.length === 0 ) {
+                console.log('account not loading', AccountselectProps, accountsOptions)
+                setAccountsOptions([...AccountselectProps.dataSource as any]);
+            } else if ( expandedAccount !== '' ) {
+                setAccountsOptions((prevAccounts) => {
+                    console.log('account not loading', AccountselectProps, accountsOptions, expandedAccount, prevAccounts)
+                    const updateAccounts = (accounts) => {
+                        return [...(accounts as any)?.map(account => {
+                            if ( expandedAccount.startsWith(account.code) ) {
+                                if ( expandedAccount === account.code ) {
+                                    return {
+                                        ...account,
+                                        children: [...AccountselectProps.dataSource as any]
+                                    }
+                                }
+                                if ( expandedAccount.length > account.code.length ) {
+                                    return {
+                                        ...account,
+                                        children: updateAccounts(account.children)
+                                    }
+                                }
+                            } else {
+                                return account;
+                            }
+                        })]
+                    }
+                    return [...updateAccounts(prevAccounts)];
+    
+                })
             }
-        ]
-    });
+        }
 
-    const accountBranches = data?.data ?? [];
+    }, [AccountselectProps.dataSource]);
 
     return (
         <Modal
             {...modalProps}
-            mask={!isOverModal}
+            mask={!props.isOverModal}
             onCancel={() => {
                 close();
                 go({
@@ -193,13 +257,14 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 >
                     <TreeSelect
                         style={{ width: '100%' }}
-                        fieldNames={{label: "title", "value": "key"}}
+                        // loadData={loadMoreAccounts as any}
+                        fieldNames={{label: "code_label", "value": "id"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountBranches}
+                        treeData={accountsOptions}
                         placeholder="Please select"
-                        treeDefaultExpandAll
-                        onChange={onChangeType}
+                        // onChange={onChangeType}
                         allowClear={true}
+                        onTreeExpand={onExpandAccount}
                         />
 
                 </Form.Item>
