@@ -1,57 +1,24 @@
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { useModalForm, useTable } from "@refinedev/antd";
 import {
-    CreateResponse,
-    HttpError,
-    useCreateMany,
-    useGetToPath,
-    useGo,
-    useList,
-    useTranslate
+    HttpError, useGetToPath,
+    useGo, useTranslate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
 
 import {
-    DeleteOutlined,
-    LeftOutlined,
-    MailOutlined,
-    PlusCircleOutlined,
-    UserOutlined,
+    LeftOutlined
 } from "@ant-design/icons";
 import {
-    Button,
-    Col,
     Form,
     Input,
-    Modal,
-    Row,
-    Select,
-    Space,
-    TreeSelect,
-    TreeSelectProps,
-    Typography,
+    Modal, TreeSelect
 } from "antd";
 
-import { IAccount, IAccountFilterVariables, IAccountsBranch } from "@/interfaces";
+import { IAccount, IAccountFilterVariables } from "@/interfaces";
 
-import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
-import { useAccountsSelect } from "@/hooks/useAccountsSelect";
-import { useCallback, useEffect, useState } from "react";
-import { useTraceUpdate } from "@/hooks/dev";
-// import { SelectOptionWithAvatar } from "@/components";
-// import { Company } from "@/graphql/schema.types";
-// import {
-//     CreateCompanyMutation,
-//     CreateCompanyMutationVariables,
-// } from "@/graphql/types";
-// import { useUsersSelect } from "@/hooks/useUsersSelect";
-
-// import { COMPANY_CREATE_MUTATION } from "./queries";
-
-type Props = {
-    isOverModal?: boolean;
-};
+import { useEffect, useState } from "react";
 
 type FormValues = {
     name: string;
@@ -59,22 +26,11 @@ type FormValues = {
 };
 
 export const AccountCreatePage = (props) => {
-    useTraceUpdate(props);
     console.log(`Create Account`, props);
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
-    const { pathname } = useLocation();
     const go = useGo();
-    const [typeValue, setTypeValue] = useState<string>();
-    const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
-
-    // const onChangeType = (newValue: string) => {
-    //     setTypeValue(newValue);
-    // };
-    // const onChangeParent = (newValue: string) => {
-    //     setParentValue(newValue);
-    // };
 
     const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
@@ -105,31 +61,18 @@ export const AccountCreatePage = (props) => {
           },
     });
 
-    const loadMoreAccounts = useCallback((record) => {
-        console.log('keys', record)
-            setFilters([{field: 'parent', operator: 'eq', value: record.value}], 'merge');
-
-        
-    }, [expandedAccount])
-
     const onExpandAccount = (keys) => {
-        console.log('keys', keys)
         let parentID = keys.pop();
         setExpandedAccount(parentID);
         setFilters([{field: 'parent', operator: 'eq', value: parentID}], 'merge');
     }
 
-    useEffect(() => {console.log(accountsOptions)}, [accountsOptions])
     useEffect(()=>{
-        console.log('state', accountsOptions, AccountselectProps);
         if ( ! AccountselectProps.loading ) {
-            console.log('account not loading', AccountselectProps)
             if ( accountsOptions.length === 0 ) {
-                console.log('account not loading', AccountselectProps, accountsOptions)
                 setAccountsOptions([...AccountselectProps.dataSource as any]);
             } else if ( expandedAccount !== '' ) {
                 setAccountsOptions((prevAccounts) => {
-                    console.log('account not loading', AccountselectProps, accountsOptions, expandedAccount, prevAccounts)
                     const updateAccounts = (accounts) => {
                         return [...(accounts as any)?.map(account => {
                             if ( expandedAccount.startsWith(account.code) ) {
@@ -210,34 +153,6 @@ export const AccountCreatePage = (props) => {
                             type: "replace",
                         });
 
-                        // const createdAccount = (data as CreateResponse<IAccount>)
-                        //     ?.data;
-
-                        // if ((values.contacts ?? [])?.length > 0) {
-                        //     await createManyMutateAsync({
-                        //         resource: "contacts",
-                        //         values:
-                        //             values.contacts?.map((contact) => ({
-                        //                 ...contact,
-                        //                 companyId: createdCompany.id,
-                        //                 salesOwnerId:
-                        //                     createdCompany.salesOwner.id,
-                        //             })) ?? [],
-                        //         successNotification: false,
-                        //     });
-                        // }
-
-                        // go({
-                        //     to: searchParams.get("to") ?? pathname,
-                        //     query: {
-                        //         companyId: createdCompany.id,
-                        //         to: undefined,
-                        //     },
-                        //     options: {
-                        //         keepQuery: true,
-                        //     },
-                        //     type: "replace",
-                        // });
                     } catch (error) {
                         Promise.reject(error);
                     }

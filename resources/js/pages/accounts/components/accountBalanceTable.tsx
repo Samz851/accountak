@@ -1,6 +1,5 @@
-import { IAccount, ITransaction } from "@/interfaces"
-import { IResourceComponentsProps, useTranslate } from "@refinedev/core";
-import { Col, Flex, Row, Table, Typography, theme } from "antd";
+import { ITransaction } from "@/interfaces";
+import { Col, Row, Table, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -11,10 +10,8 @@ type Props = {
 }
 export const AccountBalanceTable = ({transactions}: Props) => {
     const { t } = useTranslation();
-    const { token } = theme.useToken();
     const { Column, ColumnGroup } = Table;
     const totalDebit = transactions?.debit?.reduce((prev, current) => {
-        console.log(typeof prev, typeof current.amount);
         return prev + parseFloat(current.dbtrans.amount as string)
     }, 0);
     const totalCredit = transactions?.credit?.reduce((prev, current) => {

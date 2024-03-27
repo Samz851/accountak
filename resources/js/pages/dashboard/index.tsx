@@ -13,7 +13,7 @@ import {
     CardWithContent,
     TrendUpIcon,
     TrendDownIcon,
-} from "../../components";
+} from "@/components";
 import {
     ClockCircleOutlined,
     DollarCircleOutlined,
@@ -26,7 +26,7 @@ import { useMemo, useState } from "react";
 import { List, NumberField } from "@refinedev/antd";
 import { useApiUrl, useCustom } from "@refinedev/core";
 import dayjs from "dayjs";
-import { ISalesChart } from "../../interfaces";
+import { ISalesChart } from "@/interfaces";
 
 type DateFilter = "lastWeek" | "lastMonth";
 

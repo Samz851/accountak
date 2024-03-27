@@ -1,17 +1,6 @@
 import { IAccount } from "@/interfaces";
-import { ReactGrid, Column, Row, Uncertain } from "@silevis/reactgrid";
+import { Column, Row } from "@silevis/reactgrid";
 
-// export interface IDisplayAccount {
-//     id: number;
-//     name: string;
-//     balance: number;
-//   }
-  
-//   const getPeople = (): IDisplayAccount[] => [
-//     { name: "Thomas", surname: "Goldman" },
-//     { name: "Susie", surname: "Quattro" },
-//     { name: "", surname: "" }
-//   ];
   
   export const getColumns = (): Column[] => [
     { columnId: "id", width: 150 },

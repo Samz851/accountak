@@ -1,9 +1,8 @@
-import { CardWithContent, Drawer } from "@/components";
+import { CardWithContent } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { IAccount, IAccountsBranch } from "@/interfaces";
-import { IResourceComponentsProps, useNavigation, useShow } from "@refinedev/core";
-import { Flex, Grid, Typography, theme } from "antd";
-import React from "react";
+import { IAccountsBranch } from "@/interfaces";
+import { useNavigation } from "@refinedev/core";
+import { Flex, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {

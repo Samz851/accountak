@@ -1,9 +1,8 @@
-import { CardWithContent, Drawer } from "@/components";
+import { CardWithContent } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { ICompany, IContact, IAccount } from "@/interfaces";
-import { IResourceComponentsProps, useBack, useNavigation, useShow } from "@refinedev/core";
-import { Flex, Grid, Typography, theme } from "antd";
-import React from "react";
+import { IContact } from "@/interfaces";
+import { useNavigation } from "@refinedev/core";
+import { Flex, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -11,17 +10,9 @@ type Props = {
 };
 
 export const ContactView = ({contact}: Props) => {
-    const { list } = useNavigation();
-    const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IContact>();
     const { t } = useTranslation();
     const { show } = useNavigation();
     const { token } = theme.useToken();
-    // const { back } = useBack();
-
-    // const { data } = queryResult;
-    // const company = data?.data;
-
     return (
         <Flex
             vertical

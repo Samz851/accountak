@@ -1,39 +1,22 @@
 import {
     useTranslate,
     HttpError,
-    getDefaultFilter,
-    useExport,
-    useGo,
-    useNavigation,
+    getDefaultFilter, useGo,
+    useNavigation
 } from "@refinedev/core";
 import {
     List,
-    useTable,
-    DateField,
-    FilterDropdown,
-    getDefaultSortOrder,
-    ExportButton,
-    CreateButton,
+    useTable, FilterDropdown, CreateButton
 } from "@refinedev/antd";
 import {
-    Table,
-    Avatar,
-    Typography,
-    theme,
-    InputNumber,
-    Input,
-    Select,
-    Button,
-    Row,
+    Table, Typography,
+    theme, Input, Button
 } from "antd";
 
-import { IAccount, IAccountFilterVariables } from "../../interfaces";
+import { IAccount, IAccountFilterVariables } from "@/interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal, UserStatus } from "../../components";
-import { PropsWithChildren, useEffect, useId, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
-import { chunk, forEach, initial } from "lodash";
 import { useStyles } from "./styled";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
@@ -59,20 +42,6 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         pagination: {
             mode: "off"
           },
-    });
-
-    const { isLoading, triggerExport } = useExport<IAccount>({
-        sorters,
-        filters,
-        pageSize: 50,
-        maxItemCount: 50,
-        mapData: (item) => {
-            return {
-                code: item.code,
-                fullName: item.name,
-                parent: item.parent?.name
-            };
-        },
     });
 
     const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
@@ -227,15 +196,6 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                             />
                         </FilterDropdown>
                     )}
-                    // render={(value) => (
-                    //     <Typography.Text
-                    //     style={{
-                    //         whiteSpace: "nowrap",
-                    //     }}
-                    // >
-                    //     {value.name}
-                    // </Typography.Text>
-                    // )}
                 />
                 <Table.Column
                     key="balance"
@@ -243,40 +203,6 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     title={t("accounts.fields.balance")}
                     render={(_, record) => _.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
                 />
-                {/* <Table.Column
-                    key="createdAt"
-                    dataIndex="createdAt"
-                    title={t("users.fields.createdAt")}
-                    render={(value) => <DateField value={value} format="LLL" />}
-                    sorter
-                />
-                <Table.Column
-                    key="isActive"
-                    dataIndex="isActive"
-                    title={t("users.fields.isActive.label")}
-                    render={(value) => {
-                        return <UserStatus value={value} />;
-                    }}
-                    sorter
-                    defaultSortOrder={getDefaultSortOrder("isActive", sorters)}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={t(
-                                    "users.filter.isActive.placeholder",
-                                )}
-                            >
-                                <Select.Option value="true">
-                                    {t("users.fields.isActive.true")}
-                                </Select.Option>
-                                <Select.Option value="false">
-                                    {t("users.fields.isActive.false")}
-                                </Select.Option>
-                            </Select>
-                        </FilterDropdown>
-                    )}
-                /> */}
                 <Table.Column<IAccount>
                     fixed="right"
                     title={t("table.actions")}

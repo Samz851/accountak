@@ -1,38 +1,26 @@
 import {
     useTranslate,
     HttpError,
-    getDefaultFilter,
-    useExport,
-    useGo,
-    useNavigation,
+    getDefaultFilter, useGo,
+    useNavigation
 } from "@refinedev/core";
 import {
     List,
-    useTable,
-    DateField,
-    FilterDropdown,
-    getDefaultSortOrder,
-    ExportButton,
-    CreateButton,
+    useTable, FilterDropdown, CreateButton
 } from "@refinedev/antd";
 import {
-    Table,
-    Avatar,
-    Typography,
+    Table, Typography,
     theme,
     InputNumber,
-    Input,
-    Select,
-    Button,
-    Row,
+    Input, Button,
+    Row
 } from "antd";
 
 import { IAccount, ICompany, IContact } from "@/interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal, UserStatus } from "@/components";
-import { PropsWithChildren, useId } from "react";
+import { PaginationTotal } from "@/components";
+import { PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
-import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 
 export const ContactsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -55,19 +43,6 @@ export const ContactsList = ({ children }: PropsWithChildren) => {
         pagination: {
             mode: "server",
           },
-    });
-
-    const { isLoading, triggerExport } = useExport<IContact>({
-        sorters,
-        filters,
-        pageSize: 50,
-        maxItemCount: 50,
-        mapData: (item) => {
-            return {
-                id: item.id,
-                fullName: item.id,
-            };
-        },
     });
 
     return (
@@ -226,59 +201,7 @@ export const ContactsList = ({ children }: PropsWithChildren) => {
                         ))
                     }
                 />
-                {/* <Table.Column<IContact[]>
-                    key="contacts"
-                    dataIndex={["contacts"]}
-                    title={t("contacts.fields.contacts")}
-                    render={(value: IContact[]) =>
-                        value.map(child => (
-                            <Row key={child?.id}>
-
-                                <Typography.Text
-                                    style={{
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    ({child.id}) {child?.name}
-                                </Typography.Text>
-                            </Row>
-                        ))
-                    }
-                /> */}
-                {/* <Table.Column
-                    key="createdAt"
-                    dataIndex="createdAt"
-                    title={t("users.fields.createdAt")}
-                    render={(value) => <DateField value={value} format="LLL" />}
-                    sorter
-                />
-                <Table.Column
-                    key="isActive"
-                    dataIndex="isActive"
-                    title={t("users.fields.isActive.label")}
-                    render={(value) => {
-                        return <UserStatus value={value} />;
-                    }}
-                    sorter
-                    defaultSortOrder={getDefaultSortOrder("isActive", sorters)}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Select
-                                style={{ width: "100%" }}
-                                placeholder={t(
-                                    "users.filter.isActive.placeholder",
-                                )}
-                            >
-                                <Select.Option value="true">
-                                    {t("users.fields.isActive.true")}
-                                </Select.Option>
-                                <Select.Option value="false">
-                                    {t("users.fields.isActive.false")}
-                                </Select.Option>
-                            </Select>
-                        </FilterDropdown>
-                    )}
-                /> */}
+                
                 <Table.Column<ICompany>
                     fixed="right"
                     title={t("table.actions")}

@@ -1,9 +1,7 @@
-import { CardWithContent, Drawer } from "@/components";
+import { CardWithContent } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { IAccount, IAccountsBranch } from "@/interfaces";
-import { IResourceComponentsProps, useNavigation, useShow } from "@refinedev/core";
-import { Flex, Grid, Typography, theme } from "antd";
-import React from "react";
+import { IAccount } from "@/interfaces";
+import { Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -12,8 +10,6 @@ type Props = {
 
 export const AccountInfoView = ({account}: Props) => {
     const { t } = useTranslation();
-    const { show } = useNavigation();
-    const { token } = theme.useToken();
 
     // const { data } = queryResult;
     // const company = data?.data;

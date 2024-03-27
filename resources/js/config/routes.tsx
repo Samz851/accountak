@@ -1,37 +1,17 @@
 import { ReactElement } from "react";
-import { Route, Outlet } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { DashboardPage } from "@/pages/dashboard";
-import { OrderList, OrderShow } from "@/pages/orders";
-import { CustomerShow, CustomerList } from "@/pages/customers";
 import { AccountCreatePage, AccountShow, AccountsList } from "@/pages/accounts";
 import { TransactionCreatePage, TransactionsList } from "@/pages/transactions";
 import { TaxesList, TaxCreatePage } from "@/pages/taxes";
 
-import {
-    CourierList,
-    CourierShow,
-    CourierCreate,
-    CourierEdit,
-} from "@/pages/couriers";
-import {
-    ProductList,
-    ProductCreate,
-    ProductEdit,
-    ProductShow,
-} from "@/pages/products";
-import { StoreCreate, StoreEdit, StoreList } from "@/pages/stores";
-import { CategoryList } from "@/pages/categories";
 import { CompaniesList, CompanyCreatePage } from "@/pages/companies";
 import { ContactCreatePage, ContactsList } from "@/pages/contacts";
 import { CompanyShow } from "@/pages/companies/show";
 import { ContactShow } from "@/pages/contacts/show";
 import { TaxShow } from "@/pages/taxes/show";
-import { AccountsBranchCreatePage, AccountsBranchShow, AccountsBranchesList } from "@/pages/accountsBranches";
+import { AccountsBranchCreatePage, AccountsBranchShow } from "@/pages/accountsBranches";
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
-import { DisplayAccountsList } from "@/pages/accounts/newlist";
-import { StatementCreatePage } from "@/pages/statements";
-import { FortuneSheetComponent, FortuneBSheetComponent } from "@/pages/devSamples/fortuneSheet";
-import { CreateGeneralPage } from "@/pages/create";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -73,9 +53,9 @@ export const routes: ReactElement[] = [
             path="create"
             element={<TransactionCreatePage />} />
     </Route>,
-    <Route path="/statements">
-        <Route index element={<StatementCreatePage />} />
-    </Route>,
+    // <Route path="/statements">
+    //     <Route index element={<StatementCreatePage />} />
+    // </Route>,
     <Route path="/taxes">
         <Route index element={<TaxesList />} />
         <Route
@@ -97,92 +77,10 @@ export const routes: ReactElement[] = [
             element={<AccountsBranchCreatePage />}
         />
     </Route>,
-    <Route path="/dev_sample">
-        <Route index element={<FortuneBSheetComponent />} />
-    </Route>,
-    <Route path="/create_general">
-        <Route index element={<CreateGeneralPage />} />
-    </Route>
-    // <Route path="/orders">
-    //     <Route index element={<OrderList />} />
-    //     <Route
-    //         path="show/:id"
-    //         element={<OrderShow />}
-    //     />
+    // <Route path="/dev_sample">
+    //     <Route index element={<FortuneBSheetComponent />} />
     // </Route>,
-    // <Route
-    //     path="/customers"
-    //     element={
-    //         <CustomerList>
-    //             <Outlet />
-    //         </CustomerList>
-    //     }
-    // >
-    //     <Route index element={null} />
-    //     <Route
-    //         path="show/:id"
-    //         element={<CustomerShow />}
-    //     />
-    // </Route>,
-    // <Route
-    //     path="/products"
-    //     element={
-    //         <ProductList>
-    //             <Outlet />
-    //         </ProductList>
-    //     }
-    // >
-    //     <Route index element={null} />
-    //     <Route
-    //         path="create"
-    //         element={<ProductCreate />}
-    //     />
-    //     <Route
-    //         path="show/:id"
-    //         element={<ProductShow />}
-    //     />
-    //     <Route
-    //         path="edit/:id"
-    //         element={<ProductEdit />}
-    //     />
-    // </Route>,
-    // <Route path="/stores">
-    //     <Route index element={<StoreList />} />
-    //     <Route
-    //         path="create"
-    //         element={<StoreCreate />}
-    //     />
-    //     <Route
-    //         path="edit/:id"
-    //         element={<StoreEdit />}
-    //     />
-    // </Route>,
-    // <Route
-    //     path="/categories"
-    //     element={<CategoryList />}
-    // />,
-    // <Route path="/couriers">
-    //     <Route
-    //         element={
-    //             <CourierList>
-    //                 <Outlet />
-    //             </CourierList>
-    //         }
-    //     >
-    //         <Route index element={null} />
-    //         <Route
-    //             path="create"
-    //             element={<CourierCreate />}
-    //         />
-    //     </Route>
-
-    //     <Route
-    //         path="edit/:id"
-    //         element={<CourierEdit />}
-    //     />
-    //     <Route
-    //         path="show/:id"
-    //         element={<CourierShow />}
-    //     />
+    // <Route path="/create_general">
+    //     <Route index element={<CreateGeneralPage />} />
     // </Route>
 ]
