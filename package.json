@@ -2,10 +2,11 @@
     "name": "accountak",
     "version": "1.0.0",
     "scripts": {
-        "build": "tsc && refine build",
+        "build-refine": "tsc && refine build",
         "dev": "refine dev --host",
         "preview": "refine start",
-        "refine": "refine"
+        "refine": "refine",
+        "build": "npx vite build -d"
     },
     "dependencies": {
         "@ant-design/graphs": "^1.2.7",
