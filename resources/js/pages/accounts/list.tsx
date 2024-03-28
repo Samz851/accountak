@@ -18,6 +18,7 @@ import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useStyles } from "./styled";
+import { Key } from "antd/es/table/interface";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -46,6 +47,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
 
     const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
+    const [ expandedRows, setExpandedRows ] = useState<Key[]>();
 
     useEffect(()=>{
         if ( ! tableProps.loading ) {
@@ -87,6 +89,20 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         setFilters([{field: 'parent', operator: 'eq', value: record.id}], 'merge');
     }
 
+    const addExpandedKeysValue = (keys) => {
+        let key = keys.pop();
+        console.log(key);
+        console.log(! expandedRows, expandedRows?.length, expandedRows)
+        console.log(keys);
+        if ( ! expandedRows ) {
+            setExpandedRows([key]);
+        } else if ( key.startsWith(expandedRows[0]) ) {
+            setExpandedRows([...expandedRows, key]);
+        } else {
+            setExpandedRows([key]);
+        }
+    }
+
     return (
         <List
             breadcrumb={false}
@@ -121,13 +137,18 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 scroll={{ x: true }}
                 expandable={{
                     onExpand: onExpandAccount,
-                    indentSize: 30
+                    // onExpandedRowsChange: (keys) => addExpandedKeysValue(keys),
+                    rowExpandable: (record) => !! record.has_children ,
+                    indentSize: 30,
+                    expandedRowClassName: (record) => record.taxonomy,
+                    // expandedRowKeys: expandedRows
                 }}
             >
                 <Table.Column
                     key="code"
                     dataIndex="code"
                     title="ID #"
+                    rowScope="row"
                     render={(value) => (
                         <Typography.Text
                             style={{
@@ -160,6 +181,16 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                             />
                         </FilterDropdown>
                     )}
+                    // onCell={(record: IAccount, index) => { 
+                    //     console.log(index, record);
+                    //     if ( record.has_children && record.children?.length ) {
+                    //         return { 
+                    //             rowSpan: record.children.length + 1,
+                    //             colSpan: record.code.split(/(.{2})/).filter(O=>O).length
+                    //         }
+                    //     }
+                    //     return { }
+                    // }}
                 />
                 <Table.Column
                     key="name"

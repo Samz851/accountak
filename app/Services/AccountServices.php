@@ -67,7 +67,7 @@ class AccountServices implements AccountServiceContract
 
             foreach ($accounts as &$value) {
                 if ( $value['has_children'] && ! isset($value['children'])) {
-                    $value['children'][] = ['name' => 'fake', 'id' => $value['id'] * 125];
+                    $value['children'] = [];
                 }
             }
         } else {

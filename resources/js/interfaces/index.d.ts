@@ -20,6 +20,7 @@ export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
     balance: number;
+    children?: IBaseAccount[];
 }
 
 export interface IBaseAccount {
@@ -30,6 +31,7 @@ export interface IBaseAccount {
     description: string;
     code: string;
     has_children?: boolean;
+    taxonomy: string;
     [Symbol.iterator]?(): IterableIterator<number>;
 }
 
