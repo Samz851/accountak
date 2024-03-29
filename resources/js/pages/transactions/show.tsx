@@ -4,14 +4,8 @@ import {
     useNavigation,
 } from "@refinedev/core";
 import { Flex, Grid } from "antd";
-import { IAccount } from "../../interfaces";
-import {
-    CardWithContent,
-    CustomerInfoList,
-    CustomerInfoSummary,
-    CustomerOrderHistory,
-    Drawer,
-} from "../../components";
+import { IAccount } from "@/interfaces";
+import { CardWithContent, Drawer } from "@/components";
 
 export const AccountShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
@@ -34,7 +28,7 @@ export const AccountShow: React.FC<IResourceComponentsProps> = () => {
                     padding: "32px",
                 }}
             >
-                <CardWithContent title={account?.account_name} />
+                <CardWithContent title={account?.name} />
             </Flex>
         </Drawer>
     );

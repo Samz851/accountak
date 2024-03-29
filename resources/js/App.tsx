@@ -32,9 +32,12 @@ const App: React.FC = () => {
     // This hook is used to automatically login the user.
     // We use this hook to skip the login page and demonstrate the application more quickly.
     const { loading } = useAutoLoginForDemo();
-
+    const { PROD, VITE_DEV_APP_URL, VITE_PROD_APP_URL} = import.meta.env;
     const API_URL = "https://api.finefoods.refine.dev";
-    const LARAVEL_API_URL = `${import.meta.env.VITE_APP_URL}/api`;
+    const LARAVEL_API_URL = `${ PROD 
+                                ? VITE_PROD_APP_URL
+                                : VITE_DEV_APP_URL
+                            }/api`;
     const laravelDataProvider = jsonServerDataProvider(LARAVEL_API_URL);
     const dataProvider = jsonServerDataProvider(API_URL);
 

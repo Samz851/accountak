@@ -1,22 +1,15 @@
 import {
     useShow,
-    IResourceComponentsProps,
-    useNavigation,
-    useBack,
+    IResourceComponentsProps, useBack
 } from "@refinedev/core";
-import { Flex, Grid } from "antd";
-import { IAccount, IContact } from "../../interfaces";
+import { Grid } from "antd";
+import { IContact } from "@/interfaces";
 import {
-    CardWithContent,
-    CustomerInfoList,
-    CustomerInfoSummary,
-    CustomerOrderHistory,
-    Drawer,
-} from "../../components";
+    Drawer
+} from "@/components";
 import { ContactView } from "./components/contactView";
 
 export const ContactShow: React.FC<IResourceComponentsProps> = () => {
-    const { list } = useNavigation();
     const back = useBack();
     const breakpoint = Grid.useBreakpoint();
     const { queryResult } = useShow<IContact>();

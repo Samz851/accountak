@@ -18,6 +18,8 @@ export default defineConfig({
      },
      build: {
         sourcemap: true,
-        manifest: true
+        manifest: true,
+        outDir: './public/build',
+        emptyOutDir: false
      }
 });

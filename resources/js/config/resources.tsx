@@ -1,14 +1,8 @@
 import type { IResourceItem } from "@refinedev/core";
 import {
-    ShoppingOutlined,
-    ShopOutlined,
-    DashboardOutlined,
-    UserOutlined,
-    UnorderedListOutlined,
-    TagsOutlined,
+    DashboardOutlined
 } from "@ant-design/icons";
 
-import { BikeWhiteIcon } from "../components/icons";
 
 import i18next from "i18next";
 
@@ -107,56 +101,9 @@ export const resources: IResourceItem[] = [
             dataProviderName: "laravel"
         }
     },
-    // {
-    //     name: "orders",
-    //     list: "/orders",
-    //     show: "/orders/show/:id",
-    //     meta: {
-    //         icon: <ShoppingOutlined />,
-    //     },
-    // },
-    // {
-    //     name: "users",
-    //     list: "/customers",
-    //     show: "/customers/show/:id",
-    //     meta: {
-    //         icon: <UserOutlined />,
-    //     },
-    // },
-    // {
-    //     name: "products",
-    //     list: "/products",
-    //     create: "/products/create",
-    //     edit: "/products/edit/:id",
-    //     show: "/products/show/:id",
-    //     meta: {
-    //         icon: <UnorderedListOutlined />,
-    //     },
-    // },
-    // {
-    //     name: "categories",
-    //     list: "/categories",
-    //     meta: {
-    //         icon: <TagsOutlined />,
-    //     },
-    // },
-    // {
-    //     name: "stores",
-    //     list: "/stores",
-    //     create: "/stores/create",
-    //     edit: "/stores/edit/:id",
-    //     meta: {
-    //         icon: <ShopOutlined />,
-    //     },
-    // },
-    // {
-    //     name: "couriers",
-    //     list: "/couriers",
-    //     create: "/couriers/create",
-    //     edit: "/couriers/edit/:id",
-    //     show: "/couriers/show/:id",
-    //     meta: {
-    //         icon: <BikeWhiteIcon />,
-    //     },
-    // },
+    {
+        name: "create_general",
+        list: "/create_general",
+    },
+
 ]

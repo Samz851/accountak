@@ -1,9 +1,8 @@
-import { CardWithContent, Drawer } from "@/components";
+import { CardWithContent } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { IAccount, IAccountsBranch } from "@/interfaces";
-import { IResourceComponentsProps, useNavigation, useShow } from "@refinedev/core";
-import { Flex, Grid, Typography, theme } from "antd";
-import React from "react";
+import { IAccountsBranch } from "@/interfaces";
+import { useNavigation } from "@refinedev/core";
+import { Flex, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -48,25 +47,25 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
                 </Typography.Text>
             </CardWithContent>
             {
-                accountsBranch?.parent_accounts_branch &&
-                <CardWithContent title={t('accounts_branches.fields.parent_branch')}>
+                accountsBranch?.parent &&
+                <CardWithContent title={t('accounts_branches.fields.parent')}>
                     <Typography.Link
                         strong
-                        onClick={() => show('accounts_branches', accountsBranch.parent_branch?.id || 0, 'push')}
+                        onClick={() => show('accounts_branches', accountsBranch.parent?.id || 0, 'push')}
                         style={{
                             whiteSpace: "nowrap",
                             color: token.colorTextHeading,
                         }}
                     >
-                        {accountsBranch.parent_branch?.name}
+                        {accountsBranch.parent?.name}
                     </Typography.Link>
                 </CardWithContent>
             }
             {
-                accountsBranch?.child_branches &&
-                <CardWithContent title={t('accounts_branches.fields.child_branches')}>
+                accountsBranch?.children &&
+                <CardWithContent title={t('accounts_branches.fields.children')}>
                 {
-                    accountsBranch?.child_branches?.map(branch => (
+                    accountsBranch?.children?.map(branch => (
                         <Flex vertical key={branch.id}>
                             <Typography.Link
                                 strong
@@ -95,7 +94,7 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
                                 color: token.colorTextHeading,
                             }}
                         >
-                            {account.account_name}
+                            {account.name}
                         </Typography.Link>
                     </Flex>
                 ))

@@ -1,76 +1,39 @@
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-import { useModalForm } from "@refinedev/antd";
+import { useModalForm, useTable } from "@refinedev/antd";
 import {
-    CreateResponse,
-    HttpError,
-    useCreateMany,
-    useGetToPath,
-    useGo,
-    useList,
-    useTranslate
+    HttpError, useGetToPath,
+    useGo, useTranslate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
 
 import {
-    DeleteOutlined,
-    LeftOutlined,
-    MailOutlined,
-    PlusCircleOutlined,
-    UserOutlined,
+    LeftOutlined
 } from "@ant-design/icons";
 import {
-    Button,
-    Col,
     Form,
     Input,
-    Modal,
-    Row,
-    Select,
-    Space,
-    TreeSelect,
-    Typography,
+    Modal, TreeSelect
 } from "antd";
 
-import { IAccount, IAccountsBranch } from "@/interfaces";
+import { IAccount, IAccountFilterVariables } from "@/interfaces";
 
-import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
-import { useAccountsSelect } from "@/hooks/useAccountsSelect";
-import { useState } from "react";
-// import { SelectOptionWithAvatar } from "@/components";
-// import { Company } from "@/graphql/schema.types";
-// import {
-//     CreateCompanyMutation,
-//     CreateCompanyMutationVariables,
-// } from "@/graphql/types";
-// import { useUsersSelect } from "@/hooks/useUsersSelect";
-
-// import { COMPANY_CREATE_MUTATION } from "./queries";
-
-type Props = {
-    isOverModal?: boolean;
-};
+import { useEffect, useState } from "react";
 
 type FormValues = {
-    account_name: string;
+    name: string;
     account_branch_id: number;
 };
 
-export const AccountCreatePage = ({ isOverModal }: Props) => {
+export const AccountCreatePage = (props) => {
+    console.log(`Create Account`, props);
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
-    const { pathname } = useLocation();
     const go = useGo();
-    const [typeValue, setTypeValue] = useState<string>();
-    const [parentValue, setParentValue] = useState<string>();
     const t = useTranslate();
 
-    const onChangeType = (newValue: string) => {
-        setTypeValue(newValue);
-    };
-    const onChangeParent = (newValue: string) => {
-        setParentValue(newValue);
-    };
+    const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
+    const [ expandedAccount, setExpandedAccount ] = useState('');
 
     const { formProps, modalProps, close, onFinish } = useModalForm<IAccount, HttpError, FormValues
     >({
@@ -78,26 +41,70 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
         defaultVisible: true,
         resource: "accounts",
         redirect: false,
-        warnWhenUnsavedChanges: !isOverModal,
+        warnWhenUnsavedChanges: !props.isOverModal,
     });
 
-    const { data } = useList<IAccountsBranch>({
-        resource: "accounts_branches",
-        filters: [
-            {
-                field: 'noChildren',
-                operator: 'eq',
-                value: true
+    const { tableProps: AccountselectProps, filters, setFilters, sorters } = useTable<
+        IAccount,
+        HttpError,
+        IAccountFilterVariables
+    >({
+        filters: {
+            mode: "server",
+        },
+        sorters: {
+            mode: "off",
+        },
+        syncWithLocation: true,
+        pagination: {
+            mode: "off"
+          },
+    });
+
+    const onExpandAccount = (keys) => {
+        let parentID = keys.pop();
+        setExpandedAccount(parentID);
+        setFilters([{field: 'parent', operator: 'eq', value: parentID}], 'merge');
+    }
+
+    useEffect(()=>{
+        if ( ! AccountselectProps.loading ) {
+            if ( accountsOptions.length === 0 ) {
+                setAccountsOptions([...AccountselectProps.dataSource as any]);
+            } else if ( expandedAccount !== '' ) {
+                setAccountsOptions((prevAccounts) => {
+                    const updateAccounts = (accounts) => {
+                        return [...(accounts as any)?.map(account => {
+                            if ( expandedAccount.startsWith(account.code) ) {
+                                if ( expandedAccount === account.code ) {
+                                    return {
+                                        ...account,
+                                        children: [...AccountselectProps.dataSource as any]
+                                    }
+                                }
+                                if ( expandedAccount.length > account.code.length ) {
+                                    return {
+                                        ...account,
+                                        children: updateAccounts(account.children)
+                                    }
+                                }
+                            } else {
+                                return account;
+                            }
+                        })]
+                    }
+                    return [...updateAccounts(prevAccounts)];
+    
+                })
             }
-        ]
-    });
+        }
 
-    const accountBranches = data?.data ?? [];
+    }, [AccountselectProps.dataSource]);
 
     return (
         <Modal
             {...modalProps}
-            mask={!isOverModal}
+            mask={!props.isOverModal}
             onCancel={() => {
                 close();
                 go({
@@ -126,7 +133,7 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                 onFinish={async (values) => {
                     try {
                         const data = await onFinish({
-                            account_name: values.account_name,
+                            name: values.name,
                             account_branch_id: values.account_branch_id,
                         });
                         close();
@@ -146,60 +153,33 @@ export const AccountCreatePage = ({ isOverModal }: Props) => {
                             type: "replace",
                         });
 
-                        // const createdAccount = (data as CreateResponse<IAccount>)
-                        //     ?.data;
-
-                        // if ((values.contacts ?? [])?.length > 0) {
-                        //     await createManyMutateAsync({
-                        //         resource: "contacts",
-                        //         values:
-                        //             values.contacts?.map((contact) => ({
-                        //                 ...contact,
-                        //                 companyId: createdCompany.id,
-                        //                 salesOwnerId:
-                        //                     createdCompany.salesOwner.id,
-                        //             })) ?? [],
-                        //         successNotification: false,
-                        //     });
-                        // }
-
-                        // go({
-                        //     to: searchParams.get("to") ?? pathname,
-                        //     query: {
-                        //         companyId: createdCompany.id,
-                        //         to: undefined,
-                        //     },
-                        //     options: {
-                        //         keepQuery: true,
-                        //     },
-                        //     type: "replace",
-                        // });
                     } catch (error) {
                         Promise.reject(error);
                     }
                 }}
             >
                 <Form.Item
-                    label={t("accounts.fields.account_name")}
-                    name="account_name"
+                    label={t("accounts.fields.name")}
+                    name="name"
                     rules={[{ required: true }]}
                 >
                     <Input placeholder="Please enter account name" />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts.fields.account_branch")}
+                    label={t("accounts.fields.parent")}
                     name="account_branch_id"
                     rules={[{ required: true }]}
                 >
                     <TreeSelect
                         style={{ width: '100%' }}
-                        fieldNames={{label: "title", "value": "key"}}
+                        // loadData={loadMoreAccounts as any}
+                        fieldNames={{label: "code_label", "value": "id"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountBranches}
+                        treeData={accountsOptions}
                         placeholder="Please select"
-                        treeDefaultExpandAll
-                        onChange={onChangeType}
+                        // onChange={onChangeType}
                         allowClear={true}
+                        onTreeExpand={onExpandAccount}
                         />
 
                 </Form.Item>

@@ -1,59 +1,32 @@
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { useModalForm, useSelect } from "@refinedev/antd";
 import dayjs from "dayjs";
 import {
-    CreateResponse,
-    HttpError,
-    useCreateMany,
-    useGetToPath,
+    HttpError, useGetToPath,
     useGo,
     useTranslate
 } from "@refinedev/core";
-// import { GetFields, GetVariables } from "@refinedev/nestjs-query";
 
 import {
-    DeleteOutlined,
-    LeftOutlined,
-    MailOutlined,
-    MinusCircleOutlined,
-    PlusCircleOutlined,
-    PlusOutlined,
-    UserOutlined,
+    LeftOutlined, MinusCircleOutlined, PlusOutlined
 } from "@ant-design/icons";
 import {
     Button,
     Col,
     DatePicker,
     Divider,
-    Form,
-    Grid,
-    Input,
+    Form, Input,
     InputNumber,
     Modal,
     Row,
-    Select,
-    Space,
-    Switch,
-    TreeSelect,
-    Typography,
+    Select, Switch, Typography
 } from "antd";
 
 import { IAccount, ITax, ITransaction } from "@/interfaces";
 
-import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
-import { useAccountsSelect } from "@/hooks/useAccountsSelect";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useStyles } from "./styled";
-// import { SelectOptionWithAvatar } from "@/components";
-// import { Company } from "@/graphql/schema.types";
-// import {
-//     CreateCompanyMutation,
-//     CreateCompanyMutationVariables,
-// } from "@/graphql/types";
-// import { useUsersSelect } from "@/hooks/useUsersSelect";
-
-// import { COMPANY_CREATE_MUTATION } from "./queries";
 
 type Props = {
     isOverModal?: boolean;
@@ -81,24 +54,14 @@ type totalAccounts = {
 export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
-    const { pathname } = useLocation();
     const go = useGo();
     const t = useTranslate();
     const [ totalDebit, setTotalDebit ] = useState<totalAccounts>({});
     const [ totalCredit, setTotalCredit ] = useState<totalAccounts>({});
     const [ accountsBalanceError, setAccountsBalanceError ] = useState(false)
-    const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
 
     const { styles } = useStyles();
-    // const onChangeType = (newValue: string) => {
-    //     // console.log(newValue);
-    //     setTypeValue(newValue);
-    // };
-    // const onChangeParent = (newValue: string) => {
-    //     // console.log(newValue);
-    //     setParentValue(newValue);
-    // };
 
     const { form, formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
     >({
@@ -109,17 +72,11 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
         warnWhenUnsavedChanges: !isOverModal,
     });
 
-    // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
-    const { queryResult: accountsQueryResult } = useSelect<IAccount>({
+    const { selectProps: AccountselectProps } = useSelect<IAccount>({
         resource: "accounts",
-        optionLabel: "account_name",
-        optionValue: "id"
+        optionLabel: "code_label" as any,
+        optionValue: "id" as any
     });
-
-    const accountsOptions = accountsQueryResult.data?.data.map((item) => ({
-        label: item.account_name,
-        value: item.id,
-    })) ?? [];
 
     const { selectProps: taxesSelectProps } = useSelect<ITax>({
         resource: "taxes",
@@ -139,12 +96,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
         }
         cb(name);
 
-    }
-
-    const getErrors = () => {
-        let errs = form.getFieldsError();
-        let vals = form.getFieldsValue();
-        console.log('errors', vals);
     }
 
     return (
@@ -175,7 +126,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
         >
             <Form
                 {...formProps}
-                // layout="vertical"
                 onFinish={async (values) => {
                     const totalDebitAmount = Object.values(totalDebit).reduce((acc, cur) => acc + cur, 0);
                     const totalCreditAmount = Object.values(totalCredit).reduce((acc, cur) => acc + cur, 0)
@@ -232,7 +182,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                 <Row justify={"space-between"} align={"middle"} gutter={18}>
                     <Col span={16}>
                         <Form.Item
-                            // labelCol={{span: 8}}
                             label={t("transactions.fields.name")}
                             name="name"
                             rules={[{ required: true }]}
@@ -240,7 +189,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            // labelCol={{span: 8}}
                             label={t("transactions.fields.description")}
                             name="description"
                             rules={[{ required: true }]}
@@ -285,7 +233,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             rules={[
                                 {
                                 validator: async (_, debit_accounts) => {
-                                    // console.log(_, debit_accounts);
                                     if (!debit_accounts || debit_accounts.length < 1) {
                                     return Promise.reject(new Error('At least 1 Debit account'));
                                     }
@@ -302,7 +249,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                             </Col>
                                             <Col span={16} style={{textAlign: "center", borderRight: "1px solid grey"}}>
                                                 <Form.Item
-                                                    // label={t("transactions.fields.debit_account")}
                                                     name={[name, 'id']}
                                                     rules={[{required: true}]}
                                                     validateStatus={accountsBalanceError as any}
@@ -312,13 +258,12 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                         style={{ width: 300 }}
                                                         onChange={value => setSelectedDebitAccount(value)}
                                                         filterOption={true}
-                                                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                                        options={AccountselectProps.options}
                                                     />
                                                 </Form.Item>
                                             </Col>
                                             <Col span={6}>
                                                 <Form.Item
-                                                    // label={t("transactions.fields.amount")}
                                                     name={[name, "amount"]}
                                                     rules={[{ required: true }]}
                                                     validateStatus={accountsBalanceError as any}
@@ -366,7 +311,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             rules={[
                                 {
                                 validator: async (_, credit_accounts) => {
-                                    // console.log(_, credit_accounts);
                                     if (!credit_accounts || credit_accounts.length < 1) {
                                     return Promise.reject(new Error('At least 1 Credit account'));
                                     }
@@ -393,7 +337,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                         style={{ width: 300 }}
                                                         onChange={value => setSelectedDebitAccount(value)}
                                                         filterOption={true}
-                                                        options={[...accountsOptions?.filter(item => item.value !== selectedCreditAccount)]}
+                                                        options={AccountselectProps.options}
                                                     />
                                                 </Form.Item>
                                             </Col>
@@ -456,7 +400,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                             <Select
                                 style={{ width: 300 }}
                                 filterOption={true}
-                                options={accountsOptions}
+                                options={AccountselectProps.options}
                             />
                         </Form.Item>
                         <Form.Item
@@ -480,7 +424,6 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                     </Col>
                 </Row>
             </Form>
-            <Button onClick={getErrors}>Get errors</Button>
         </Modal>
     );
 };

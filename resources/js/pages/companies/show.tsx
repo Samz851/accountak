@@ -1,22 +1,15 @@
 import {
     useShow,
-    IResourceComponentsProps,
-    useNavigation,
-    useBack,
+    IResourceComponentsProps, useBack
 } from "@refinedev/core";
-import { Flex, Grid } from "antd";
-import { ICompany, IContact } from "@/interfaces";
+import { Grid } from "antd";
+import { ICompany } from "@/interfaces";
 import {
-    CardWithContent,
-    CustomerInfoList,
-    CustomerInfoSummary,
-    CustomerOrderHistory,
-    Drawer,
+    Drawer
 } from "@/components";
 import { CompanyView } from "./components/companyView";
 
 export const CompanyShow: React.FC<IResourceComponentsProps> = () => {
-    const { list } = useNavigation();
     const back = useBack();
     const breakpoint = Grid.useBreakpoint();
     const { queryResult } = useShow<ICompany>();

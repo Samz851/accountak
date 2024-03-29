@@ -1,9 +1,7 @@
-import { CardWithContent, Drawer } from "@/components";
+import { CardWithContent } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { IAccount, IAccountsBranch } from "@/interfaces";
-import { IResourceComponentsProps, useNavigation, useShow } from "@refinedev/core";
-import { Flex, Grid, Typography, theme } from "antd";
-import React from "react";
+import { IAccount } from "@/interfaces";
+import { Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -12,8 +10,6 @@ type Props = {
 
 export const AccountInfoView = ({account}: Props) => {
     const { t } = useTranslation();
-    const { show } = useNavigation();
-    const { token } = theme.useToken();
 
     // const { data } = queryResult;
     // const company = data?.data;
@@ -38,13 +34,13 @@ export const AccountInfoView = ({account}: Props) => {
                             margin: 0,
                         }}
                     >
-                        {account?.account_name}
+                        {account?.name}
                     </Typography.Title>
                 </Flex>
             </Flex>
-            <CardWithContent title={t('accounts.fields.account_branch')}>
+            <CardWithContent title={t('accounts.fields.parent')}>
                 <Typography.Text>
-                    {account?.account_branch.name}
+                    {account?.parent?.name}
                 </Typography.Text>
             </CardWithContent>
         </Flex>

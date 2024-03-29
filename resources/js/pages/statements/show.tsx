@@ -13,7 +13,6 @@ import {
     CustomerOrderHistory,
     Drawer,
 } from "@/components";
-import { CompanyView } from "./components/companyView";
 
 export const CompanyShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
@@ -29,7 +28,7 @@ export const CompanyShow: React.FC<IResourceComponentsProps> = () => {
             onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
-            <CompanyView company={company} />
+            {/* <CompanyView company={company} /> */}
         </Drawer>
     );
 };

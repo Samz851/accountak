@@ -1,9 +1,7 @@
-import { CardWithContent, Drawer } from "@/components";
+import { CardWithContent } from "@/components";
 import { RandomAvatar } from "@/components/avatar";
-import { ITax, IAccount } from "@/interfaces";
-import { IResourceComponentsProps, useBack, useNavigation, useShow } from "@refinedev/core";
-import { Flex, Grid, Typography, theme } from "antd";
-import React from "react";
+import { ITax } from "@/interfaces";
+import { Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -11,12 +9,7 @@ type Props = {
 };
 
 export const TaxView = ({tax}: Props) => {
-    const { list } = useNavigation();
-    const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<ITax>();
     const { t } = useTranslation();
-    const { show } = useNavigation();
-    const { token } = theme.useToken();
     // const { back } = useBack();
 
     // const { data } = queryResult;

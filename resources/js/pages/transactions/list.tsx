@@ -1,38 +1,26 @@
 import {
     useTranslate,
     HttpError,
-    getDefaultFilter,
-    useExport,
-    useGo,
-    useNavigation,
+    getDefaultFilter, useGo,
+    useNavigation
 } from "@refinedev/core";
 import {
     List,
-    useTable,
-    DateField,
-    FilterDropdown,
-    getDefaultSortOrder,
-    ExportButton,
-    CreateButton,
+    useTable, FilterDropdown, CreateButton
 } from "@refinedev/antd";
 import {
-    Table,
-    Avatar,
-    Typography,
+    Table, Typography,
     theme,
     InputNumber,
-    Input,
-    Select,
-    Button,
-    Row,
+    Input, Button,
+    Row
 } from "antd";
 
 import { IAccount, ITransaction, ITransactionFilterVariables } from "../../interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal, UserStatus } from "../../components";
-import { PropsWithChildren, useId } from "react";
+import { PaginationTotal } from "../../components";
+import { PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
-import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
 
 export const TransactionsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -56,19 +44,6 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
         pagination: {
             mode: "server",
           },
-    });
-
-    const { isLoading, triggerExport } = useExport<ITransaction>({
-        sorters,
-        filters,
-        pageSize: 50,
-        maxItemCount: 50,
-        mapData: (item) => {
-            return {
-                id: item.id,
-                fullName: item.id,
-            };
-        },
     });
 
     return (
@@ -198,13 +173,10 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                                             whiteSpace: "nowrap",
                                         }}
                                     >
-                                        ({account.id}) {account?.account_name}
+                                        ({account.id}) {account?.name}
                                     </Typography.Text>
                                 </Row>
                             ))
-                        // value.child_accounts.map(child => (
-                            
-                        // ))
                     }
                 />
                 <Table.Column<IAccount>
@@ -219,7 +191,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    ({account.id}) {account?.account_name}
+                                    ({account.id}) {account?.name}
                                 </Typography.Text>
                             </Row>
                         ))

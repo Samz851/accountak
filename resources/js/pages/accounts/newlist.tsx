@@ -1,45 +1,20 @@
 import {
-    useTranslate,
-    HttpError,
-    getDefaultFilter,
-    useExport,
-    useGo,
-    useNavigation,
-    useList,
+  useTranslate, useGo,
+  useNavigation,
+  useList
 } from "@refinedev/core";
 import {
-    List,
-    useTable,
-    DateField,
-    FilterDropdown,
-    getDefaultSortOrder,
-    ExportButton,
-    CreateButton,
+  List, CreateButton
 } from "@refinedev/antd";
-import {
-    // Table,
-    Avatar,
-    Typography,
-    theme,
-    InputNumber,
-    Input,
-    Select,
-    Button,
-    Row,
-} from "antd";
 
-import { IAccount, IAccountFilterVariables } from "../../interfaces";
-import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { PaginationTotal, UserStatus } from "../../components";
-import { PropsWithChildren, useId } from "react";
+import { IAccount } from "../../interfaces";
+import { PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
-import { ListTitleButton } from "@/components/listTitleButton/list-title-button";
-import { getColumns, getRows } from "./grid";
 // import { ReactGrid } from "@silevis/reactgrid";
 import { Loader, Table } from 'rsuite';
 import { RowDataType } from "rsuite/esm/Table";
 // import "@silevis/reactgrid/styles.css";
-import "rsuite/Table/styles/index.css"
+import "rsuite/Table/styles/index.css";
 
 const { Column, HeaderCell, Cell } = Table;
 
@@ -47,9 +22,8 @@ type AccountsTreeData = IAccount & RowDataType;
 export const DisplayAccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { show, createUrl } = useNavigation();
+    const { createUrl } = useNavigation();
     const t = useTranslate();
-    const { token } = theme.useToken();
 
     const { data } = useList<AccountsTreeData>({
         resource: "accounts",
@@ -64,20 +38,6 @@ export const DisplayAccountsList = ({ children }: PropsWithChildren) => {
 
     const accounts = data?.data || [];
 
-    // const { isLoading, triggerExport } = useExport<IAccount>({
-    //     pageSize: 50,
-    //     maxItemCount: 50,
-    //     mapData: (item) => {
-    //         return {
-    //             id: item.id,
-    //             fullName: item.name,
-    //             account_branch: item.parent.name
-    //         };
-    //     },
-    // });
-
-    // const rows = getRows(accounts);
-    // const columns = getColumns();
     return (
         <List
             breadcrumb={false}

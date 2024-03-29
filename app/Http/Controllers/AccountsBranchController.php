@@ -76,8 +76,7 @@ class AccountsBranchController extends Controller
     private function getSelectOptions(?bool $noChildren = null): array
     {
         if ($noChildren) {
-            $accountTypes = AccountsBranch::doesntHave('children')
-            ->get()
+            $accountTypes = AccountsBranch::get()
             ->toArray();
         } else {
             $accountTypes = AccountsBranch::doesntHave('parent')
