@@ -12,6 +12,7 @@ import { ContactShow } from "@/pages/contacts/show";
 import { TaxShow } from "@/pages/taxes/show";
 import { AccountsBranchCreatePage, AccountsBranchShow } from "@/pages/accountsBranches";
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
+import { CreateGeneralPage } from "@/pages/create";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/companies">
@@ -77,9 +78,6 @@ export const routes: ReactElement[] = [
             element={<AccountsBranchCreatePage />}
         />
     </Route>,
-    <Route path="/dev_sample">
-        <Route index element={<FortuneBSheetComponent />} />
-    </Route>,
     // <Route path="/orders">
     //     <Route index element={<OrderList />} />
     //     <Route
@@ -87,7 +85,7 @@ export const routes: ReactElement[] = [
     //         element={<OrderShow />}
     //     />
     // </Route>,
-    // <Route path="/create_general">
-    //     <Route index element={<CreateGeneralPage />} />
-    // </Route>
+    <Route path="/create_general">
+        <Route index element={<CreateGeneralPage />} />
+    </Route>
 ]

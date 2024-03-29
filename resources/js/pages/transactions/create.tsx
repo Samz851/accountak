@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import {
     HttpError, useGetToPath,
     useGo,
+    useNavigation,
     useTranslate
 } from "@refinedev/core";
 
@@ -20,7 +21,7 @@ import {
     InputNumber,
     Modal,
     Row,
-    Select, Switch, Typography
+    Select, Space, Switch, Typography
 } from "antd";
 
 import { IAccount, ITax, ITransaction } from "@/interfaces";
@@ -55,6 +56,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
+    const { create } = useNavigation();
     const t = useTranslate();
     const [ totalDebit, setTotalDebit ] = useState<totalAccounts>({});
     const [ totalCredit, setTotalCredit ] = useState<totalAccounts>({});
@@ -259,6 +261,17 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                         onChange={value => setSelectedDebitAccount(value)}
                                                         filterOption={true}
                                                         options={AccountselectProps.options}
+                                                        dropdownRender={(menu) => (
+                                                            <>
+                                                              {menu}
+                                                              <Divider style={{ margin: '8px 0' }} />
+                                                              <Space style={{ padding: '0 8px 4px' }}>
+                                                                <Button type="text" icon={<PlusOutlined />} onClick={() => create('accounts_branches', 'push')}>
+                                                                  Add item
+                                                                </Button>
+                                                              </Space>
+                                                            </>
+                                                          )}
                                                     />
                                                 </Form.Item>
                                             </Col>

@@ -3,14 +3,27 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use App\Traits\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthAuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+// use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Model implements
+AuthAuthenticatableContract,
+AuthorizableContract,
+CanResetPasswordContract
 {
-    use HasApiTokens, HasFactory, Notifiable;
+use HasFactory, Notifiable, HasApiTokens,
+    Authenticatable, Authorizable, CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +34,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'branches_levels'
+        'organization'
     ];
 
     /**
@@ -43,4 +56,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'organization');
+    }
 }
