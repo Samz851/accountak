@@ -6,6 +6,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TaxesController;
 use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\UserController;
 use App\Models\AccountsBranch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,13 +26,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::get('/accounts', [AccountController::class, 'index']);
-Route::apiResource('/accounts', AccountController::class);
-Route::get('/test_accounts', [AccountController::class, 'testAccounts']);
-Route::apiResource('/transactions', TransactionsController::class);
-Route::apiResource('/taxes', TaxesController::class);
-Route::apiResource('/companies', CompanyController::class);
-Route::apiResource('/contacts', ContactController::class);
-Route::apiResource('/accounts_branches', AccountsBranchController::class);
-Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
-Route::get('/accounts/select', [AccountController::class, 'getSelect']);
+Route::middleware('auth:sanctum')->group(function () {
+    // Route::get('/accounts', [AccountController::class, 'index']);
+    Route::apiResource('/accounts', AccountController::class);
+    Route::get('/test_accounts', [AccountController::class, 'testAccounts']);
+    Route::apiResource('/transactions', TransactionsController::class);
+    Route::apiResource('/taxes', TaxesController::class);
+    Route::apiResource('/companies', CompanyController::class);
+    Route::apiResource('/contacts', ContactController::class);
+    Route::apiResource('/accounts_branches', AccountsBranchController::class);
+    Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
+    Route::get('/accounts/select', [AccountController::class, 'getSelect']);
+    Route::get('/users/autologin', [UserController::class, 'autlogin']);
+    Route::get('/users/authenticated', [UserController::class, 'isAuthenticated']);
+});
+
+

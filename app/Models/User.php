@@ -34,7 +34,7 @@ use HasFactory, Notifiable, HasApiTokens,
         'name',
         'email',
         'password',
-        'organization'
+        'organization_id'
     ];
 
     /**
@@ -60,6 +60,6 @@ use HasFactory, Notifiable, HasApiTokens,
 
     public function organization(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'organization');
+        return $this->belongsTo(Organization::class, 'organization_id');
     }
 }

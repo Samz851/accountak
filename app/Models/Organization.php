@@ -27,14 +27,14 @@ class Organization extends Model
     ];
 
 
-    public function primary(): BelongsTo
+    public function primary(): ?User
     {
-        return $this->belongsTo(User::class, 'primary');
+        return User::find($this->primary);
     }
 
     public function agents(): HasMany
     {
-        return $this->hasMany(User::class, 'organization');
+        return $this->hasMany(User::class, 'organization_id');
     }
 
 }

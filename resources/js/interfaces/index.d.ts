@@ -1,4 +1,8 @@
 import { Dayjs } from "dayjs";
+import {
+    FormInstance,
+    FormProps
+} from "antd";
 
 export interface IStatement extends any {}
 export interface ICompany {
@@ -10,6 +14,14 @@ export interface ICompany {
     contacts?: IContact[];
     accounts?: IAccount[];
 }
+
+export type CreateFormPropsType = {
+    form: FormInstance;
+    formProps: FormProps;
+    goToForm: (resource: string) => void;
+    onFinish: (any?: any) => Promise;
+    formLoading: boolean;
+  }
 
 export interface IAccountsBranch extends IBaseAccount{
     children?: IAccountsBranch[];

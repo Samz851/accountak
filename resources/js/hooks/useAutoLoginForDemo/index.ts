@@ -8,17 +8,17 @@ import { authProvider } from "../../providers/authProvider";
 export const useAutoLoginForDemo = () => {
     const [isLoading, setIsLoading] = useState(true);
 
-    const login = useCallback(async () => {
-        try {
-            await authProvider.login({
-                email: "demo@refine.dev",
-                password: "demodemo",
-            });
-        } catch (_error) {
-        } finally {
-            setIsLoading(false);
-        }
-    }, [isLoading]);
+    // const login = useCallback(async () => {
+    //     try {
+    //         await authProvider.login({
+    //             email: "demo@refine.dev",
+    //             password: "demodemo",
+    //         });
+    //     } catch (_error) {
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // }, [isLoading]);
 
     useEffect(() => {
         const shouldLogin = localStorage.getItem("auto_login") !== "false";
@@ -27,7 +27,7 @@ export const useAutoLoginForDemo = () => {
             return;
         }
 
-        login();
+        // login();
     }, []);
 
     return { loading: isLoading };

@@ -1,12 +1,13 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { Create, SaveButton, useModalForm, useSelect, useStepsForm } from "@refinedev/antd";
+import { Create, SaveButton, UseFormReturnType, useForm, useModalForm, useSelect, useStepsForm } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
     useCreateMany,
     useGetToPath,
     useGo,
+    useResource,
     useTranslate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
@@ -22,8 +23,11 @@ import {
     Button,
     Col,
     Form,
+    FormInstance,
+    FormProps,
     Input,
     InputNumber,
+    List,
     Modal,
     Row,
     Select,
@@ -34,11 +38,11 @@ import {
     Typography,
 } from "antd";
 
-import { ICompany, ITransaction } from "@/interfaces";
+import { CreateFormPropsType } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { FormList } from "./formList";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
@@ -61,7 +65,16 @@ type FormValues = {
     contact_information?: string;
 };
 
-export const CreateGeneralPage = ({ isOverModal }: Props) => {
+// type CreateFormPropsType = {
+//   form: FormInstance;
+//   formProps: FormProps;
+//   goToForm: (resource: string) => void;
+// }
+
+// type ResourceInterface<> = 
+
+export const CreateGeneralPage = () => {
+  const { resource } = useResource();
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
@@ -69,7 +82,60 @@ export const CreateGeneralPage = ({ isOverModal }: Props) => {
     const t = useTranslate();
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
+    const [ current, setCurrent ] = useState<string>(resource?.name || '');
+    const createForm = useForm(resource);
+    const [ loading, setLoading ] = useState<boolean>(true);
+    const [ createForms, setCreateForms ] = useState<CreateFormPropsType[]>([]);
 
+    const getFormProps = useCallback((): CreateFormPropsType => {
+      // if (resource) {
+        const { onFinish, form, formProps, formLoading } = useForm({
+          action: 'create',
+          resource: resource?.name,
+        })
+        return {
+          form,
+          formProps: {
+            ...formProps, 
+            name: resource?.name
+          }, 
+          goToForm: goToForm,
+          onFinish: onFinish,
+          formLoading: formLoading
+        }
+      // }
+
+    }, [current]);
+    useEffect(() => {
+      if ( ! createForms.some( (form) => form.formProps.name === resource?.name) ) {
+        const { onFinish, form, formProps, formLoading, goToForm } = getFormProps()
+        setCreateForms([
+            ...createForms,
+            {
+              form,
+              formProps: {
+                ...formProps, 
+                name: resource?.name
+              }, 
+              goToForm: goToForm,
+              onFinish: onFinish,
+              formLoading: formLoading
+            }]);
+        setLoading(formLoading);
+      }
+    }, [ current ]);
+
+    const CurrentFormComponent: JSX.Element = useMemo(() => {
+      const createFormProps: CreateFormPropsType | undefined = createForms.find(form => form.formProps.name === resource?.name);
+      if ( createFormProps !== undefined ) {
+        return FormList[current](createFormProps);
+      }
+    }, [ current, loading ] );
+
+    const goToForm = (resource: string) => {
+      setCurrent(resource);
+      // getToPath(pathname.replace(current, resource));
+    }
     // const onChangeType = (newValue: string) => {
     //     console.log(newValue);
     //     setTypeValue(newValue);
@@ -79,16 +145,16 @@ export const CreateGeneralPage = ({ isOverModal }: Props) => {
     //     setParentValue(newValue);
     // };
 
-    const { current,
-        gotoStep,
-        stepsProps,
-        formProps,
-        saveButtonProps,
-        queryResult, onFinish } = useStepsForm<ITransaction, HttpError, ITransaction
-    >({
-        action: "create",
-        warnWhenUnsavedChanges: true
-    });
+    // const { current,
+    //     gotoStep,
+    //     stepsProps,
+    //     formProps,
+    //     saveButtonProps,
+    //     queryResult, onFinish } = useStepsForm<ITransaction, HttpError, ITransaction
+    // >({
+    //     action: "create",
+    //     warnWhenUnsavedChanges: true
+    // });
 
     // const { data: typesData, isLoading: typesIsLoading } = useAccountTypesSelect();
     // const { queryResult: accountsQueryResult } = useSelect<IAccount>({
@@ -109,49 +175,14 @@ export const CreateGeneralPage = ({ isOverModal }: Props) => {
     // })
 
     return (
-        <Create 
-            saveButtonProps={saveButtonProps}
-            footerButtons={
-                <>
-                  {current > 0 && (
-                    <Button
-                      onClick={() => {
-                        gotoStep(current - 1);
-                      }}
-                    >
-                      Previous
-                    </Button>
-                  )}
-                  {current < FormList.length - 1 && (
-                    <Button
-                      onClick={() => {
-                        gotoStep(current + 1);
-                      }}
-                    >
-                      Next
-                    </Button>
-                  )}
-                  {current === FormList.length - 1 && (
-                    <SaveButton {...saveButtonProps} />
-                  )}
-                </>
-              }
-        >
-            <Steps {...stepsProps}>
-                <Steps.Step
-                    title="transaction"
-                />
-                <Steps.Step
-                    title="Branch"
-                />
-                <Steps.Step
-                    title="account"
-                />
-            </Steps>
-            <Form {...formProps} layout="vertical">
-                {FormList[current]}
-            </Form>
-        </Create>
+        <List>
+          <Row>
+            {CurrentFormComponent}
+          </Row>
+
+            {/* <Form {...formProps} layout="vertical"> */}
+            {/* </Form> */}
+        </List>
         
         // <h1>Hello</h1>
     );

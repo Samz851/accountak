@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
             $table->uuid();
-            $table->boolean('setup');
+            $table->boolean('setup')->default(false);
             $table->string('avatar')->nullable();
             $table->string('name');
             $table->string('website')->nullable();
@@ -25,9 +25,8 @@ return new class extends Migration
             $table->string('city');
             $table->string('country');
             $table->json('departments')->nullable();
-            $table->foreignId('primary')
-                    ->constrained(table: 'users');
-            $table->json('permissions');
+            $table->integer('primary')->default(0);
+            $table->json('permissions')->nullable();
             $table->timestamps();
         });
     }
