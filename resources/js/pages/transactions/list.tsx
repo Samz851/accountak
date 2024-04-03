@@ -25,7 +25,7 @@ import { useLocation } from "react-router-dom";
 export const TransactionsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl } = useNavigation();
+    const { showUrl, create } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -55,18 +55,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     {...props.createButtonProps}
                     key="create"
                     size="large"
-                    onClick={() => {
-                        return go({
-                            to: `${createUrl("transactions")}`,
-                            query: {
-                                to: pathname,
-                            },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
-                    }}
+                    onClick={() => create("transactions", "push")}
                 >
                     {t("transactions.form.add")}
                 </CreateButton>,

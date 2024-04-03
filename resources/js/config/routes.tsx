@@ -14,9 +14,17 @@ import { AccountsBranchCreatePage, AccountsBranchShow } from "@/pages/accountsBr
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
 import { CreateGeneralPage } from "@/pages/create";
 import { SetupPage } from "@/pages/setup";
+import { TransactionCreateForm } from "@/pages/create/forms/transaction";
+import { AccountCreateForm } from "@/pages/create/forms/account";
+import { AccountsBranchCreateForm } from "@/pages/create/forms/branches";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/setup" element={<SetupPage />} />,
+    <Route path="/create" element={<CreateGeneralPage />}>
+        <Route path="transactions" element={<TransactionCreateForm />} />
+        <Route path="accounts" element={<AccountCreateForm />} />
+        <Route path="branches" element={<AccountsBranchCreateForm />} />
+    </Route>,
     <Route path="/companies">
         <Route index element={<CompaniesList />} />
         <Route
@@ -45,20 +53,20 @@ export const routes: ReactElement[] = [
             path="show/:id"
             element={<AccountShow />}
         />
-            <Route
+        {/* <Route
             path="create"
             element={<CreateGeneralPage />}
-        />
+        /> */}
     </Route>,
     <Route path="/transactions">
         <Route index element={<TransactionsList />} />
-        <Route
+        {/* <Route
             path="create"
-            element={<CreateGeneralPage />} />
+            element={<CreateGeneralPage />} /> */}
     </Route>,
-    // <Route path="/statements">
-    //     <Route index element={<StatementCreatePage />} />
-    // </Route>,
+    <Route path="/statements">
+        {/* <Route index element={<StatementCreatePage />} /> */}
+    </Route>,
     <Route path="/taxes">
         <Route index element={<TaxesList />} />
         <Route
@@ -69,16 +77,16 @@ export const routes: ReactElement[] = [
             path="create"
             element={<TaxCreatePage />} />
     </Route>,
-    <Route path="/accounts_branches">
+    <Route path="/branches">
         <Route index element={<AccountsBranchesListPage />} />
         <Route
             path="show/:id"
             element={<AccountsBranchShow />}
         />
-        <Route
+        {/* <Route
             path="create"
             element={<CreateGeneralPage />}
-        />
+        /> */}
     </Route>,
     // <Route path="/orders">
     //     <Route index element={<OrderList />} />

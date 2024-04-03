@@ -1,8 +1,8 @@
 import { useSearchParams } from "react-router-dom";
 
-import { useModalForm } from "@refinedev/antd";
+import { useForm, useModalForm } from "@refinedev/antd";
 import {
-    HttpError, useGetToPath,
+    HttpError, useBack, useGetToPath,
     useGo,
     useList,
     useTranslate
@@ -32,27 +32,26 @@ type FormValues = {
     parent?: any;
 };
 // type AccountsBranchesTree = IAccountsBranch & DataNode;
-export const AccountsBranchCreateForm = ({form, formProps, goToForm, onFinish}: CreateFormPropsType) => {
+export const AccountsBranchCreateForm = () => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
+    const back = useBack();
+
     const [typeValue, setTypeValue] = useState<string>();
 
     const t = useTranslate();
 
     const initValues = {parent: searchParams.get('parent') ?? ''};
 
-    // const { formProps, modalProps, close, onFinish } = useModalForm<IAccountsBranch, HttpError, FormValues
-    // >({
-    //     action: "create",
-    //     defaultVisible: true,
-    //     resource: "accounts_branches",
-    //     redirect: false,
-    //     warnWhenUnsavedChanges: !isOverModal,
-    // });
+    const { formProps, form, formLoading, onFinish } = useForm<IAccountsBranch, HttpError, FormValues
+    >({
+        action: "create",
+        resource: "branches",
+    });
 
     const { data } = useList<IAccountsBranch>({
-        resource: "accounts_branches",
+        resource: "branches",
         filters: [
             {
                 field: 'selectOptions',
@@ -101,22 +100,7 @@ export const AccountsBranchCreateForm = ({form, formProps, goToForm, onFinish}: 
                             description: values.description,
                             parent: values.parent
                         });
-                        close();
-                        go({
-                            to:
-                                searchParams.get("to") ??
-                                getToPath({
-                                    action: "list",
-                                }) ??
-                                "",
-                            query: {
-                                to: undefined,
-                            },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
+                        back();
 
                         
                     } catch (error) {

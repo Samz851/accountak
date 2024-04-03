@@ -3,7 +3,9 @@ import {
     FormInstance,
     FormProps
 } from "antd";
+import { SetStateAction } from "react";
 
+export type CreateContextType = string[] | Distpatch<SetStateAction<string[]>>;
 export interface IStatement extends any {}
 export interface ICompany {
     id: number;

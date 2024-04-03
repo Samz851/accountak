@@ -1,9 +1,10 @@
-import { useLocation, useSearchParams } from "react-router-dom";
+import { Outlet, useLocation, useSearchParams } from "react-router-dom";
 
 import { Create, SaveButton, UseFormReturnType, useForm, useModalForm, useSelect, useStepsForm } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
+    useBack,
     useCreateMany,
     useGetToPath,
     useGo,
@@ -17,6 +18,7 @@ import {
     LeftOutlined,
     MailOutlined,
     PlusCircleOutlined,
+    RollbackOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 import {
@@ -34,16 +36,18 @@ import {
     Space,
     Steps,
     Switch,
+    Tooltip,
     TreeSelect,
     Typography,
 } from "antd";
 
-import { CreateFormPropsType } from "@/interfaces";
+import { CreateContextType, CreateFormPropsType } from "@/interfaces";
 
 import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { FormList } from "./formList";
+import { useStyles } from "./styled";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -80,62 +84,63 @@ export const CreateGeneralPage = () => {
     const { pathname } = useLocation();
     const go = useGo();
     const t = useTranslate();
+    const back = useBack();
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
-    const [ current, setCurrent ] = useState<string>(resource?.name || '');
-    const createForm = useForm(resource);
+    const [ openForms, setOpenForms ] = useState<string[]>([]);
+    // const createForm = useForm(resource);
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ createForms, setCreateForms ] = useState<CreateFormPropsType[]>([]);
+    const { styles } = useStyles();
+    // const getFormProps = useCallback((): CreateFormPropsType => {
+    //   // if (resource) {
+    //     const { onFinish, form, formProps, formLoading } = useForm({
+    //       action: 'create',
+    //       resource: resource?.name,
+    //     })
+    //     return {
+    //       form,
+    //       formProps: {
+    //         ...formProps, 
+    //         name: resource?.name
+    //       }, 
+    //       goToForm: goToForm,
+    //       onFinish: onFinish,
+    //       formLoading: formLoading
+    //     }
+    //   // }
 
-    const getFormProps = useCallback((): CreateFormPropsType => {
-      // if (resource) {
-        const { onFinish, form, formProps, formLoading } = useForm({
-          action: 'create',
-          resource: resource?.name,
-        })
-        return {
-          form,
-          formProps: {
-            ...formProps, 
-            name: resource?.name
-          }, 
-          goToForm: goToForm,
-          onFinish: onFinish,
-          formLoading: formLoading
-        }
-      // }
+    // }, [current]);
+    // useEffect(() => {
+    //   if ( ! createForms.some( (form) => form.formProps.name === resource?.name) ) {
+    //     const { onFinish, form, formProps, formLoading, goToForm } = getFormProps()
+    //     setCreateForms([
+    //         ...createForms,
+    //         {
+    //           form,
+    //           formProps: {
+    //             ...formProps, 
+    //             name: resource?.name
+    //           }, 
+    //           goToForm: goToForm,
+    //           onFinish: onFinish,
+    //           formLoading: formLoading
+    //         }]);
+    //     setLoading(formLoading);
+    //   }
+    // }, [ current ]);
 
-    }, [current]);
-    useEffect(() => {
-      if ( ! createForms.some( (form) => form.formProps.name === resource?.name) ) {
-        const { onFinish, form, formProps, formLoading, goToForm } = getFormProps()
-        setCreateForms([
-            ...createForms,
-            {
-              form,
-              formProps: {
-                ...formProps, 
-                name: resource?.name
-              }, 
-              goToForm: goToForm,
-              onFinish: onFinish,
-              formLoading: formLoading
-            }]);
-        setLoading(formLoading);
-      }
-    }, [ current ]);
+    // const CurrentFormComponent: JSX.Element = useMemo(() => {
+    //   const createFormProps: CreateFormPropsType | undefined = createForms.find(form => form.formProps.name === resource?.name);
+    //   if ( createFormProps !== undefined ) {
+    //     return FormList[current](createFormProps);
+    //   }
+    // }, [ current, loading ] );
 
-    const CurrentFormComponent: JSX.Element = useMemo(() => {
-      const createFormProps: CreateFormPropsType | undefined = createForms.find(form => form.formProps.name === resource?.name);
-      if ( createFormProps !== undefined ) {
-        return FormList[current](createFormProps);
-      }
-    }, [ current, loading ] );
-
-    const goToForm = (resource: string) => {
-      setCurrent(resource);
-      // getToPath(pathname.replace(current, resource));
-    }
+    // const goToForm = (resource: string) => {
+    //   setCurrent(resource);
+    //   // getToPath(pathname.replace(current, resource));
+    // }
     // const onChangeType = (newValue: string) => {
     //     console.log(newValue);
     //     setTypeValue(newValue);
@@ -175,9 +180,37 @@ export const CreateGeneralPage = () => {
     // })
 
     return (
-        <List>
-          <Row>
-            {CurrentFormComponent}
+        <List
+          className={styles.wrapper}
+          header={
+            <Row justify="space-between">
+            {
+              openForms.map((form, i) => (
+                <Col key={i}>
+                  <Typography.Title level={4}>{form.toUpperCase()}</Typography.Title>
+                </Col>
+              ))
+            }
+            <Col flex="0 1 100px">
+                <Tooltip title="Back" >
+                  <Button 
+                    icon={<RollbackOutlined />} 
+                    onClick={() => back()}
+                    type="primary"
+                    size="large"
+                  />
+                </Tooltip>
+              </Col>
+          </Row>
+
+          }
+        >
+
+          <Row justify="center">
+            <Col span={24}>
+              <Outlet context={[openForms, setOpenForms] satisfies CreateContextType}/>
+            </Col>
+            {/* {CurrentFormComponent} */}
           </Row>
 
             {/* <Form {...formProps} layout="vertical"> */}

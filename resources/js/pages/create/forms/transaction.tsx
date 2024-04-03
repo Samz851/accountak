@@ -1,11 +1,13 @@
-import { useSearchParams } from "react-router-dom";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
-import { useModalForm, useSelect } from "@refinedev/antd";
+import { useForm, useModalForm, useSelect } from "@refinedev/antd";
 import dayjs from "dayjs";
 import {
-    HttpError, useGetToPath,
+    HttpError, useBack, useGetToPath,
     useGo,
     useNavigation,
+    useParse,
+    useParsed,
     useTranslate
 } from "@refinedev/core";
 
@@ -24,9 +26,9 @@ import {
     Select, Space, Switch, Typography
 } from "antd";
 
-import { CreateFormPropsType, IAccount, ITax, ITransaction } from "@/interfaces";
+import { CreateContextType, CreateFormPropsType, IAccount, ITax, ITransaction } from "@/interfaces";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStyles } from "../styled";
 
 type Props = {
@@ -52,26 +54,31 @@ type totalAccounts = {
     [key: number]: number;
 }
 
-export const TransactionCreateForm = ({form, formProps, goToForm, onFinish}: CreateFormPropsType) => {
+export const TransactionCreateForm = () => {
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
+    const back = useBack();
     const { create } = useNavigation();
+    const [ openForms, setOpenForms ] = useOutletContext<CreateContextType>();
     const t = useTranslate();
     const [ totalDebit, setTotalDebit ] = useState<totalAccounts>({});
     const [ totalCredit, setTotalCredit ] = useState<totalAccounts>({});
     const [ accountsBalanceError, setAccountsBalanceError ] = useState(false)
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
 
-    // const { form, formProps, modalProps, close, onFinish } = useModalForm<ITransaction, HttpError, FormValues
-    // >({
-    //     action: "create",
-    //     defaultVisible: true,
-    //     resource: "transactions",
-    //     redirect: false,
-    //     warnWhenUnsavedChanges: true,
-    // });
+    const { resource } = useParsed();
 
+    const { form, formProps, onFinish, formLoading } = useForm<ITransaction, HttpError, FormValues
+    >({
+        action: "create",
+        resource: "transactions",
+    });
+    useEffect(() => {
+        if ( ! formLoading ) {
+            setOpenForms([...openForms, resource?.name])
+        }
+    }, [formLoading])
     const { styles } = useStyles();
 
     const { selectProps: AccountselectProps } = useSelect<IAccount>({
@@ -134,22 +141,7 @@ export const TransactionCreateForm = ({form, formProps, goToForm, onFinish}: Cre
                             tax_id: values.tax_id
                         });
 
-                        close();
-                        go({
-                            to:
-                                searchParams.get("to") ??
-                                getToPath({
-                                    action: "list",
-                                }) ??
-                                "",
-                            query: {
-                                to: undefined,
-                            },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
+                        back();
 
                     } catch (error) {
                         Promise.reject(error);
@@ -242,7 +234,7 @@ export const TransactionCreateForm = ({form, formProps, goToForm, onFinish}: Cre
                                                         {menu}
                                                         <Divider style={{ margin: '8px 0' }} />
                                                         <Space style={{ padding: '0 8px 4px' }}>
-                                                            <Button type="text" icon={<PlusOutlined />} onClick={() => goToForm('account')}>
+                                                            <Button type="text" icon={<PlusOutlined />} onClick={() => create('accounts', 'push')}>
                                                             Add item
                                                             </Button>
                                                         </Space>
@@ -327,6 +319,17 @@ export const TransactionCreateForm = ({form, formProps, goToForm, onFinish}: Cre
                                                     onChange={value => setSelectedDebitAccount(value)}
                                                     filterOption={true}
                                                     options={AccountselectProps.options}
+                                                    dropdownRender={(menu) => (
+                                                        <>
+                                                        {menu}
+                                                        <Divider style={{ margin: '8px 0' }} />
+                                                        <Space style={{ padding: '0 8px 4px' }}>
+                                                            <Button type="text" icon={<PlusOutlined />} onClick={() => create('accounts', 'push')}>
+                                                            Add item
+                                                            </Button>
+                                                        </Space>
+                                                        </>
+                                                    )}
                                                 />
                                             </Form.Item>
                                         </Col>

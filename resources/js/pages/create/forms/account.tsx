@@ -1,9 +1,9 @@
-import { useSearchParams } from "react-router-dom";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
-import { useModalForm, useTable } from "@refinedev/antd";
+import { useForm, useModalForm, useTable } from "@refinedev/antd";
 import {
-    HttpError, useGetToPath,
-    useGo, useTranslate
+    HttpError, useBack, useGetToPath,
+    useGo, useNavigation, useParsed, useTranslate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
 
@@ -18,7 +18,7 @@ import {
     Modal, Space, TreeSelect
 } from "antd";
 
-import { CreateFormPropsType, IAccount, IAccountFilterVariables } from "@/interfaces";
+import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables } from "@/interfaces";
 
 import { useEffect, useState } from "react";
 
@@ -27,25 +27,28 @@ type FormValues = {
     account_branch_id: number;
 };
 
-export const AccountCreateForm = ({form, formProps, goToForm, onFinish}: CreateFormPropsType) => {
+export const AccountCreateForm = () => {
     // console.log(`Create Account`, props);
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
+    const back = useBack()
     const t = useTranslate();
-
+    const { create } = useNavigation();
+    const [ openForms, setOpenForms ] = useOutletContext<CreateContextType>();
     const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
-
-    // const { formProps, modalProps, close, onFinish } = useModalForm<IAccount, HttpError, FormValues
-    // >({
-    //     action: "create",
-    //     defaultVisible: true,
-    //     resource: "accounts",
-    //     redirect: false,
-    //     warnWhenUnsavedChanges: !props.isOverModal,
-    // });
-
+    const { resource } = useParsed();
+    const { form, formProps, onFinish, formLoading } = useForm<IAccount, HttpError, FormValues
+    >({
+        action: "create",
+        resource: "accounts",
+    });
+    useEffect(() => {
+        if ( ! formLoading ) {
+            setOpenForms([...openForms, resource?.name])
+        }
+    }, [formLoading])
     const { tableProps: AccountselectProps, filters, setFilters, sorters } = useTable<
         IAccount,
         HttpError,
@@ -163,7 +166,7 @@ export const AccountCreateForm = ({form, formProps, goToForm, onFinish}: CreateF
                             {menu}
                             <Divider style={{ margin: '8px 0' }} />
                             <Space style={{ padding: '0 8px 4px' }}>
-                                <Button type="text" icon={<PlusOutlined />} onClick={() => goToForm('branches')}>
+                                <Button type="text" icon={<PlusOutlined />} onClick={() => create('branches', 'push')}>
                                 Add item
                                 </Button>
                             </Space>
