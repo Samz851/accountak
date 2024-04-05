@@ -36,7 +36,7 @@ export const AccountCreateForm = () => {
     const back = useBack()
     const t = useTranslate();
     const { create } = useNavigation();
-    const [ createForms, goToCreateForm ] = useOutletContext<CreateContextType>();
+    const [ createForms, goToCreateForm, openForms, setOpenForms ] = useOutletContext<CreateContextType>();
     const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const { resource } = useParsed();
@@ -111,6 +111,8 @@ export const AccountCreateForm = () => {
         const prevForm = createForms.find( (form) => form.key === key );
         if ( prevForm ) {
             form.setFieldsValue( prevForm.values || {});
+        } else {
+            // setOpenForms([...openForms, `accounts - ${key}`]);
         }
     }, []);
 

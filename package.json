@@ -47,7 +47,8 @@
         "scheduler": "^0.23.0",
         "translation-check": "^1.1.0",
         "tslib": "^2.3.1",
-        "usehooks-ts": "^2.14.0"
+        "usehooks-ts": "^2.14.0",
+        "vite-plugin-react-js-support": "^1.0.7"
     },
     "devDependencies": {
         "@types/google.maps": "^3.50.4",

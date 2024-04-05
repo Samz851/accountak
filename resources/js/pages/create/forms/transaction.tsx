@@ -61,7 +61,7 @@ export const TransactionCreateForm = () => {
     const go = useGo();
     const back = useBack();
     const { create } = useNavigation();
-    const [ createForms, goToCreateForm ] = useOutletContext<CreateContextType>();
+    const [ createForms, goToCreateForm, openForms, setOpenForms ] = useOutletContext<CreateContextType>();
     const t = useTranslate();
     const [ totalDebit, setTotalDebit ] = useState<totalAccounts>({});
     const [ totalCredit, setTotalCredit ] = useState<totalAccounts>({});
@@ -109,10 +109,12 @@ export const TransactionCreateForm = () => {
     }
 
     useEffect(() => {
-        console.log('forms', createForms, key);
+        // console.log('forms', createForms, key);
         const prevForm = createForms.find( (form) => form.key === key );
         if ( prevForm ) {
             form.setFieldsValue( prevForm.values || {});
+        } else {
+            // setOpenForms([...openForms, `transactions - ${key}`]);
         }
         // console.log(formProps)
     }, [])
@@ -412,7 +414,19 @@ export const TransactionCreateForm = () => {
                     >
                         <Select
                             style={{ width: 300 }}
-                            {...taxesSelectProps}
+                            options={taxesSelectProps.options}
+                            dropdownRender={(menu) => (
+                                <>
+                                {menu}
+                                <Divider style={{ margin: '8px 0' }} />
+                                <Space style={{ padding: '0 8px 4px' }}>
+                                    <Button type="text" icon={<PlusOutlined />} onClick={() => goToCreateForm(form.getFieldsValue(true), 'taxes')}>
+                                    Add item
+                                    </Button>
+                                </Space>
+                                </>
+                            )}
+                            // {...taxesSelectProps}
                         />
                     </Form.Item>
                 </Col>

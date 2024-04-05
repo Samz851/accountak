@@ -17,6 +17,8 @@ import { SetupPage } from "@/pages/setup";
 import { TransactionCreateForm } from "@/pages/create/forms/transaction";
 import { AccountCreateForm } from "@/pages/create/forms/account";
 import { AccountsBranchCreateForm } from "@/pages/create/forms/branches";
+import { TaxCreateForm } from "@/pages/create/forms/tax";
+import { StatementBuilder } from "@/pages/statements";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
     <Route path="/setup" element={<SetupPage />} />,
@@ -24,6 +26,7 @@ export const routes: ReactElement[] = [
         <Route path="transactions" element={<TransactionCreateForm />} />
         <Route path="accounts" element={<AccountCreateForm />} />
         <Route path="branches" element={<AccountsBranchCreateForm />} />
+        <Route path="taxes" element={<TaxCreateForm />} />
     </Route>,
     <Route path="/companies">
         <Route index element={<CompaniesList />} />
@@ -65,7 +68,7 @@ export const routes: ReactElement[] = [
             element={<CreateGeneralPage />} /> */}
     </Route>,
     <Route path="/statements">
-        {/* <Route index element={<StatementCreatePage />} /> */}
+        <Route index element={<StatementBuilder />} />
     </Route>,
     <Route path="/taxes">
         <Route index element={<TaxesList />} />

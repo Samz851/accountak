@@ -85,7 +85,8 @@ export const CreateGeneralPage = () => {
     const getToPath = useGetToPath();
     const { create } = useNavigation();
     const [searchParams] = useSearchParams();
-    const { key } = useLocation();
+    const location = useLocation();
+    const { key } = location;
     const navigate = useNavigate();
     const go = useGo();
     const t = useTranslate();
@@ -97,6 +98,8 @@ export const CreateGeneralPage = () => {
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ createForms, setCreateForms ] = useState<CreateFormPropsType[]>([]);
     const { styles } = useStyles();
+    const [ currentPath, setCurrentPath ] = useState('');
+
     const addFormStep = (values) => {
       
       const formData = {
@@ -104,7 +107,7 @@ export const CreateGeneralPage = () => {
         resource: resource?.name,
         values: values
       };
-      setOpenForms([...openForms, `${formData.resource} - ${formData.key}`]);
+      // setOpenForms([...openForms, `${formData.resource} - ${formData.key}`]);
       // console.log(formData);
 
       setCreateForms([...createForms, formData]);
@@ -120,6 +123,63 @@ export const CreateGeneralPage = () => {
       create(goToResource, 'push');
     }, [key]);
 
+    const linksCount = openForms.length - 1;
+
+    useEffect(() => {
+      setOpenForms([...openForms, `${resource?.name} - ${key}`]);
+    }, [resource, key]);
+
+    // useEffect(() => {
+    //   console.log(location);
+    //   console.trace();
+    //   // throw new Error;
+    // }, [location])
+
+    const OpenFormsNav = () => {
+      const currentLink = openForms.findIndex(form => form === `${resource?.name} - ${key}`);
+      console.log(currentLink, location,openForms);
+      return (
+        <>
+        {
+              
+              openForms.map((form, i) => {
+                // console.log(form, location, i);
+                // console.log(`i == ${i} and currentLink == ${currentLink}`);
+                if ( i === currentLink ) {
+                  return (
+                    <Col key={i} className="acc-link current">
+                      <Typography.Title level={4}>{form}</Typography.Title>
+                    </Col>
+                  )
+                }
+                if ( i > currentLink ) {
+                  return (
+                    <Col key={i} className="acc-link">
+                    <Typography.Title onClick={() => {
+                      console.log(openForms.length, i, i - linksCount);
+                      navigate(i - currentLink)
+                    }} level={4}>{form.toUpperCase()}</Typography.Title>
+                    </Col>
+                  )
+                }
+
+                if ( i < currentLink ) {
+                  return (
+                    <Col key={i} className="acc-link">
+                    <Typography.Title onClick={() => {
+                      console.log(openForms.length, i, i - linksCount);
+                      navigate(i - currentLink)
+                    }} level={4}>{form.toUpperCase()}</Typography.Title>
+                    </Col>
+                  )
+                }
+              })
+            }
+        </>
+      )
+    }
+
+    
     // useEffect(() => {
     //   console.log('forms', createForms, key);
     //   // console.trace(history);
@@ -217,13 +277,9 @@ export const CreateGeneralPage = () => {
           className={styles.wrapper}
           header={
             <Row justify="space-between">
-            {
-              openForms.map((form, i) => (
-                <Col key={i}>
-                  <Typography.Title onClick={() => navigate(i - openForms.length)} level={4}>{form.toUpperCase()}</Typography.Title>
-                </Col>
-              ))
-            }
+            <Col className="acc-link current">
+              <Typography.Title level={4}>{`${resource?.name.toUpperCase()} - ${key}`}</Typography.Title>
+            </Col>
             <Col flex="0 1 100px">
                 <Tooltip title="Back" >
                   <Button 
@@ -241,7 +297,12 @@ export const CreateGeneralPage = () => {
 
           <Row justify="center">
             <Col span={24}>
-              <Outlet context={[createForms, goToCreateForm] satisfies CreateContextType}/>
+              <Outlet context={[
+                  createForms,
+                  goToCreateForm,
+                  openForms,
+                  setOpenForms
+                  ] satisfies CreateContextType}/>
             </Col>
             {/* {CurrentFormComponent} */}
           </Row>

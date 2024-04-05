@@ -38,7 +38,7 @@ export const AccountsBranchCreateForm = () => {
     const [searchParams] = useSearchParams();
     const go = useGo();
     const back = useBack();
-    const [ createForms, goToCreateForm ] = useOutletContext<CreateContextType>();
+    const [ createForms, goToCreateForm, openForms, setOpenForms ] = useOutletContext<CreateContextType>();
 
     const [typeValue, setTypeValue] = useState<string>();
 
@@ -69,6 +69,8 @@ export const AccountsBranchCreateForm = () => {
         const prevForm = createForms.find( (form) => form.key === key );
         if ( prevForm ) {
             form.setFieldsValue( prevForm.values || {});
+        } else {
+            setOpenForms([...openForms, `branches - ${key}`]);
         }
     }, []);
 
