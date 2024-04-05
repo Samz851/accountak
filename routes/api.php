@@ -40,5 +40,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/autologin', [UserController::class, 'autlogin']);
     Route::get('/users/authenticated', [UserController::class, 'isAuthenticated']);
 });
-
-

@@ -1,4 +1,4 @@
-import { useOutletContext, useSearchParams } from "react-router-dom";
+import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
 import { useForm, useModalForm, useTable } from "@refinedev/antd";
 import {
@@ -29,13 +29,14 @@ type FormValues = {
 
 export const AccountCreateForm = () => {
     // console.log(`Create Account`, props);
+    const { key } = useLocation();
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
     const back = useBack()
     const t = useTranslate();
     const { create } = useNavigation();
-    const [ openForms, setOpenForms ] = useOutletContext<CreateContextType>();
+    const [ createForms, goToCreateForm ] = useOutletContext<CreateContextType>();
     const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const { resource } = useParsed();
@@ -44,11 +45,11 @@ export const AccountCreateForm = () => {
         action: "create",
         resource: "accounts",
     });
-    useEffect(() => {
-        if ( ! formLoading ) {
-            setOpenForms([...openForms, resource?.name])
-        }
-    }, [formLoading])
+    // useEffect(() => {
+    //     if ( ! formLoading ) {
+    //         setOpenForms([...openForms, resource?.name])
+    //     }
+    // }, [formLoading])
     const { tableProps: AccountselectProps, filters, setFilters, sorters } = useTable<
         IAccount,
         HttpError,
@@ -105,6 +106,13 @@ export const AccountCreateForm = () => {
         }
 
     }, [AccountselectProps.dataSource]);
+
+    useEffect(() => {
+        const prevForm = createForms.find( (form) => form.key === key );
+        if ( prevForm ) {
+            form.setFieldsValue( prevForm.values || {});
+        }
+    }, []);
 
     return (
             <Form
@@ -166,7 +174,7 @@ export const AccountCreateForm = () => {
                             {menu}
                             <Divider style={{ margin: '8px 0' }} />
                             <Space style={{ padding: '0 8px 4px' }}>
-                                <Button type="text" icon={<PlusOutlined />} onClick={() => create('branches', 'push')}>
+                                <Button type="text" icon={<PlusOutlined />} onClick={() => goToCreateForm(form.getFieldsValue(true), 'branches')}>
                                 Add item
                                 </Button>
                             </Space>

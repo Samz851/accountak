@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useSearchParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import { Create, SaveButton, UseFormReturnType, useForm, useModalForm, useSelect, useStepsForm } from "@refinedev/antd";
 import {
@@ -8,6 +8,7 @@ import {
     useCreateMany,
     useGetToPath,
     useGo,
+    useNavigation,
     useResource,
     useTranslate
 } from "@refinedev/core";
@@ -48,6 +49,8 @@ import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { FormList } from "./formList";
 import { useStyles } from "./styled";
+import _ from "lodash";
+// import { create } from "lodash";
 // import { SelectOptionWithAvatar } from "@/components";
 // import { Company } from "@/graphql/schema.types";
 // import {
@@ -80,8 +83,10 @@ type FormValues = {
 export const CreateGeneralPage = () => {
   const { resource } = useResource();
     const getToPath = useGetToPath();
+    const { create } = useNavigation();
     const [searchParams] = useSearchParams();
-    const { pathname } = useLocation();
+    const { key } = useLocation();
+    const navigate = useNavigate();
     const go = useGo();
     const t = useTranslate();
     const back = useBack();
@@ -92,6 +97,34 @@ export const CreateGeneralPage = () => {
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ createForms, setCreateForms ] = useState<CreateFormPropsType[]>([]);
     const { styles } = useStyles();
+    const addFormStep = (values) => {
+      
+      const formData = {
+        key: key,
+        resource: resource?.name,
+        values: values
+      };
+      setOpenForms([...openForms, `${formData.resource} - ${formData.key}`]);
+      // console.log(formData);
+
+      setCreateForms([...createForms, formData]);
+    };
+
+    const goToCreateForm = useCallback((values, goToResource) => {
+      // console.log(values);
+      // console.log(createForms, key);
+
+      if ( ! createForms.some( (form) => key === form.key) && ! _.isEmpty(values) ) {
+        addFormStep(values);
+      }
+      create(goToResource, 'push');
+    }, [key]);
+
+    // useEffect(() => {
+    //   console.log('forms', createForms, key);
+    //   // console.trace(history);
+    // }, [key]);
+    // useEffect(()=>{console.log("location", location, resource)}, []);
     // const getFormProps = useCallback((): CreateFormPropsType => {
     //   // if (resource) {
     //     const { onFinish, form, formProps, formLoading } = useForm({
@@ -178,7 +211,7 @@ export const CreateGeneralPage = () => {
     //     optionLabel: "name",
     //     optionValue: "id"
     // })
-
+    // console.log('hash', location);
     return (
         <List
           className={styles.wrapper}
@@ -187,7 +220,7 @@ export const CreateGeneralPage = () => {
             {
               openForms.map((form, i) => (
                 <Col key={i}>
-                  <Typography.Title level={4}>{form.toUpperCase()}</Typography.Title>
+                  <Typography.Title onClick={() => navigate(i - openForms.length)} level={4}>{form.toUpperCase()}</Typography.Title>
                 </Col>
               ))
             }
@@ -208,7 +241,7 @@ export const CreateGeneralPage = () => {
 
           <Row justify="center">
             <Col span={24}>
-              <Outlet context={[openForms, setOpenForms] satisfies CreateContextType}/>
+              <Outlet context={[createForms, goToCreateForm] satisfies CreateContextType}/>
             </Col>
             {/* {CurrentFormComponent} */}
           </Row>

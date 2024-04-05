@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
 import { useForm, useModalForm } from "@refinedev/antd";
 import {
@@ -18,9 +18,9 @@ import {
     Modal, TreeSelect
 } from "antd";
 
-import { CreateFormPropsType, IAccountsBranch } from "@/interfaces";
+import { CreateContextType, CreateFormPropsType, IAccountsBranch } from "@/interfaces";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
     isOverModal?: boolean;
@@ -33,10 +33,12 @@ type FormValues = {
 };
 // type AccountsBranchesTree = IAccountsBranch & DataNode;
 export const AccountsBranchCreateForm = () => {
+    const { key } = useLocation();
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
     const back = useBack();
+    const [ createForms, goToCreateForm ] = useOutletContext<CreateContextType>();
 
     const [typeValue, setTypeValue] = useState<string>();
 
@@ -62,6 +64,13 @@ export const AccountsBranchCreateForm = () => {
     });
 
     const accountBranches = data?.data ?? [];
+
+    useEffect(() => {
+        const prevForm = createForms.find( (form) => form.key === key );
+        if ( prevForm ) {
+            form.setFieldsValue( prevForm.values || {});
+        }
+    }, []);
 
     return (
         // <Modal

@@ -18,11 +18,9 @@ export interface ICompany {
 }
 
 export type CreateFormPropsType = {
-    form: FormInstance;
-    formProps: FormProps;
-    goToForm: (resource: string) => void;
-    onFinish: (any?: any) => Promise;
-    formLoading: boolean;
+    values: any;
+    key: string;
+    resource?: string;
   }
 
 export interface IAccountsBranch extends IBaseAccount{

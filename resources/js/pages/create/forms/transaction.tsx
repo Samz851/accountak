@@ -1,4 +1,4 @@
-import { useOutletContext, useSearchParams } from "react-router-dom";
+import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
 import { useForm, useModalForm, useSelect } from "@refinedev/antd";
 import dayjs from "dayjs";
@@ -55,12 +55,13 @@ type totalAccounts = {
 }
 
 export const TransactionCreateForm = () => {
+    const { key } = useLocation();
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
     const go = useGo();
     const back = useBack();
     const { create } = useNavigation();
-    const [ openForms, setOpenForms ] = useOutletContext<CreateContextType>();
+    const [ createForms, goToCreateForm ] = useOutletContext<CreateContextType>();
     const t = useTranslate();
     const [ totalDebit, setTotalDebit ] = useState<totalAccounts>({});
     const [ totalCredit, setTotalCredit ] = useState<totalAccounts>({});
@@ -74,11 +75,11 @@ export const TransactionCreateForm = () => {
         action: "create",
         resource: "transactions",
     });
-    useEffect(() => {
-        if ( ! formLoading ) {
-            setOpenForms([...openForms, resource?.name])
-        }
-    }, [formLoading])
+    // useEffect(() => {
+    //     if ( ! formLoading ) {
+    //         addFormStep({v: "one"})
+    //     }
+    // }, [formLoading])
     const { styles } = useStyles();
 
     const { selectProps: AccountselectProps } = useSelect<IAccount>({
@@ -106,6 +107,15 @@ export const TransactionCreateForm = () => {
         cb(name);
 
     }
+
+    useEffect(() => {
+        console.log('forms', createForms, key);
+        const prevForm = createForms.find( (form) => form.key === key );
+        if ( prevForm ) {
+            form.setFieldsValue( prevForm.values || {});
+        }
+        // console.log(formProps)
+    }, [])
 
     return (
         <Form
@@ -234,7 +244,7 @@ export const TransactionCreateForm = () => {
                                                         {menu}
                                                         <Divider style={{ margin: '8px 0' }} />
                                                         <Space style={{ padding: '0 8px 4px' }}>
-                                                            <Button type="text" icon={<PlusOutlined />} onClick={() => create('accounts', 'push')}>
+                                                            <Button type="text" icon={<PlusOutlined />} onClick={() => goToCreateForm(form.getFieldsValue(true), 'accounts')}>
                                                             Add item
                                                             </Button>
                                                         </Space>
