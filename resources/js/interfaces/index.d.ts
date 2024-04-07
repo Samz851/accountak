@@ -21,6 +21,7 @@ export interface IOptions {
     fiscal_cycle: number;
     fiscal_year_start: any;
     logo?: string;
+    logo_file?: any;
     description?: string;
     option_1?: string;
     option_2?: string;

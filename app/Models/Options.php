@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasLogo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Options extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogo;
 
     protected $fillable = [
         'organization_id',
@@ -21,6 +22,13 @@ class Options extends Model
         'option_3',
         'option_4',
     ];
+
+    protected static function booted(): void
+    {
+        // static::creating(function($options) {
+        //     $options->code = $options->generateCode();
+        // });
+    }
 
     public function organization(): BelongsTo
     {

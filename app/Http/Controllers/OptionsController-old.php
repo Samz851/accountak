@@ -3,23 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Options;
+use App\Traits\HasFileUploads;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class OptionsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use HasFileUploads;
+
     public function index()
     {
         return response(Options::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store( Request $request ): Response
     {
         Log::info($request->file(), [__LINE__, __FILE__]);
         if ( $request->file('logo_file')) {
@@ -33,21 +31,16 @@ class OptionsController extends Controller
         return response($options);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Options $options)
+    public function show( Options $options ): Response
     {
-        $urlWithQueryString = request()->fullUrl();
-        // $optionsFresh = Options::where('id', )
-        Log::info([$urlWithQueryString], [__LINE__, __FILE__]);
         return response($options);
     }
 
+    
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Options $options)
+    public function update(Options $options)
     {
         //
     }

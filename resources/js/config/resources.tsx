@@ -94,6 +94,7 @@ export const resources: IResourceItem[] = [
         name: "options",
         list: "/options",
         create: "/options/create",
+        show: "/options/show/:id",
         meta: {
             dataProviderName: "laravel"
         }
