@@ -21,7 +21,7 @@ import { TaxCreateForm } from "@/pages/create/forms/tax";
 import { StatementBuilder } from "@/pages/statements";
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
-    <Route path="/setup" element={<SetupPage />} />,
+    <Route path="/options" element={<SetupPage />} />,
     <Route path="/create" element={<CreateGeneralPage />}>
         <Route path="transactions" element={<TransactionCreateForm />} />
         <Route path="accounts" element={<AccountCreateForm />} />

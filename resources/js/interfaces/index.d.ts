@@ -17,6 +17,17 @@ export interface ICompany {
     accounts?: IAccount[];
 }
 
+export interface IOptions {
+    fiscal_cycle: number;
+    fiscal_year_start: any;
+    logo?: string;
+    description?: string;
+    option_1?: string;
+    option_2?: string;
+    option_3?: string;
+    option_4?: string;
+}
+
 export type CreateFormPropsType = {
     values: any;
     key: string;

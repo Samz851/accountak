@@ -91,6 +91,14 @@ export const resources: IResourceItem[] = [
         },
     },
     {
+        name: "options",
+        list: "/options",
+        create: "/options/create",
+        meta: {
+            dataProviderName: "laravel"
+        }
+    },
+    {
         name: "dev_sample",
         list: "/dev_sample",
         create: "/dev_sample/create",

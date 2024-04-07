@@ -13,7 +13,7 @@ class CompanyController extends Controller
      */
     public function index( Request $request )
     {
-        Log::info( $request->user(), [__LINE__, __FILE__] );
+        // Log::info( $request->user(), [__LINE__, __FILE__] );
         return response(Company::with(['contacts'])->get());
     }
 

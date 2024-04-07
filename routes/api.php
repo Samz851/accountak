@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountsBranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\OptionsController;
 use App\Http\Controllers\TaxesController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UserController;
@@ -35,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/companies', CompanyController::class);
     Route::apiResource('/contacts', ContactController::class);
     Route::apiResource('/branches', AccountsBranchController::class);
+    Route::apiResource('/options', OptionsController::class);
     Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
     Route::get('/accounts/select', [AccountController::class, 'getSelect']);
     Route::get('/users/autologin', [UserController::class, 'autlogin']);
