@@ -6,24 +6,21 @@ namespace App\Models;
 
 use App\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Traits\Auth\Passwords\CanResetPassword;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthAuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model implements
-AuthAuthenticatableContract,
-AuthorizableContract,
-CanResetPasswordContract
+class User extends Model implements AuthAuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-use HasFactory, Notifiable, HasApiTokens,
-    Authenticatable, Authorizable, CanResetPassword;
+    use Authenticatable, Authorizable, CanResetPassword,
+        HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +31,7 @@ use HasFactory, Notifiable, HasApiTokens,
         'name',
         'email',
         'password',
-        'organization_id'
+        'organization_id',
     ];
 
     /**
@@ -56,7 +53,6 @@ use HasFactory, Notifiable, HasApiTokens,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
 
     public function organization(): BelongsTo
     {

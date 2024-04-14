@@ -14,7 +14,7 @@ class Contact extends Model
         'email',
         'phone_number',
         'type',
-        'company_id'
+        'company_id',
     ];
 
     public function company()

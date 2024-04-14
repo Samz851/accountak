@@ -11,7 +11,7 @@ class CompanyController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index( Request $request )
+    public function index(Request $request)
     {
         // Log::info( $request->user(), [__LINE__, __FILE__] );
         return response(Company::with(['contacts'])->get());
@@ -23,6 +23,7 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $company = Company::create($request->all());
+
         return response($company);
     }
 
@@ -32,6 +33,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         $company->contacts;
+
         return response($company);
     }
 

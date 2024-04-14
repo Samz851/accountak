@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Log;
 class OptionsController extends Controller
 {
     use HasFileUploads;
+
     const X_ACCOUNTAK_ONBOARDING = 'X-ACCOUNTAK-ONBOARDING';
+
     /**
      * Display a listing of the resource.
      */
@@ -26,15 +28,16 @@ class OptionsController extends Controller
     public function store(Request $request)
     {
         Log::info($request->file(), [__LINE__, __FILE__]);
-        if ( $request->file('logo_file')) {
-            $directory = 'logos/' . $request->user()->organization->id;
+        if ($request->file('logo_file')) {
+            $directory = 'logos/'.$request->user()->organization->id;
             $file = $request->file('logo_file');
-            if ( $fileUploadedData = $this->uploadSingleFile($file, $directory) ) {
+            if ($fileUploadedData = $this->uploadSingleFile($file, $directory)) {
                 $request->merge(['logo' => $fileUploadedData['filepath']]);
             }
         }
-        $options = $request->user()->organization->options()->create($request->all());
+        $options = $request->user()->organization->options()->update($request->all());
         $setup = $request->user()->organization->update(['setup' => 1]);
+
         return response($options)->withoutCookie(self::X_ACCOUNTAK_ONBOARDING);
     }
 
@@ -47,6 +50,7 @@ class OptionsController extends Controller
         // $optionsFresh = Options::where('id', )
         $anotherOptions = Options::find(1);
         Log::info([$options, $anotherOptions], [__LINE__, __FILE__]);
+
         return response($options);
     }
 

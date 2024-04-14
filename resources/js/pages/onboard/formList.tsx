@@ -16,18 +16,11 @@ const normFile = (e) => {
 };
 export const FormList = [
     <>
-      {/* <Form.Item
-        label="Logo"
-        name="logo_file"
-        valuePropName="fileList"
-        getValueFromEvent={normFile}
-        className="samer-formitem"
-      > */}
         <LogoUpload />
-      {/* </Form.Item> */}
       <Form.Item
         label="description"
         name="description"
+        required={true}
       >
         <Input.TextArea rows={4} />
       </Form.Item>
@@ -60,12 +53,12 @@ export const FormList = [
     
     </>,
     <>
-            <Form.Item
-            label="fiscal_cycle"
-            name="fiscal_cycle"
-            >
-                <InputNumber max={12} />
-        </Form.Item>
+      <Form.Item
+      label="fiscal_cycle"
+      name="fiscal_cycle"
+      >
+        <InputNumber max={12} />
+      </Form.Item>
         <Form.Item
             label="fiscal_year_start"
             name="fiscal_year_start"
