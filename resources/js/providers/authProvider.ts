@@ -26,8 +26,8 @@ export const authProvider: ACAuthProvider = {
             let res = await Request('POST', "/users/login", {email, password, remember}, {"X-XSRF-TOKEN": getCookie(XSRF_COOKIE)});
             console.log('success', res)
             if ( res.data.success ) {
-                saveState(API_KEY, {token: res.data.token});
-                saveState(IDENTITY_KEY, {token: res.data.user});
+                saveState(API_KEY, {token: res.data.token.token});
+                saveState(IDENTITY_KEY, res.data.user);
             }
             return {
                 success: true,
@@ -134,7 +134,7 @@ export const authProvider: ACAuthProvider = {
 
     },
     getPermissions: async () => null,
-    getIdentity: async () => {
+    getIdentity: () => {
         const token = loadState(IDENTITY_KEY);
         if (!token) {
             return null;

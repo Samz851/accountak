@@ -30,6 +30,14 @@ class Organization extends Model
     protected $with = ['options'];
 
 
+    protected static function booted(): void
+    {
+        static::created(function($organization) {
+            $organization->options()->create([
+                'fiscal_year_start' => date('Y/m/d')
+            ]);
+        });
+    }
     public function primary(): ?User
     {
         return User::find($this->primary);

@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Options;
+use App\Traits\HasFileUploads;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class OptionsController extends Controller
 {
+    use HasFileUploads;
+    const X_ACCOUNTAK_ONBOARDING = 'X-ACCOUNTAK-ONBOARDING';
     /**
      * Display a listing of the resource.
      */
@@ -30,17 +34,19 @@ class OptionsController extends Controller
             }
         }
         $options = $request->user()->organization->options()->create($request->all());
-        return response($options);
+        $setup = $request->user()->organization->update(['setup' => 1]);
+        return response($options)->withoutCookie(self::X_ACCOUNTAK_ONBOARDING);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Options $options)
+    public function show(Options $options): Response
     {
         $urlWithQueryString = request()->fullUrl();
         // $optionsFresh = Options::where('id', )
-        Log::info([$urlWithQueryString], [__LINE__, __FILE__]);
+        $anotherOptions = Options::find(1);
+        Log::info([$options, $anotherOptions], [__LINE__, __FILE__]);
         return response($options);
     }
 

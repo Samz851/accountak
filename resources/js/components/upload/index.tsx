@@ -6,7 +6,7 @@ import { UploadFile } from 'antd/lib';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const getBase64 = (img: FileType, callback: (url: string) => void) => {
+const getBase64 = (img, callback: (url: string) => void) => {
   const reader = new FileReader();
   reader.addEventListener('load', () => callback(reader.result as string));
   reader.readAsDataURL(img);
@@ -19,22 +19,22 @@ export const LogoUpload: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-  const handleChange: UploadProps['onChange'] = (info) => {
-    setFileList([...info.fileList])
-    if (info.file.status === 'uploading') {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj as FileType, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
-    }
-  };
+  // const handleChange: UploadProps['onChange'] = (info) => {
+  //   setFileList([...info.fileList])
+  //   // if (info.file.status === 'uploading') {
+  //   //   setLoading(true);
+  //   //   return;
+  //   // }
+  //   // if (info.file.status === 'done') {
+  //     // Get this url from response in real world.
+  //     getBase64(info.file.originFileObj as FileType, (url) => {
+  //       setLoading(false);
+  //       setImageUrl(url);
+  //     });
+  //   // }
+  // };
 
-  const uploadButton = (
+  const UploadButton = (
     <button style={{ border: 0, background: 'none' }} type="button">
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
@@ -76,12 +76,12 @@ export const LogoUpload: React.FC = () => {
         listType="picture-circle"
         className="avatar-uploader"
         // showUploadList={true}
-        // fileList={fileList}
+        fileList={fileList}
         beforeUpload={beforeUpload}
-        onChange={handleChange}
+        // onChange={handleChange}
         showUploadList={{showRemoveIcon: true}}
       >
-        {imageUrl ? <img src={imageUrl} alt="logo" style={{ width: '100%' }} /> : uploadButton}
+        { UploadButton}
       </Upload>
       </Form.Item>
     // </Flex>

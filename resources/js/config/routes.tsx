@@ -13,15 +13,36 @@ import { TaxShow } from "@/pages/taxes/show";
 import { AccountsBranchCreatePage, AccountsBranchShow } from "@/pages/accountsBranches";
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
 import { CreateGeneralPage } from "@/pages/create";
-import { SetupPage } from "@/pages/setup";
+import { EditOptions, HandleOptionsView, OptionsWrapper, ShowOptions } from "@/pages/options";
 import { TransactionCreateForm } from "@/pages/create/forms/transaction";
 import { AccountCreateForm } from "@/pages/create/forms/account";
 import { AccountsBranchCreateForm } from "@/pages/create/forms/branches";
 import { TaxCreateForm } from "@/pages/create/forms/tax";
 import { StatementBuilder } from "@/pages/statements";
+import { OnboardPage } from "@/pages/onboard";
+import { loadState } from "@/helpers/localStorage";
+
+const optionsLoader = () => {
+    const identity = loadState('identity');
+    return identity.organization.options.id;
+}
+
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
-    <Route path="/options" element={<SetupPage />} />,
+    <Route path="/options">
+        <Route path="onboard" element={<OnboardPage />} />
+        <Route
+            loader={optionsLoader}
+            index
+            path="show"
+            element={<ShowOptions />}
+        />
+        <Route
+            loader={optionsLoader}
+            path="edit"
+            element={<EditOptions />}
+        />
+    </Route>,
     <Route path="/create" element={<CreateGeneralPage />}>
         <Route path="transactions" element={<TransactionCreateForm />} />
         <Route path="accounts" element={<AccountCreateForm />} />

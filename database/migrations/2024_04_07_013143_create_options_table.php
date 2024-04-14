@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('option_3')->nullable();
             $table->string('option_4')->nullable();
             $table->foreignId('organization_id')
-                ->constrained(table: "organizations");
+                ->constrained(table: "organizations")
+                ->unique();
             $table->integer('fiscal_cycle')->default(12);
             $table->date('fiscal_year_start');
             $table->timestamps();

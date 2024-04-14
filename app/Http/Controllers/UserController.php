@@ -7,11 +7,15 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class UserController extends Controller
 {
+    const X_ACCOUNTAK_ONBOARDING = 'X-ACCOUNTAK-ONBOARDING';
     public function login( Request $request ): Response
     {
+        Log::info(self::X_ACCOUNTAK_ONBOARDING, [__LINE__, __FILE__]);
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -24,7 +28,15 @@ class UserController extends Controller
             $token = $user->createToken('api_token');
             $request->session()->regenerate();
             
-            return response(['success' => true, 'token' => $token->plainTextToken, 'redirectTo' => $user->organization->setup ? "/" : "/setup", 'user' => $user]);
+            $response = response([
+                'success' => true, 
+                'token' => $token->plainTextToken, 
+                'redirectTo' => $user->organization->setup ? "/" : "/options/onboard", 'user' => $user]);
+            if ( ! $user->organization->setup )
+            {
+                return $response->cookie(self::X_ACCOUNTAK_ONBOARDING, !$user->organization->setup);
+            }
+            return $response;
             // return redirect()->intended(route('home'));
         }
         return response('The provided credentials do not match our records.', 401);

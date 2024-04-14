@@ -1,47 +1,37 @@
-import { Create, List, SaveButton, useStepsForm } from "@refinedev/antd"
+import { Create, Edit, List, SaveButton, useStepsForm, useThemedLayoutContext } from "@refinedev/antd"
 import { Button, Form, FormInstance, Row, Space, Steps } from "antd"
 import { useEffect, useState } from "react";
 import { FormList } from "./formList";
-import { IOptions } from "@/interfaces";
-import { HttpError } from "@refinedev/core";
+import { OptionsOutletContextType, IIdentityObject, IOptions } from "@/interfaces";
+import { HttpError, useGetIdentity, useGo, useNavigation } from "@refinedev/core";
 import dayjs from "dayjs";
+import { useBlocker, useOutletContext } from "react-router-dom";
 interface SubmitButtonProps {
   form: FormInstance;
 }
-// const SubmitButton: React.FC<React.PropsWithChildren<SubmitButtonProps>> = ({ form, children }) => {
-//   const [submittable, setSubmittable] = useState<boolean>(false);
 
-//   // Watch all values
-//   const values = Form.useWatch([], form);
+export const OnboardPage = () => {
+  const { list } = useNavigation();
+  const [ submitted, setSubmitted ] = useState(false);
+  // const blocker = useBlocker(({ currentLocation, nextLocation }) =>
+  //   !submitted &&
+  //   currentLocation.pathname !== nextLocation.pathname
+  // )
 
-//   useEffect(() => {
-//     form
-//       .validateFields({ validateOnly: true })
-//       .then(() => setSubmittable(true))
-//       .catch(() => setSubmittable(false));
-//   }, [form, values]);
-
-//   return (
-//     <Button type="primary" htmlType="submit" disabled={!submittable}>
-//       {children}
-//     </Button>
-//   );
-// };
-
-export const SetupPage = () => {
-  const [ optionsValues, setOptionsValues ] = useState<IOptions>({
-    fiscal_cycle: 12,
-    fiscal_year_start: dayjs().format('YYYY/MM/DD').toString(),
-  })
-  const { current, gotoStep, stepsProps, formProps, form, onFinish, saveButtonProps } =
+  const { 
+    current, gotoStep, 
+    stepsProps, formProps, 
+    form, onFinish, 
+    saveButtonProps, formLoading
+   } =
     useStepsForm<IOptions, HttpError, IOptions>(
       {
-        action: "edit",
+        action: "create",
         resource: "options",
         submit: async (values) => {
           try {
                 // if (values.hasOwnProperty('fiscal_year_start') ) values.fiscal_year_start = values.fiscal_year_start.format('YYYY/MM/DD').toString();
-                console.log(values, optionsValues);
+                // console.log(values, optionsValues);
                 const data = {...values} as any;
                 if (data.hasOwnProperty('fiscal_year_start') ) data.fiscal_year_start = data.fiscal_year_start.format('YYYY/MM/DD').toString();
                 if ( data.logo_file?.length ) data.logo_file = data.logo_file[0].originFileObj;
@@ -60,23 +50,29 @@ export const SetupPage = () => {
                 
                 });
                 const response = await onFinish(formData as any);
+                setSubmitted(true);
+                list("options");
               } catch (error) {
                 console.log(error);
               }
         },
-        id: 10
       }
     );
 
+  // useEffect(()=>{
+  //   if (identity?.organization?.options.id !== undefined && identity?.organization?.options.id > 0 ) setId(identity?.organization?.options.id)
+  // },[identity]);
 
 
-  const handleValuesChange = (changedValues, allValues) => {
-    console.log(changedValues, allValues);
-    setOptionsValues({...optionsValues, ...changedValues});
-  }
+
+  // const handleValuesChange = (changedValues, allValues) => {
+  //   console.log(optionsValues, changedValues, allValues);
+  //   setOptionsValues({...optionsValues, ...changedValues});
+  // }
 // const [current, setCurrent] = useState(0);
     return (
       <Create
+      isLoading={formLoading}
       footerButtons={
         <>
           {current > 0 && (
@@ -114,8 +110,8 @@ export const SetupPage = () => {
         layout="vertical"
         style={{ marginTop: 30 }}
         form={form}
-        onFieldsChange={(changedFields, allFields) => { console.log(changedFields, allFields);}}
-        onValuesChange={handleValuesChange}
+        // onFieldsChange={(changedFields, allFields) => { console.log(optionsValues, changedFields, allFields);}}
+        // onValuesChange={handleValuesChange}
         // onFinish={async (values) => {
         //   try {
         //     // if (values.hasOwnProperty('fiscal_year_start') ) values.fiscal_year_start = values.fiscal_year_start.format('YYYY/MM/DD').toString();

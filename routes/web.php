@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/{all?}', function () {
     return view('welcome');
-})->where('all', '\b(?!\/users\/login\b)\w*')
+})->where('all', '.*')
 ->name('home');
 
 Route::post('/users/login', [UserController::class, 'login']);
