@@ -2,15 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\AccountTransactionTypes;
 use App\Contracts\BaseAccount as BaseAccountContract;
-use App\Enums\BaseAccountTaxonomy;
-use Illuminate\Database\Eloquent\Builder;
+use App\Enums\AccountTransactionTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Number;
 
 class Account extends BaseAccount implements BaseAccountContract
 {
@@ -18,17 +12,17 @@ class Account extends BaseAccount implements BaseAccountContract
 
     protected static function booted(): void
     {
-        static::creating(function($account) {
+        static::creating(function ($account) {
             $last = self::where('parent_id', $account->parent_id)
-                        ->latest('code')->first();
-            if ( $last ) {
+                ->latest('code')->first();
+            if ($last) {
                 $lastCode = str_split($last->code, 2);
                 $codePart = array_pop($lastCode);
-                $lastCode[] = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
+                $lastCode[] = str_pad($codePart + 1, 2, '0', STR_PAD_LEFT);
                 $newCode = implode($lastCode);
             } else {
                 $branchCode = AccountsBranch::where('id', intval($account->parent_id))->first();
-                $newCode = $branchCode->code . str_pad('1', 10 - strlen($branchCode->code), "0", STR_PAD_LEFT);
+                $newCode = $branchCode->code.str_pad('1', 10 - strlen($branchCode->code), '0', STR_PAD_LEFT);
             }
 
             $account->code = $newCode;
@@ -39,27 +33,28 @@ class Account extends BaseAccount implements BaseAccountContract
     {
         // return $this->hasMany(TransRecord::class, 'debit_account_id');
         return $this->belongsToMany(TransRecord::class, 'account_trans_record')
-                    ->using(AccountTransRecord::class)
-                    ->as('dbtrans')
-                    ->withPivot(['type', 'amount'])
-                    ->wherePivot('type', AccountTransactionTypes::DEBIT);
+            ->using(AccountTransRecord::class)
+            ->as('dbtrans')
+            ->withPivot(['type', 'amount'])
+            ->wherePivot('type', AccountTransactionTypes::DEBIT);
     }
 
     public function creditTransactions()
     {
         // return $this->hasMany(TransRecord::class, 'credit_account_id');
         return $this->belongsToMany(TransRecord::class, 'account_trans_record')
-                    ->using(AccountTransRecord::class)
-                    ->as('crtrans')
-                    ->withPivot(['type', 'amount'])
-                    ->wherePivot('type', AccountTransactionTypes::CREDIT);
+            ->using(AccountTransRecord::class)
+            ->as('crtrans')
+            ->withPivot(['type', 'amount'])
+            ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
     public function getBalanceAttribute(): float
     {
-        $totalCredit = $this->creditTransactions()->get()->pluck('crtrans')->sum("amount") ?? 0;
-        $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum("amount") ?? 0;
-        return  round($totalCredit - $totalDebit, 2);
+        $totalCredit = $this->creditTransactions()->get()->pluck('crtrans')->sum('amount') ?? 0;
+        $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum('amount') ?? 0;
+
+        return round($totalCredit - $totalDebit, 2);
     }
 
     public function contact()

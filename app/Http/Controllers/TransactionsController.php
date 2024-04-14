@@ -5,18 +5,23 @@ namespace App\Http\Controllers;
 use App\Enums\AccountTransactionTypes;
 use App\Models\TransRecord;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class TransactionsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): Response
     {
-        $transactions = TransRecord::with(["noteable", "debitAccounts", "creditAccounts", "payment"])
-                                    ->paginate()
-                                    ->items();
+        Log::info($request->query(), [__LINE__, __FILE__]);
+        $transactions = TransRecord::with(['noteable', 'debitAccounts', 'creditAccounts', 'payment'])
+            ->where('date', '>=', '2024-03-01')
+            ->paginate()
+            ->items();
+
         return response($transactions);
     }
 
@@ -35,7 +40,7 @@ class TransactionsController extends Controller
             foreach ($debitAccounts as $debitAccount) {
                 $transaction->debitAccounts()->attach($debitAccount['id'], [
                     'type' => AccountTransactionTypes::DEBIT,
-                    'amount' => $debitAccount['amount']
+                    'amount' => $debitAccount['amount'],
                 ]);
             }
         }
@@ -43,7 +48,7 @@ class TransactionsController extends Controller
             foreach ($creditAccounts as $creditAccount) {
                 $transaction->debitAccounts()->attach($creditAccount['id'], [
                     'type' => AccountTransactionTypes::CREDIT,
-                    'amount' => $creditAccount['amount']
+                    'amount' => $creditAccount['amount'],
                 ]);
             }
         }
@@ -52,8 +57,8 @@ class TransactionsController extends Controller
         }
         // Reload model with children
         $transaction = TransRecord::where('id', $transaction->id)
-                                ->with(["noteable", "debitAccounts", "creditAccounts", "payment"])
-                                ->first();
+            ->with(['noteable', 'debitAccounts', 'creditAccounts', 'payment'])
+            ->first();
 
         return response($transaction);
     }

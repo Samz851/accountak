@@ -1,5 +1,5 @@
 import React from "react";
-import { Authenticated, Refine } from "@refinedev/core";
+import { Authenticated, CanAccess, Refine } from "@refinedev/core";
 import { RefineKbarProvider } from "@refinedev/kbar";
 import {
     useNotificationProvider,
@@ -27,11 +27,13 @@ import { useAutoLoginForDemo } from "./hooks";
 import "@refinedev/antd/dist/reset.css";
 import { resources } from "./config/resources";
 import { routes } from "./config/routes";
+import { loadState } from "./helpers/localStorage";
+import { getCookie } from "./helpers/session";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
     // We use this hook to skip the login page and demonstrate the application more quickly.
-    const { loading } = useAutoLoginForDemo();
+    // const { loading } = useAutoLoginForDemo();
     const { PROD, VITE_DEV_APP_URL, VITE_PROD_APP_URL} = import.meta.env;
     const API_URL = "https://api.finefoods.refine.dev";
     const LARAVEL_API_URL = `${ PROD 
@@ -49,9 +51,9 @@ const App: React.FC = () => {
         getLocale: () => i18n.language,
     };
 
-    if (loading) {
-        return null;
-    }
+    // if (loading) {
+    //     return null;
+    // }
 
     return (
         <BrowserRouter>
@@ -65,6 +67,30 @@ const App: React.FC = () => {
                         }}
                         authProvider={authProvider}
                         i18nProvider={i18nProvider}
+                        accessControlProvider={{
+                            can: async ({ resource, action, params }) => {
+                                const accessCookie = getCookie('X-ACCOUNTAK-ONBOARDING');
+                                const canAccess = accessCookie || resource === "options" || resource === undefined;
+                                if ( !canAccess ) {
+                                    return {can: false};
+                                }
+                            //   if (identity?.organization?.setup === 0 && resource === undefined) {
+                            //     return {
+                            //       can: false,
+                            //     };
+                            //   
+                              return { can: true };
+                            },
+                            options: {
+                              buttons: {
+                                enableAccessControl: true,
+                                hideIfUnauthorized: true,
+                              },
+                              queryOptions: {
+                                // ... default global query options
+                              },
+                            },
+                          }}
                         options={{
                             syncWithLocation: true,
                             warnWhenUnsavedChanges: true,
@@ -92,12 +118,18 @@ const App: React.FC = () => {
                                                     marginRight: "auto",
                                                 }}
                                             > */}
+                                            <CanAccess fallback={
+                                                <CatchAllNavigate to="/options/onboard" />
+                                            }>
                                                 <Outlet />
+
+                                            </CanAccess>
                                             {/* </div> */}
                                         </ThemedLayoutV2>
                                     </Authenticated>
                                 }
                             >
+
                                 {...routes}
                             </Route>
 
@@ -118,8 +150,8 @@ const App: React.FC = () => {
                                             type="login"
                                             formProps={{
                                                 initialValues: {
-                                                    email: "demo@refine.dev",
-                                                    password: "demodemo",
+                                                    email: "samer@example.com",
+                                                    password: "password",
                                                 },
                                             }}
                                         />

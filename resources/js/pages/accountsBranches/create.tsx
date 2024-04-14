@@ -46,13 +46,13 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
     >({
         action: "create",
         defaultVisible: true,
-        resource: "accounts_branches",
+        resource: "branches",
         redirect: false,
         warnWhenUnsavedChanges: !isOverModal,
     });
 
     const { data } = useList<IAccountsBranch>({
-        resource: "accounts_branches",
+        resource: "branches",
         filters: [
             {
                 field: 'selectOptions',

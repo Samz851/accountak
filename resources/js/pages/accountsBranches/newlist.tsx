@@ -20,7 +20,7 @@ export const AccountsBranchesListPage = () => {
     const t = useTranslate();
     const { styles } = useStyles();
     const { data } = useList<AccountsBranchesTree>({
-        resource: "accounts_branches",
+        resource: "branches",
         filters: [
             {
                 field: 'tree',
@@ -36,7 +36,7 @@ export const AccountsBranchesListPage = () => {
 
     const addType = (parent?) => {
         return go({
-            to: `${createUrl("accounts_branches")}`,
+            to: `${createUrl("branches")}`,
             query: {
                 to: pathname,
                 parent: parent

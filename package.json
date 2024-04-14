@@ -32,6 +32,7 @@
         "i18next": "^20.1.0",
         "i18next-browser-languagedetector": "^6.1.1",
         "i18next-xhr-backend": "^3.2.2",
+        "js-cookie": "^3.0.5",
         "laravel-vite-plugin": "^0.8.1",
         "lodash.debounce": "^4.0.8",
         "react": "^18.0.0",
@@ -46,7 +47,8 @@
         "scheduler": "^0.23.0",
         "translation-check": "^1.1.0",
         "tslib": "^2.3.1",
-        "usehooks-ts": "^2.14.0"
+        "usehooks-ts": "^2.14.0",
+        "vite-plugin-react-js-support": "^1.0.7"
     },
     "devDependencies": {
         "@types/google.maps": "^3.50.4",

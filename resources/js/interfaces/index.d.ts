@@ -1,5 +1,27 @@
 import { Dayjs } from "dayjs";
+import {
+    FormInstance,
+    FormProps
+} from "antd";
+import { SetStateAction } from "react";
+import { resources } from '../config/resources';
 
+export type IIdentityObject = {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: string;
+    organization_id: 1;
+    created_at: string;
+    updated_at: string;
+    organization?: IOrganization;
+}
+export interface IOrganization {
+    id: number;
+    setup: number;
+    options: IOptions;
+}
+export type CreateContextType = string[] | Distpatch<SetStateAction<string[]>>;
 export interface IStatement extends any {}
 export interface ICompany {
     id: number;
@@ -10,6 +32,39 @@ export interface ICompany {
     contacts?: IContact[];
     accounts?: IAccount[];
 }
+
+// export type OptionsOutletContextType = {
+//     meta?: {
+//         id?: number;
+//     },
+//     resource?: string,
+//     action?: string,
+//     loading: boolean,
+// };
+export type OptionsOutletContextType = {
+    id?: number;
+    resource?: string,
+    action?: string,
+    loading: boolean,
+};
+export interface IOptions {
+    id?: number;
+    fiscal_cycle: number;
+    fiscal_year_start: any;
+    logo?: string;
+    logo_file?: any;
+    description?: string;
+    option_1?: string;
+    option_2?: string;
+    option_3?: string;
+    option_4?: string;
+}
+
+export type CreateFormPropsType = {
+    values: any;
+    key: string;
+    resource?: string;
+  }
 
 export interface IAccountsBranch extends IBaseAccount{
     children?: IAccountsBranch[];

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Options;
 use Illuminate\Support\ServiceProvider;
+use Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Route::model('option', Options::class);
     }
 }
