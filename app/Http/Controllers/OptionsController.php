@@ -7,6 +7,7 @@ use App\Traits\HasFileUploads;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use PhpOption\Option;
 
 class OptionsController extends Controller
 {
@@ -27,18 +28,37 @@ class OptionsController extends Controller
      */
     public function store(Request $request)
     {
+        // $request->merge(['id' => $request->user()->organization->options->id]);
         Log::info($request->file(), [__LINE__, __FILE__]);
         if ($request->file('logo_file')) {
             $directory = 'logos/'.$request->user()->organization->id;
             $file = $request->file('logo_file');
             if ($fileUploadedData = $this->uploadSingleFile($file, $directory)) {
-                $request->merge(['logo' => $fileUploadedData['filepath']]);
+                $request->merge(['logo' => 'storage/'.$fileUploadedData['filepath']]);
             }
         }
-        $options = $request->user()->organization->options()->update($request->all());
-        $setup = $request->user()->organization->update(['setup' => 1]);
+        Log::info($request->all(), [__LINE__, __FILE__]);
 
-        return response($options)->withoutCookie(self::X_ACCOUNTAK_ONBOARDING);
+
+        $optionsData = $request->except(['logo', 'logo_file']);
+        $options = Options::where('id', $request->user()->organization->options->id)->update($optionsData);
+        // $options = $request->user()
+        //         ->organization
+        //         ->options()
+        //         ->update($request->except(['logo', 'logo_file'])->toArray());
+                Log::info([$optionsData, $request->all()], [__LINE__, __FILE__]);
+
+        $onboarded = $request->user()
+                ->organization
+                ->update([
+                    'onboarded' => 1,
+                    'logo' => $request->get('logo'),
+                ]);
+                Log::info($request->all(), [__LINE__, __FILE__]);
+
+        return response($request->user()
+        ->organization
+        ->options)->withoutCookie(self::X_ACCOUNTAK_ONBOARDING);
     }
 
     /**
@@ -46,10 +66,6 @@ class OptionsController extends Controller
      */
     public function show(Options $options): Response
     {
-        $urlWithQueryString = request()->fullUrl();
-        // $optionsFresh = Options::where('id', )
-        $anotherOptions = Options::find(1);
-        Log::info([$options, $anotherOptions], [__LINE__, __FILE__]);
 
         return response($options);
     }

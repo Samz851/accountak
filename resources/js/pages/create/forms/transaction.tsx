@@ -1,6 +1,6 @@
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
-import { useForm, useModalForm, useSelect } from "@refinedev/antd";
+import { Create, useForm, useModalForm, useSelect } from "@refinedev/antd";
 import dayjs from "dayjs";
 import {
     HttpError, useBack, useGetToPath,
@@ -70,7 +70,7 @@ export const TransactionCreateForm = () => {
 
     const { resource } = useParsed();
 
-    const { form, formProps, onFinish, formLoading } = useForm<ITransaction, HttpError, FormValues
+    const { form, formProps, onFinish, formLoading, saveButtonProps } = useForm<ITransaction, HttpError, FormValues
     >({
         action: "create",
         resource: "transactions",
@@ -120,6 +120,7 @@ export const TransactionCreateForm = () => {
     }, [])
 
     return (
+        <Create saveButtonProps={saveButtonProps}>
         <Form
             {...formProps}
             form={form}
@@ -440,6 +441,7 @@ export const TransactionCreateForm = () => {
                 </Col>
             </Row>
         </Form>
+        </Create>
     )
 
 }

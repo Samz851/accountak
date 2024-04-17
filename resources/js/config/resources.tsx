@@ -5,6 +5,7 @@ import {
 
 
 import i18next from "i18next";
+import { ShowOptions } from "@/pages/options";
 
 export const resources: IResourceItem[] = [
     {
@@ -92,10 +93,11 @@ export const resources: IResourceItem[] = [
     },
     {
         name: "options",
-        // list: "/options/list",
-        // create: "/options/create",
-        list: "/options/show",
+        list: "/options",
+        show: "/options/show/:id",
+        edit: "/options/edit/:id",
         meta: {
+            hide: true,
             dataProviderName: "laravel"
         }
     },

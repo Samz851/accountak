@@ -5,22 +5,34 @@ import {
 } from "antd";
 import { SetStateAction } from "react";
 import { resources } from '../config/resources';
+import { BaseKey } from "@refinedev/core";
 
-export type IIdentityObject = {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at: string;
-    organization_id: 1;
-    created_at: string;
-    updated_at: string;
-    organization?: IOrganization;
+export interface IOptions {
+    id?: BaseKey;
+    fiscal_cycle: number;
+    fiscal_year_start: Date;
+    description?: string;
+    option_1?: string;
+    option_2?: string;
+    option_3?: string;
+    option_4?: string;
 }
 export interface IOrganization {
-    id: number;
-    setup: number;
-    options: IOptions;
+    logo?: string;
+    id: BaseKey;
+    onboarded: number;
 }
+
+export interface IUser {
+    id: BaseKey;
+    name: string;
+}
+export interface IIdentity {
+    user: IUser;
+    organization: IOrganization;
+    options: IOptions
+}
+
 export type CreateContextType = string[] | Distpatch<SetStateAction<string[]>>;
 export interface IStatement extends any {}
 export interface ICompany {
@@ -47,18 +59,6 @@ export type OptionsOutletContextType = {
     action?: string,
     loading: boolean,
 };
-export interface IOptions {
-    id?: number;
-    fiscal_cycle: number;
-    fiscal_year_start: any;
-    logo?: string;
-    logo_file?: any;
-    description?: string;
-    option_1?: string;
-    option_2?: string;
-    option_3?: string;
-    option_4?: string;
-}
 
 export type CreateFormPropsType = {
     values: any;
@@ -176,25 +176,6 @@ export interface ISalesChart {
 export interface IOrderStatus {
     id: number;
     text: "Pending" | "Ready" | "On The Way" | "Delivered" | "Cancelled";
-}
-
-export interface IUser {
-    id: number;
-    firstName: string;
-    lastName: string;
-    fullName: string;
-    gender: string;
-    gsm: string;
-    createdAt: string;
-    isActive: boolean;
-    avatar: IFile[];
-    addresses: IAddress[];
-}
-
-export interface IIdentity {
-    id: number;
-    name: string;
-    avatar: string;
 }
 
 export interface IAddress {

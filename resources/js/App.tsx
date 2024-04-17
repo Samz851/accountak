@@ -70,7 +70,7 @@ const App: React.FC = () => {
                         accessControlProvider={{
                             can: async ({ resource, action, params }) => {
                                 const accessCookie = getCookie('X-ACCOUNTAK-ONBOARDING');
-                                const canAccess = accessCookie || resource === "options" || resource === undefined;
+                                const canAccess = !accessCookie || resource === undefined;
                                 if ( !canAccess ) {
                                     return {can: false};
                                 }

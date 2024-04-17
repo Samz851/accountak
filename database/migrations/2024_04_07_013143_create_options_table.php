@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('options', function (Blueprint $table) {
             $table->id();
-            $table->string('logo')->nullable();
             $table->string('description')->nullable();
             $table->string('option_1')->nullable();
             $table->string('option_2')->nullable();
             $table->string('option_3')->nullable();
             $table->string('option_4')->nullable();
             $table->foreignId('organization_id')
-                ->constrained(table: "organizations")
-                ->unique();
+                ->constrained(table: "organizations");
             $table->integer('fiscal_cycle')->default(12);
             $table->date('fiscal_year_start');
             $table->timestamps();

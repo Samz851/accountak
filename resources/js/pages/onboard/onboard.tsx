@@ -2,8 +2,8 @@ import { Create, Edit, List, SaveButton, useStepsForm, useThemedLayoutContext } 
 import { Button, Form, FormInstance, Row, Space, Steps } from "antd"
 import { useEffect, useState } from "react";
 import { FormList } from "./formList";
-import { OptionsOutletContextType, IIdentityObject, IOptions } from "@/interfaces";
-import { HttpError, useGetIdentity, useGo, useNavigation } from "@refinedev/core";
+import { OptionsOutletContextType, IOptions, IIdentity } from "@/interfaces";
+import { BaseKey, HttpError, useGetIdentity, useGo, useNavigation, useResource } from "@refinedev/core";
 import dayjs from "dayjs";
 import { useBlocker, useOutletContext } from "react-router-dom";
 interface SubmitButtonProps {
@@ -11,8 +11,11 @@ interface SubmitButtonProps {
 }
 
 export const OnboardPage = () => {
-  const { list } = useNavigation();
+  const { data: identity } = useGetIdentity<IIdentity>();
+  const { show } = useNavigation();
   const [ submitted, setSubmitted ] = useState(false);
+  const { resource } = useResource();
+  // console.log('oboard', resource)
   // const blocker = useBlocker(({ currentLocation, nextLocation }) =>
   //   !submitted &&
   //   currentLocation.pathname !== nextLocation.pathname
@@ -50,8 +53,9 @@ export const OnboardPage = () => {
                 
                 });
                 const response = await onFinish(formData as any);
+                console.log('response', response)
                 setSubmitted(true);
-                list("options");
+                show("options", identity?.options.id as BaseKey);
               } catch (error) {
                 console.log(error);
               }
@@ -59,17 +63,6 @@ export const OnboardPage = () => {
       }
     );
 
-  // useEffect(()=>{
-  //   if (identity?.organization?.options.id !== undefined && identity?.organization?.options.id > 0 ) setId(identity?.organization?.options.id)
-  // },[identity]);
-
-
-
-  // const handleValuesChange = (changedValues, allValues) => {
-  //   console.log(optionsValues, changedValues, allValues);
-  //   setOptionsValues({...optionsValues, ...changedValues});
-  // }
-// const [current, setCurrent] = useState(0);
     return (
       <Create
       isLoading={formLoading}
@@ -110,62 +103,8 @@ export const OnboardPage = () => {
         layout="vertical"
         style={{ marginTop: 30 }}
         form={form}
-        // onFieldsChange={(changedFields, allFields) => { console.log(optionsValues, changedFields, allFields);}}
-        // onValuesChange={handleValuesChange}
-        // onFinish={async (values) => {
-        //   try {
-        //     // if (values.hasOwnProperty('fiscal_year_start') ) values.fiscal_year_start = values.fiscal_year_start.format('YYYY/MM/DD').toString();
-        //     console.log(values);
-        //     const data = {...values} as any;
-        //     if (data.hasOwnProperty('fiscal_year_start') ) data.fiscal_year_start = data.fiscal_year_start.format('YYYY/MM/DD').toString();
-        //     const formData = new FormData();
-        //     const keys = Object.keys(data);
-        
-        //     keys.forEach( key => {
-        //       console.log(key, data[key]);
-        //       if ( Array.isArray(data[key]) ) {
-        //         data[key].map( per => {
-        //               formData.append(`${key}[]`, per);
-        //           })
-        //       } else {
-        //           formData.append(key, data[key])
-        //       }
-            
-        //     });
-        //     const response = await onFinish(formData as any);
-        //   } catch (error) {
-        //     console.log(error);
-        //   }
-        // }}
       >
         {FormList[current]}
-        {/* <>
-          {current > 0 && (
-            <Button
-              onClick={() => {
-                gotoStep(current - 1);
-              }}
-            >
-              Previous
-            </Button>
-          )}
-          {current < FormList.length - 1 && (
-            <Button
-              onClick={() => {
-                gotoStep(current + 1);
-              }}
-            >
-              Next
-            </Button>
-          )}
-          {current === FormList.length - 1 && (
-            <Form.Item>
-            <Space>
-              <SubmitButton form={form}>Submit</SubmitButton>
-            </Space>
-          </Form.Item>
-          )}
-        </> */}
       </Form>
     </Create>
     )

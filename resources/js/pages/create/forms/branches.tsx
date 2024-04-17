@@ -1,6 +1,6 @@
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
-import { useForm, useModalForm } from "@refinedev/antd";
+import { Create, useForm, useModalForm } from "@refinedev/antd";
 import {
     HttpError, useBack, useGetToPath,
     useGo,
@@ -46,7 +46,7 @@ export const AccountsBranchCreateForm = () => {
 
     const initValues = {parent: searchParams.get('parent') ?? ''};
 
-    const { formProps, form, formLoading, onFinish } = useForm<IAccountsBranch, HttpError, FormValues
+    const { formProps, form, formLoading, onFinish, saveButtonProps } = useForm<IAccountsBranch, HttpError, FormValues
     >({
         action: "create",
         resource: "branches",
@@ -100,6 +100,7 @@ export const AccountsBranchCreateForm = () => {
         //     width={512}
         //     closeIcon={<LeftOutlined />}
         // >
+        <Create saveButtonProps={saveButtonProps}>
             <Form
                 {...formProps}
                 form={form}
@@ -156,6 +157,7 @@ export const AccountsBranchCreateForm = () => {
                 </Form.Item>
                 
             </Form>
+        </Create>
         // </Modal>
     );
 };

@@ -15,7 +15,6 @@ class Options extends Model
         'organization_id',
         'fiscal_cycle',
         'fiscal_year_start',
-        'logo',
         'description',
         'option_1',
         'option_2',

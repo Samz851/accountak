@@ -1,14 +1,14 @@
-import { OptionsOutletContextType, IIdentityObject, IOptions } from "@/interfaces"
+import { OptionsOutletContextType, IOptions } from "@/interfaces"
 import { Show } from "@refinedev/antd";
-import { useGetIdentity, useShow } from "@refinedev/core"
+import { BaseKey, useGetIdentity, useShow } from "@refinedev/core"
 import { useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useLoaderData, useOutletContext } from "react-router-dom";
 
 export const ShowOptions = () => {
-    // const { id } = useOutletContext<OptionsOutletContextType>();
+    // const id: BaseKey = useLoaderData() as BaseKey;
 
     const { queryResult} = useShow<IOptions>({
-        resource: "options"
+        resource: "options",
     });
     const { data, isLoading } = queryResult;
     const record = data?.data;
@@ -21,9 +21,10 @@ export const ShowOptions = () => {
         <Show
             isLoading={isLoading}
             canEdit={true}
+            dataProviderName="laravel"
         >
             <div>Fiscal Cycle: {record?.fiscal_cycle}</div>
-            <div>Fiscal Year Start: {record?.fiscal_year_start}</div>
+            <div>Fiscal Year Start: {record?.fiscal_year_start.toString()}</div>
         </Show>
     )
 }

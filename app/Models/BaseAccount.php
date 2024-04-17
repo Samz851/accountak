@@ -21,6 +21,7 @@ abstract class BaseAccount extends Model
         'description',
         'code',
         'taxonomy',
+        'parent_id'
     ];
 
     protected $appends = [

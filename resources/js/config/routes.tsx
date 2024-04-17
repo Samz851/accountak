@@ -24,7 +24,8 @@ import { loadState } from "@/helpers/localStorage";
 
 const optionsLoader = () => {
     const identity = loadState('identity');
-    return identity.organization.options.id;
+    if (!identity) return 0;
+    return identity.options.id;
 }
 
 export const routes: ReactElement[] = [
@@ -32,14 +33,13 @@ export const routes: ReactElement[] = [
     <Route path="/options">
         <Route path="onboard" element={<OnboardPage />} />
         <Route
-            loader={optionsLoader}
-            index
-            path="show"
+            // loader={optionsLoader}
+            path="show/:id"
             element={<ShowOptions />}
         />
         <Route
-            loader={optionsLoader}
-            path="edit"
+            // loader={optionsLoader}
+            path="edit/:id"
             element={<EditOptions />}
         />
     </Route>,

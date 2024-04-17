@@ -1,6 +1,6 @@
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
-import { useForm, useModalForm, useTable } from "@refinedev/antd";
+import { Create, SaveButton, useForm, useModalForm, useTable } from "@refinedev/antd";
 import {
     HttpError, useBack, useGetToPath,
     useGo, useNavigation, useParsed, useTranslate
@@ -24,7 +24,8 @@ import { useEffect, useState } from "react";
 
 type FormValues = {
     name: string;
-    account_branch_id: number;
+    parent_id: number;
+    description: string;
 };
 
 export const AccountCreateForm = () => {
@@ -40,7 +41,7 @@ export const AccountCreateForm = () => {
     const [ accountsOptions, setAccountsOptions ] = useState<IAccount[] | []>([]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const { resource } = useParsed();
-    const { form, formProps, onFinish, formLoading } = useForm<IAccount, HttpError, FormValues
+    const { form, formProps, onFinish, formLoading, saveButtonProps } = useForm<IAccount, HttpError, FormValues
     >({
         action: "create",
         resource: "accounts",
@@ -117,6 +118,7 @@ export const AccountCreateForm = () => {
     }, []);
 
     return (
+        <Create saveButtonProps={saveButtonProps}>
             <Form
                 {...formProps}
                 form={form}
@@ -125,7 +127,8 @@ export const AccountCreateForm = () => {
                     try {
                         const data = await onFinish({
                             name: values.name,
-                            account_branch_id: values.account_branch_id,
+                            parent_id: values.parent_id,
+                            description: values.description
                         });
                         close();
                         go({
@@ -157,8 +160,15 @@ export const AccountCreateForm = () => {
                     <Input placeholder="Please enter account name" />
                 </Form.Item>
                 <Form.Item
+                    label={t("accounts_branches.fields.description")}
+                    name="description"
+                    rules={[{ required: true }]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
                     label={t("accounts.fields.parent")}
-                    name="account_branch_id"
+                    name="parent_id"
                     rules={[{ required: true }]}
                 >
                     <TreeSelect
@@ -185,6 +195,8 @@ export const AccountCreateForm = () => {
                         />
 
                 </Form.Item>
+                <SaveButton/>
             </Form>
+        </Create>
     );
 };

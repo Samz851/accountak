@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\BaseAccount as BaseAccountContract;
 use App\Enums\AccountTransactionTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 
 class Account extends BaseAccount implements BaseAccountContract
 {
@@ -13,6 +14,7 @@ class Account extends BaseAccount implements BaseAccountContract
     protected static function booted(): void
     {
         static::creating(function ($account) {
+            Log::info($account, [__LINE__, __FILE__]);
             $last = self::where('parent_id', $account->parent_id)
                 ->latest('code')->first();
             if ($last) {

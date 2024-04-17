@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
             $table->uuid();
-            $table->boolean('setup')->default(false);
-            $table->string('avatar')->nullable();
+            $table->boolean('onboarded')->default(false);
+            $table->string('logo')->nullable();
             $table->string('name');
             $table->string('website')->nullable();
             $table->string('symbol')->nullable();

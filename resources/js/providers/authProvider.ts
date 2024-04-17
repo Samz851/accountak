@@ -27,7 +27,7 @@ export const authProvider: ACAuthProvider = {
             console.log('success', res)
             if ( res.data.success ) {
                 saveState(API_KEY, {token: res.data.token.token});
-                saveState(IDENTITY_KEY, res.data.user);
+                saveState(IDENTITY_KEY, res.data.identity);
             }
             return {
                 success: true,

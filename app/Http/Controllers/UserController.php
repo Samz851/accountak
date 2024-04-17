@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\IdentityFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,6 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = User::where('id', Auth::user()->id)
-                ->with('organization:id,setup')
                 ->first();
             $token = $user->createToken('api_token');
             $request->session()->regenerate();
@@ -30,9 +30,10 @@ class UserController extends Controller
             $response = response([
                 'success' => true,
                 'token' => $token->plainTextToken,
-                'redirectTo' => $user->organization->setup ? '/' : '/options/onboard', 'user' => $user]);
-            if (! $user->organization->setup) {
-                return $response->cookie(self::X_ACCOUNTAK_ONBOARDING, ! $user->organization->setup);
+                'redirectTo' => $user->organization->onboarded ? '/' : '/options/onboard',
+                'identity' => (new IdentityFactory($user))->toArray()]);
+            if (! $user->organization->onboarded) {
+                return $response->cookie(self::X_ACCOUNTAK_ONBOARDING, ! $user->organization->onboarded);
             }
 
             return $response;

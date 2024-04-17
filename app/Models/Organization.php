@@ -12,7 +12,7 @@ class Organization extends Model
     use HasFactory;
 
     protected $fillable = [
-        'avatar',
+        'logo',
         'name',
         'website',
         'symbol',
@@ -23,10 +23,10 @@ class Organization extends Model
         'country',
         'primary',
         'departments',
-        'setup',
+        'onboarded',
     ];
 
-    protected $with = ['options'];
+    // protected $with = ['options'];
 
     protected static function booted(): void
     {

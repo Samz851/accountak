@@ -1,6 +1,6 @@
 import { useOutletContext, useSearchParams } from "react-router-dom";
 
-import { useForm, useModalForm } from "@refinedev/antd";
+import { Create, useForm, useModalForm } from "@refinedev/antd";
 import {
     HttpError, useBack, useGetToPath,
     useGo,
@@ -38,13 +38,14 @@ export const TaxCreateForm = () => {
     const [ createForms, goToCreateForm, openForms, setOpenForms ] = useOutletContext<CreateContextType>();
 
 
-    const { formProps, form, onFinish } = useForm<ITax, HttpError, FormValues
+    const { formProps, form, onFinish, saveButtonProps } = useForm<ITax, HttpError, FormValues
     >({
         action: "create",
         resource: "taxes",
     });
 
     return (
+        <Create saveButtonProps={saveButtonProps}>
             <Form
                 {...formProps}
                 layout="vertical"
@@ -84,5 +85,6 @@ export const TaxCreateForm = () => {
 
                 </Form.Item>
             </Form>
+        </Create>
     );
 };
