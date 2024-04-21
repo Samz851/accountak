@@ -28,8 +28,9 @@ import {
 
 import { CreateContextType, CreateFormPropsType, IAccount, ITax, ITransaction } from "@/interfaces";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useStyles } from "../styled";
+import { debounce } from "lodash";
 
 type Props = {
     isOverModal?: boolean;
@@ -55,6 +56,10 @@ type totalAccounts = {
 }
 
 export const TransactionCreateForm = () => {
+    const [ pagination, setPagination ] = useState({
+        current: 1,
+        pageSize: 20
+    })
     const { key } = useLocation();
     const getToPath = useGetToPath();
     const [searchParams] = useSearchParams();
@@ -82,11 +87,38 @@ export const TransactionCreateForm = () => {
     // }, [formLoading])
     const { styles } = useStyles();
 
-    const { selectProps: AccountselectProps } = useSelect<IAccount>({
+    const { 
+        selectProps: AccountselectProps
+     } = useSelect<IAccount>({
         resource: "accounts",
         optionLabel: "code_label" as any,
-        optionValue: "id" as any
+        optionValue: "id" as any,
+        searchField: "code_label" as any,
+        debounce: 800,
+        onSearch: (value) => [{
+            field: 'code_label',
+            operator: 'contains',
+            value: value
+        }],
+        filters: [
+            {
+            field: "taxonomy",
+            operator: "eq",
+            value: "leaf"
+            },
+            {
+            field: "type",
+            operator: "eq",
+            value: 'account'
+            }
+        ],
+        pagination: {
+            mode: 'server',
+            pageSize: pagination.pageSize,
+            current: pagination.current
+        }
     });
+    // console.log(AccountselectProps);
 
     const { selectProps: taxesSelectProps } = useSelect<ITax>({
         resource: "taxes",
@@ -108,6 +140,107 @@ export const TransactionCreateForm = () => {
 
     }
 
+    const filterOption = (input, option) => {
+        return option.label.toLowerCase().includes(input.toLowerCase());
+    }
+    // import React, { useMemo, useRef, useState } from 'react';
+    // import { Select, Spin } from 'antd';
+    // import type { SelectProps } from 'antd';
+    // import debounce from 'lodash/debounce';
+    
+    // export interface DebounceSelectProps<ValueType = any>
+    //   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
+    //   fetchOptions: (search: string) => Promise<ValueType[]>;
+    //   debounceTimeout?: number;
+    // }
+    
+    // function DebounceSelect<ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any>({ fetchOptions, debounceTimeout = 800, ...props }: DebounceSelectProps<ValueType>) 
+    // {
+    //   const [fetching, setFetching] = useState(false);
+    //   const [options, setOptions] = useState<ValueType[]>([]);
+    //   const fetchRef = useRef(0);
+    
+    //   const debounceFetcher = useMemo(() => {
+
+    //     // const loadOptions = (value: string) => {
+    //     //   fetchRef.current += 1;
+    //     //   const fetchId = fetchRef.current;
+    //     //   setOptions([]);
+    //     //   setFetching(true);
+    
+    //     //   fetchOptions(value).then((newOptions) => {
+    //     //     if (fetchId !== fetchRef.current) {
+    //     //       // for fetch callback order
+    //     //       return;
+    //     //     }
+    
+    //     //     setOptions(newOptions);
+    //     //     setFetching(false);
+    //     //   });
+    //     // };
+    
+    //     return debounce(loadOptions, debounceTimeout);
+    //   }, [fetchOptions, debounceTimeout]);
+    
+    //   return (
+    //     <Select
+    //       labelInValue
+    //       filterOption={false}
+    //       onSearch={debounceFetcher}
+    //       notFoundContent={fetching ? <Spin size="small" /> : null}
+    //       {...props}
+    //       options={options}
+    //     />
+    //   );
+    // }
+    
+    // Usage of DebounceSelect
+    // interface UserValue {
+    //   label: string;
+    //   value: string;
+    // }
+    
+    // async function fetchUserList(username: string): Promise<UserValue[]> {
+    //   console.log('fetching user', username);
+    
+    //   return fetch('https://randomuser.me/api/?results=5')
+    //     .then((response) => response.json())
+    //     .then((body) =>
+    //       body.results.map(
+    //         (user: { name: { first: string; last: string }; login: { username: string } }) => ({
+    //           label: `${user.name.first} ${user.name.last}`,
+    //           value: user.login.username,
+    //         }),
+    //       ),
+    //     );
+    // }
+    
+    // const App: React.FC = () => {
+    //   const [value, setValue] = useState<UserValue[]>([]);
+    
+    //   return (
+    //     <DebounceSelect
+    //       mode="multiple"
+    //       value={value}
+    //       placeholder="Select users"
+    //       fetchOptions={fetchUserList}
+    //       onChange={(newValue) => {
+    //         setValue(newValue as UserValue[]);
+    //       }}
+    //       style={{ width: '100%' }}
+    //     />
+    //   );
+    // };
+    
+    // export default App;
+    const handleEndScroll = useMemo(
+        () =>
+          debounce(() => {
+            setPagination({...pagination, current: pagination.current+1})
+            console.log("END SCROLL")
+        }, 1000),
+        []
+      );
     useEffect(() => {
         // console.log('forms', createForms, key);
         const prevForm = createForms.find( (form) => form.key === key );
@@ -237,10 +370,18 @@ export const TransactionCreateForm = () => {
                                                 validateStatus={accountsBalanceError as any}
                                                         >
                                                 <Select
+                                                {...AccountselectProps}
                                                     size="small"
+                                                    showSearch
+                                                    optionFilterProp="code"
                                                     style={{ width: 300 }}
-                                                    onChange={value => setSelectedDebitAccount(value)}
-                                                    filterOption={true}
+                                                    onChange={value => setSelectedDebitAccount(value as any)}
+                                                    filterOption={filterOption}
+                                                    onPopupScroll={(e) => {
+                                                        
+                                                        console.log(e.currentTarget.scrollTop, e.currentTarget.scrollHeight, e.currentTarget);
+                                                        handleEndScroll();
+                                                    }}
                                                     options={AccountselectProps.options}
                                                     dropdownRender={(menu) => (
                                                         <>

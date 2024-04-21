@@ -15,7 +15,6 @@ class UserController extends Controller
 
     public function login(Request $request): Response
     {
-        Log::info(self::X_ACCOUNTAK_ONBOARDING, [__LINE__, __FILE__]);
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],

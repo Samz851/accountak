@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use App\Contracts\BaseAccount as BaseAccountContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
 
 class AccountsBranch extends BaseAccount implements BaseAccountContract
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected static function booted(): void
     {
@@ -91,5 +93,15 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
         }
 
         return false;
+    }
+
+    public function scopeLeaves(Builder $query): void
+    {
+        $query->doesntHave('subbranches');
+    }
+
+    public function scopeRoots(Builder $query): void
+    {
+        $query->doesntHave('parent');
     }
 }

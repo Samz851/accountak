@@ -45,6 +45,7 @@ export const AccountCreateForm = () => {
     >({
         action: "create",
         resource: "accounts",
+        redirect: false,
     });
     // useEffect(() => {
     //     if ( ! formLoading ) {
@@ -57,7 +58,13 @@ export const AccountCreateForm = () => {
         IAccountFilterVariables
     >({
         filters: {
-            mode: "server",
+            initial: [
+                {
+                    field: "branch",
+                    operator: "eq",
+                    value: true
+                }
+            ],
         },
         sorters: {
             mode: "off",
@@ -69,6 +76,7 @@ export const AccountCreateForm = () => {
     });
 
     const onExpandAccount = (keys) => {
+        console.log(keys);
         let parentID = keys.pop();
         setExpandedAccount(parentID);
         setFilters([{field: 'parent', operator: 'eq', value: parentID}], 'merge');
@@ -130,23 +138,7 @@ export const AccountCreateForm = () => {
                             parent_id: values.parent_id,
                             description: values.description
                         });
-                        close();
-                        go({
-                            to:
-                                searchParams.get("to") ??
-                                getToPath({
-                                    action: "list",
-                                }) ??
-                                "",
-                            query: {
-                                to: undefined,
-                            },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
-
+                        back();
                     } catch (error) {
                         Promise.reject(error);
                     }

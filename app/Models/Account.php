@@ -4,17 +4,18 @@ namespace App\Models;
 
 use App\Contracts\BaseAccount as BaseAccountContract;
 use App\Enums\AccountTransactionTypes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
 
 class Account extends BaseAccount implements BaseAccountContract
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected static function booted(): void
     {
         static::creating(function ($account) {
-            Log::info($account, [__LINE__, __FILE__]);
             $last = self::where('parent_id', $account->parent_id)
                 ->latest('code')->first();
             if ($last) {
@@ -67,5 +68,15 @@ class Account extends BaseAccount implements BaseAccountContract
     public function getHasChildrenAttribute(): bool
     {
         return false;
+    }
+
+    public function scopeLeaves(Builder $query): void
+    {
+
+    }
+
+    public function scopeRoots(Builder $query): void
+    {
+        
     }
 }

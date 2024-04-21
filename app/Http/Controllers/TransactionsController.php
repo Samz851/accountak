@@ -16,7 +16,6 @@ class TransactionsController extends Controller
      */
     public function index(Request $request): Response
     {
-        Log::info($request->query(), [__LINE__, __FILE__]);
         $transactions = TransRecord::with(['noteable', 'debitAccounts', 'creditAccounts', 'payment'])
             ->where('date', '>=', '2024-03-01')
             ->paginate()

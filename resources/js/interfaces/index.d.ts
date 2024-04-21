@@ -66,6 +66,10 @@ export type CreateFormPropsType = {
     resource?: string;
   }
 
+export interface DebounceSelectProps<ValueType = any> extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
+  fetchOptions: (search: string) => Promise<ValueType[]>;
+  debounceTimeout?: number;
+}
 export interface IAccountsBranch extends IBaseAccount{
     children?: IAccountsBranch[];
     accounts?: IAccount[];
@@ -75,7 +79,7 @@ export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
     balance: number;
-    children?: IBaseAccount[];
+    children: IBaseAccount[] | [{}];
 }
 
 export interface IBaseAccount {
