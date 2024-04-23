@@ -96,7 +96,7 @@ export const AccountsBranchCreateForm = () => {
         //             type: "replace",
         //         });
         //     }}
-        //     title={t("accounts_branches.form.add")}
+        //     title={t("branches.form.add")}
         //     width={512}
         //     closeIcon={<LeftOutlined />}
         // >
@@ -122,21 +122,21 @@ export const AccountsBranchCreateForm = () => {
                 initialValues={initValues}
             >
                 <Form.Item
-                    label={t("accounts_branches.fields.name")}
+                    label={t("branches.fields.name")}
                     name="name"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.description")}
+                    label={t("branches.fields.description")}
                     name="description"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.parent")}
+                    label={t("branches.fields.parent")}
                     name="parent"
                     // rules={[{ required: true }]}
                 >

@@ -55,6 +55,8 @@ export const resources: IResourceItem[] = [
         show: "/branches/show/:id",
         create: "/create/branches",
         meta: {
+            label: i18next.t("branches.branches"),
+            icon: <DashboardOutlined />,
             dataProviderName: "laravel",
             // hide: true
         }
@@ -86,7 +88,7 @@ export const resources: IResourceItem[] = [
         create: "/statements/create",
         show: "/statements/show/:id",
         meta: {
-            label: i18next.t("companies.companies"),
+            label: i18next.t("statements.statements"),
             icon: <DashboardOutlined />,
             dataProviderName: "laravel"
         },

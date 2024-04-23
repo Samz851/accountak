@@ -18,13 +18,13 @@ class AccountQueryBuilder
     private bool $withChildren = false;
 
 
-    public function __construct(private ?int $offset = 0, private ?int $limit = 20){}
+    public function __construct(private ?int $offset = null, private ?int $limit = null){}
 
     public function setType(string $type): self
     {
         if ( $type === 'branch' ) {
             $this->model = AccountsBranch::class;
-            $this->query = $this->model::query()->offset($this->offset)->limit($this->limit);
+            $this->query = $this->model::query();
         } else if ( $type === 'account') {
             $this->model = Account::class;
             $this->query = $this->model::query();
@@ -62,8 +62,13 @@ class AccountQueryBuilder
 
     public function executeAccountQuery(): Collection
     {
-        $result = $this->query->offset($this->offset)->limit($this->limit)->get();
-        return $result;
+        $result = $this->query;
+        // Log::info(['offset' => $this->offset, 'limit' => $this->limit], [__LINE__, __FILE__]);
+        if ( $this->offset && $this->limit ) {
+            $result = $result->offset($this->offset)->limit($this->limit);
+        }
+        
+        return $result->get();
     }
 
 

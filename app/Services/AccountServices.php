@@ -62,7 +62,13 @@ class AccountServices implements AccountServiceContract
         try {
             if ( $filters ) {
                 $queries = $this->extractFilters($filters);
-                $accounts = new AccountQueryBuilder($filters['_start'] ?? 0, $filters['_end'] ?? 20);
+                if ( isset($filters['_start']) && isset($filters['_end']) ) {
+                    $accounts = new AccountQueryBuilder($filters['_start'], $filters['_end']);
+
+                } else {
+                    $accounts = new AccountQueryBuilder();
+
+                }
 
                 if ( $queries['type'] === 'all' )
                 {
@@ -86,7 +92,7 @@ class AccountServices implements AccountServiceContract
                 }
                 $accounts = $accounts->toArray();
                 foreach ($accounts as &$value) {
-                    Log::info([$value['has_children'], gettype($value['has_children']), $value['has_children'] === true && ! isset($value['children'])], [__LINE__, __FILE__]);
+                    // Log::info([$value['has_children'], gettype($value['has_children']), $value['has_children'] === true && ! isset($value['children'])], [__LINE__, __FILE__]);
                     if ( $value['has_children'] === true && ! isset($value['children'])) {
                         $value['children'] = [];
                     }

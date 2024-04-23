@@ -152,7 +152,7 @@ export const AccountCreateForm = () => {
                     <Input placeholder="Please enter account name" />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.description")}
+                    label={t("branches.fields.description")}
                     name="description"
                     rules={[{ required: true }]}
                 >

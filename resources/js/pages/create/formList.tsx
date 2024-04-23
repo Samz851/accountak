@@ -10,6 +10,6 @@ import { TransactionCreateForm } from "./forms/transaction";
 
 export const FormList = {
     accounts: AccountCreateForm,
-    accounts_branches: AccountsBranchCreateForm,
+    branches: AccountsBranchCreateForm,
     transactions: TransactionCreateForm,
 }

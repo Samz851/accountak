@@ -266,7 +266,7 @@ export const TransactionCreatePage = ({ isOverModal }: Props) => {
                                                               {menu}
                                                               <Divider style={{ margin: '8px 0' }} />
                                                               <Space style={{ padding: '0 8px 4px' }}>
-                                                                <Button type="text" icon={<PlusOutlined />} onClick={() => create('accounts_branches', 'push')}>
+                                                                <Button type="text" icon={<PlusOutlined />} onClick={() => create('branches', 'push')}>
                                                                   Add item
                                                                 </Button>
                                                               </Space>

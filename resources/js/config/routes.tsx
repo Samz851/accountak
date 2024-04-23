@@ -21,6 +21,7 @@ import { TaxCreateForm } from "@/pages/create/forms/tax";
 import { StatementBuilder } from "@/pages/statements";
 import { OnboardPage } from "@/pages/onboard";
 import { loadState } from "@/helpers/localStorage";
+import { LocaleJsonEditor } from "@/pages/devSamples/localejson";
 
 const optionsLoader = () => {
     const identity = loadState('identity');
@@ -30,6 +31,7 @@ const optionsLoader = () => {
 
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
+    <Route path="/jsonviewer" element={<LocaleJsonEditor />} />,
     <Route path="/options">
         <Route path="onboard" element={<OnboardPage />} />
         <Route

@@ -601,7 +601,7 @@
       "date": "تاريخ",
       "name": "اسم",
       "parent": "فرع",
-      "balance": "الإجمالي"
+      "balance": "توازن"
     },
     "show": {
       "info": "معلومات الحساب"
@@ -654,24 +654,24 @@
       "address": "عنوان",
       "currency": "عملة",
       "contact_information": "هاتف",
-      "contacts": "الأفراد"
+      "contacts": "جهات الاتصال"
     },
     "form": {
       "add": "إضافة شركة جديدة"
     }
   },
   "contacts": {
-    "contacts": "الأفراد",
+    "contacts": "جهات الاتصال",
     "fields": {
       "name": "اسم",
       "email": "بريد إلكتروني",
       "phone_number": "هاتف",
-      "type": "النوع",
+      "type": "يكتب",
       "company": "شركة",
       "accounts": "حسابات"
     },
     "form": {
-      "add": "إضافة فرد جديدة"
+      "add": "إضافة جهة اتصال جديدة"
     }
   },
   "branches": {

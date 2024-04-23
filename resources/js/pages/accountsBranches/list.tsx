@@ -41,7 +41,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
 
     const accountTypes = data?.data ?? [{
         key: 1,
-        title: t('accounts_branches.form.first'),
+        title: t('branches.form.first'),
         id: 1,
         name: '',
         description: '',
@@ -74,7 +74,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => addType()}
                 >
-                    {t("accounts_branches.form.add")}
+                    {t("branches.form.add")}
                 </CreateButton>,
             ]}
         >
