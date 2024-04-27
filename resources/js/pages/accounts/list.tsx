@@ -10,7 +10,8 @@ import {
 } from "@refinedev/antd";
 import {
     Table, Typography,
-    theme, Input, Button
+    theme, Input, Button,
+    Select
 } from "antd";
 
 import { IAccount, IAccountFilterVariables } from "@/interfaces";
@@ -19,6 +20,7 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useStyles } from "./styled";
 import { Key } from "antd/es/table/interface";
+import type { SelectProps } from 'antd';
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
@@ -27,6 +29,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const t = useTranslate();
     const { token } = theme.useToken();
     const { styles} = useStyles();
+    const [ fields, setFields ] = useState(["code", "name", "parent", "balance"]);
 
     const { tableProps, filters, setFilters, sorters } = useTable<
         IAccount,
@@ -45,16 +48,245 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         sorters: {
             mode: "off",
         },
-        syncWithLocation: true,
+        syncWithLocation: false,
         pagination: {
             mode: "off"
           },
     });
 
+
+
     const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
+    const [ columnsOptions, setColumnsOptions ] = useState<SelectProps['options']>([]);
 
+    const initialColumnsOptions  = [
+        {
+            label: "code",
+            key: "code",
+            value: "code",
+            dataIndex: "code",
+            title:"ID #",
+            rowScope:"row",
+            render:(value) => (
+                        <Typography.Text
+                            style={{
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            {value}
+                        </Typography.Text>
+                    ),
+            filterIcon:(filtered) => (
+                        <SearchOutlined
+                            style={{
+                                color: filtered
+                                    ? token.colorPrimary
+                                    : undefined,
+                            }}
+                        />
+                    ),
+            defaultFilteredValue: getDefaultFilter(
+                        "code",
+                        filters,
+                        "contains",
+                    ),
+            filterDropdown: (props) => (
+                        <FilterDropdown {...props}>
+                            <Input
+                                addonBefore="#"
+                                style={{ width: "100%" }}
+                                placeholder={t("orders.filter.id.placeholder")}
+                            />
+                        </FilterDropdown>
+                    ),
+        },
+        {
+            label: "name",
+            value: "name",
+            key:"name",
+                    dataIndex:"name",
+                    title:t("users.fields.name"),
+                    defaultFilteredValue:getDefaultFilter(
+                        "name",
+                        filters,
+                        "contains",
+                    ),
+                    filterDropdown:(props) => (
+                        <FilterDropdown {...props}>
+                            <Input
+                                style={{ width: "100%" }}
+                                placeholder={t("users.filter.name.placeholder")}
+                            />
+                        </FilterDropdown>
+                    )
+        },
+        {
+            label: "parent",
+            value: "parent",
+            key:"parent",
+                    dataIndex:["parent", "name"],
+                    title:t("accounts.fields.parent"),
+                    defaultFilteredValue:getDefaultFilter(
+                        "parent",
+                        filters,
+                        "contains",
+                    ),
+                    filterDropdown:(props) => (
+                        <FilterDropdown {...props}>
+                            <Input
+                                style={{ width: "100%" }}
+                                placeholder={t("users.filter.gsm.placeholder")}
+                            />
+                        </FilterDropdown>
+                    )
+        },
+        {
+            label: "balance",
+            value: "balance",
+            key:"balance",
+                    dataIndex:["balance"],
+                    title:t("accounts.fields.balance"),
+                    render:(_, record) => _.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
+        },
+    ]
+    const allColumnsOptions = [
+        {
+            label: "id",
+            value: "id",
+            dataIndex: "id"
+        },
+        {
+            label: "code",
+            key: "code",
+            value: "code",
+            dataIndex: "code",
+            title:"ID #",
+            rowScope:"row",
+            render:(value) => (
+                        <Typography.Text
+                            style={{
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            {value}
+                        </Typography.Text>
+                    ),
+            filterIcon:(filtered) => (
+                        <SearchOutlined
+                            style={{
+                                color: filtered
+                                    ? token.colorPrimary
+                                    : undefined,
+                            }}
+                        />
+                    ),
+            defaultFilteredValue: getDefaultFilter(
+                        "code",
+                        filters,
+                        "contains",
+                    ),
+            filterDropdown: (props) => (
+                        <FilterDropdown {...props}>
+                            <Input
+                                addonBefore="#"
+                                style={{ width: "100%" }}
+                                placeholder={t("orders.filter.id.placeholder")}
+                            />
+                        </FilterDropdown>
+                    ),
+        },
+        {
+            label: "name",
+            value: "name",
+            key:"name",
+                    dataIndex:"name",
+                    title:t("users.fields.name"),
+                    defaultFilteredValue:getDefaultFilter(
+                        "name",
+                        filters,
+                        "contains",
+                    ),
+                    filterDropdown:(props) => (
+                        <FilterDropdown {...props}>
+                            <Input
+                                style={{ width: "100%" }}
+                                placeholder={t("users.filter.name.placeholder")}
+                            />
+                        </FilterDropdown>
+                    )
+        },
+        {
+            label: "parent",
+            value: "parent",
+            key:"parent",
+                    dataIndex:["parent", "name"],
+                    title:t("accounts.fields.parent"),
+                    defaultFilteredValue:getDefaultFilter(
+                        "parent",
+                        filters,
+                        "contains",
+                    ),
+                    filterDropdown:(props) => (
+                        <FilterDropdown {...props}>
+                            <Input
+                                style={{ width: "100%" }}
+                                placeholder={t("users.filter.gsm.placeholder")}
+                            />
+                        </FilterDropdown>
+                    )
+        },
+        {
+            label: "balance",
+            value: "balance",
+            key:"balance",
+                    dataIndex:["balance"],
+                    title:t("accounts.fields.balance"),
+                    render:(_, record) => _.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
+        },
+        {
+            label: "description",
+            value: "description",
+            title:t("accounts.fields.description"),
+            dataIndex: "description"
+        },
+        {
+            label: "taxonomy",
+            value: "taxonomy",
+            dataIndex: "taxonomy"
+        },
+        {
+            label: "created_at",
+            value: "created_at",
+            dataIndex: "created_at"
+        },
+        {
+            label: "updated_at",
+            value: "updated_at",
+            dataIndex: "updated_at"
+        },
+        {
+            label: "code_label",
+            value: "code_label",
+            dataIndex: "code_label"
+        },
+        {
+            label: "tree_path",
+            value: "tree_path",
+            dataIndex: "tree_path"
+        },
+        {
+            label: "has_children",
+            value: "has_children",
+            dataIndex: "has_children"
+        },
+        {
+            label: "children",
+            value: "children",
+            dataIndex: "children"
+        }
+    ]
     useEffect(()=>{
         console.log(tableProps);
         if ( ! tableProps.loading ) {
@@ -84,7 +316,13 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     
                 })
             } else {
+                const singleOption = Array.isArray(tableProps.dataSource) ? tableProps.dataSource[0] : {};
                 setAccounts([...tableProps.dataSource as any]);
+                if ( singleOption ) {
+
+                    setColumnsOptions([...Object.keys(singleOption).map(o => ({label: o, value: o, dataIndex: o})) as any]);
+                    console.log(columnsOptions);
+                }
             }
         }
 
@@ -127,6 +365,20 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         console.log('expandable', record);
         return record.has_children ?? false;
     }
+
+    const rowSelection = {
+        onChange: (selectedRowKeys: React.Key[], selectedRows) => {
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+        getCheckboxProps: (record) => ({
+          disabled: record.name === 'Disabled User', // Column configuration not to be checked
+          name: record.name,
+        }),
+    };
+
+    const handleSetFields = () => {
+
+    }
     return (
         <List
             breadcrumb={false}
@@ -153,12 +405,23 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 </CreateButton>,
             ]}
         >
+        <Select
+            style={{width: "100%"}}
+            mode="multiple"
+            allowClear
+            options={allColumnsOptions}
+            value={fields}
+            onChange={(value, option) => setFields([...value])}
+            />
+            <Button onClick={handleSetFields}>{"Submit"}</Button>
             <Table
                 {...tableProps}
                 dataSource={accounts}
                 className={styles.expanded}
+                columns={allColumnsOptions.filter(c => fields.includes(c.label)) as any}
                 rowKey="code"
                 scroll={{ x: true }}
+                rowSelection={rowSelection}
                 expandable={{
                     onExpand: onExpandAccount,
                     // onExpandedRowsChange: (keys) => addExpandedKeysValue(keys),
@@ -168,7 +431,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     // expandedRowKeys: expandedRows
                 }}
             >
-                <Table.Column
+                {/* <Table.Column
                     key="code"
                     dataIndex="code"
                     title="ID #"
@@ -267,7 +530,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                             onClick={() => show('accounts', record.id, "push")}
                         />
                     )}
-                />
+                /> */}
             </Table>
             {children}
         </List>
