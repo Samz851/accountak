@@ -1,5 +1,39 @@
 import { Dayjs } from "dayjs";
+import {
+    FormInstance,
+    FormProps
+} from "antd";
+import { SetStateAction } from "react";
+import { resources } from '../config/resources';
+import { BaseKey } from "@refinedev/core";
 
+export interface IOptions {
+    id?: BaseKey;
+    fiscal_cycle: number;
+    fiscal_year_start: Date;
+    description?: string;
+    option_1?: string;
+    option_2?: string;
+    option_3?: string;
+    option_4?: string;
+}
+export interface IOrganization {
+    logo?: string;
+    id: BaseKey;
+    onboarded: number;
+}
+
+export interface IUser {
+    id: BaseKey;
+    name: string;
+}
+export interface IIdentity {
+    user: IUser;
+    organization: IOrganization;
+    options: IOptions
+}
+
+export type CreateContextType = string[] | Distpatch<SetStateAction<string[]>>;
 export interface IStatement extends any {}
 export interface ICompany {
     id: number;
@@ -11,6 +45,31 @@ export interface ICompany {
     accounts?: IAccount[];
 }
 
+// export type OptionsOutletContextType = {
+//     meta?: {
+//         id?: number;
+//     },
+//     resource?: string,
+//     action?: string,
+//     loading: boolean,
+// };
+export type OptionsOutletContextType = {
+    id?: number;
+    resource?: string,
+    action?: string,
+    loading: boolean,
+};
+
+export type CreateFormPropsType = {
+    values: any;
+    key: string;
+    resource?: string;
+  }
+
+export interface DebounceSelectProps<ValueType = any> extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
+  fetchOptions: (search: string) => Promise<ValueType[]>;
+  debounceTimeout?: number;
+}
 export interface IAccountsBranch extends IBaseAccount{
     children?: IAccountsBranch[];
     accounts?: IAccount[];
@@ -20,7 +79,7 @@ export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
     balance: number;
-    children?: IBaseAccount[];
+    children: IBaseAccount[] | [{}];
 }
 
 export interface IBaseAccount {
@@ -121,25 +180,6 @@ export interface ISalesChart {
 export interface IOrderStatus {
     id: number;
     text: "Pending" | "Ready" | "On The Way" | "Delivered" | "Cancelled";
-}
-
-export interface IUser {
-    id: number;
-    firstName: string;
-    lastName: string;
-    fullName: string;
-    gender: string;
-    gsm: string;
-    createdAt: string;
-    isActive: boolean;
-    avatar: IFile[];
-    addresses: IAddress[];
-}
-
-export interface IIdentity {
-    id: number;
-    name: string;
-    avatar: string;
 }
 
 export interface IAddress {

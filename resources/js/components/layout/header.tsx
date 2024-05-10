@@ -6,6 +6,7 @@ import {
 } from "@refinedev/core";
 import { Layout as AntdLayout, Typography, Avatar, Space, theme } from "antd";
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
+import { IIdentity } from "@/interfaces";
 
 export const ThemedHeaderV2: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   isSticky,
@@ -14,11 +15,9 @@ export const ThemedHeaderV2: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { token } = theme.useToken();
 
   const authProvider = useActiveAuthProvider();
-  const { data: user } = useGetIdentity({
-    v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
-  });
-
-  const shouldRenderHeader = user && (user.name || user.avatar);
+  const { data: identity } = useGetIdentity<IIdentity>();
+console.log(identity)
+  const shouldRenderHeader = identity?.organization && (identity?.organization.logo || identity?.user.name);
 
   if (!shouldRenderHeader) {
     return null;
@@ -43,8 +42,8 @@ export const ThemedHeaderV2: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     <AntdLayout.Header style={headerStyles}>
       <Space>
         <Space size="middle">
-          {user?.name && <Typography.Text strong>{user.name}</Typography.Text>}
-          {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
+          {identity.user?.name && <Typography.Text strong>{identity.user.name}</Typography.Text>}
+          {identity.organization?.logo && <Avatar src={`/${identity.organization?.logo}`} alt={identity.user?.name} />}
         </Space>
       </Space>
     </AntdLayout.Header>

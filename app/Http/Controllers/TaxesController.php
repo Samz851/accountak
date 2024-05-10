@@ -13,8 +13,8 @@ class TaxesController extends Controller
     public function index()
     {
         return response(Tax::inRandomOrder()
-        ->paginate()
-        ->items());
+            ->paginate()
+            ->items());
     }
 
     /**
@@ -23,6 +23,7 @@ class TaxesController extends Controller
     public function store(Request $request)
     {
         $tax = Tax::create($request->all());
+
         return response($tax);
     }
 
@@ -32,6 +33,7 @@ class TaxesController extends Controller
     public function show(Tax $tax)
     {
         $tax->total;
+
         return response($tax);
     }
 

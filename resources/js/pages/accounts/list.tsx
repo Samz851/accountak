@@ -34,7 +34,13 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         IAccountFilterVariables
     >({
         filters: {
-            mode: "server"
+            initial: [
+                {
+                    field: "type",
+                    operator: "eq",
+                    value: "all",
+                }
+            ]
         },
         sorters: {
             mode: "off",
@@ -50,6 +56,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
 
     useEffect(()=>{
+        console.log(tableProps);
         if ( ! tableProps.loading ) {
             if ( expandedAccount !== '' ) {
                 setAccounts((prevAccounts) => {
@@ -84,9 +91,22 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     }, [tableProps.dataSource]);
 
 
-    const onExpandAccount = (expanded, record) => {
+    const onExpandAccount = (expanded: boolean, record: IAccount) => {
         setExpandedAccount(record.code);
-        setFilters([{field: 'parent', operator: 'eq', value: record.id}], 'merge');
+        if ( ! record.children?.length && record.has_children ){
+            setFilters([
+                {
+                    field: 'type',
+                    operator: 'eq',
+                    value: 'all',
+                },
+                {
+                    field: 'parent',
+                    operator: 'eq',
+                    value: record.id,
+                }
+            ], 'replace');
+        }
     }
 
     const addExpandedKeysValue = (keys) => {
@@ -103,6 +123,10 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         }
     }
 
+    const isExpandable = (record: IAccount) => {
+        console.log('expandable', record);
+        return record.has_children ?? false;
+    }
     return (
         <List
             breadcrumb={false}
@@ -138,7 +162,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 expandable={{
                     onExpand: onExpandAccount,
                     // onExpandedRowsChange: (keys) => addExpandedKeysValue(keys),
-                    rowExpandable: (record) => !! record.has_children ,
+                    rowExpandable: isExpandable,
                     indentSize: 30,
                     expandedRowClassName: (record) => record.taxonomy,
                     // expandedRowKeys: expandedRows

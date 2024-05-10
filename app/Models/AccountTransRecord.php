@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class AccountTransRecord extends Pivot
 {
     protected $casts = [
-        'type' => AccountTransactionTypes::class
+        'type' => AccountTransactionTypes::class,
     ];
 }

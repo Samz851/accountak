@@ -20,7 +20,7 @@ export const AccountsBranchesListPage = () => {
     const t = useTranslate();
     const { styles } = useStyles();
     const { data } = useList<AccountsBranchesTree>({
-        resource: "accounts_branches",
+        resource: "branches",
         filters: [
             {
                 field: 'tree',
@@ -36,7 +36,7 @@ export const AccountsBranchesListPage = () => {
 
     const addType = (parent?) => {
         return go({
-            to: `${createUrl("accounts_branches")}`,
+            to: `${createUrl("branches")}`,
             query: {
                 to: pathname,
                 parent: parent
@@ -59,7 +59,7 @@ export const AccountsBranchesListPage = () => {
                     size="large"
                     onClick={() => addType()}
                 >
-                    {t("accounts_branches.form.add")}
+                    {t("branches.form.add")}
                 </CreateButton>,
             ]}
         >
@@ -74,7 +74,7 @@ export const AccountsBranchesListPage = () => {
                     <Flex justify='space-between'>
                         <Typography.Link
                             strong
-                            onClick={() => show('accounts_branches', item.key as any, "push")}
+                            onClick={() => show('branches', item.key as any, "push")}
                         >
                             {item.label}
                         </Typography.Link>

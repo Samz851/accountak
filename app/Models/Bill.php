@@ -13,7 +13,7 @@ class Bill extends Model
     protected $fillable = [
         'date',
         'total_amount',
-        'vendor_id'
+        'vendor_id',
     ];
 
     public function vendor()

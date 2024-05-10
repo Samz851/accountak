@@ -5,6 +5,7 @@ import {
 
 
 import i18next from "i18next";
+import { ShowOptions } from "@/pages/options";
 
 export const resources: IResourceItem[] = [
     {
@@ -41,7 +42,7 @@ export const resources: IResourceItem[] = [
         name: "taxes",
         list: "/taxes",
         show: "/taxes/show/:id",
-        create: "/taxes/create",
+        create: "/create/taxes",
         meta: {
             label: i18next.t("taxes.taxes"),
             icon: <DashboardOutlined />,
@@ -49,11 +50,13 @@ export const resources: IResourceItem[] = [
         },
     },
     {
-        name: "accounts_branches",
-        list: "/accounts_branches",
-        show: "/accounts_branches/show/:id",
-        create: "/accounts_branches/create",
+        name: "branches",
+        list: "/branches",
+        show: "/branches/show/:id",
+        create: "/create/branches",
         meta: {
+            label: i18next.t("branches.branches"),
+            icon: <DashboardOutlined />,
             dataProviderName: "laravel",
             // hide: true
         }
@@ -61,7 +64,7 @@ export const resources: IResourceItem[] = [
     {
         name: "accounts",
         list: "/accounts",
-        create: "/accounts/create",
+        create: "/create/accounts",
         show: "/accounts/show/:id",
         meta: {
             label: i18next.t("accounts.accounts"),
@@ -72,7 +75,7 @@ export const resources: IResourceItem[] = [
     {
         name: "transactions",
         list: "/transactions",
-        create: "/transactions/create",
+        create: "/create/transactions",
         meta: {
             label: i18next.t("transactions.transactions"),
             icon: <DashboardOutlined />,
@@ -85,10 +88,20 @@ export const resources: IResourceItem[] = [
         create: "/statements/create",
         show: "/statements/show/:id",
         meta: {
-            label: i18next.t("companies.companies"),
+            label: i18next.t("statements.statements"),
             icon: <DashboardOutlined />,
             dataProviderName: "laravel"
         },
+    },
+    {
+        name: "options",
+        list: "/options",
+        show: "/options/show/:id",
+        edit: "/options/edit/:id",
+        meta: {
+            hide: true,
+            dataProviderName: "laravel"
+        }
     },
     {
         name: "dev_sample",

@@ -3,6 +3,7 @@
         "target": "ESNext",
         "jsx": "react-jsx",
         "module": "ES2020",
+        "resolveJsonModule": true,
         "moduleResolution": "node",
         "baseUrl": ".",
         "paths": {

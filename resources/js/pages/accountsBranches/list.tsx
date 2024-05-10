@@ -29,7 +29,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
     const t = useTranslate();
     const { token } = theme.useToken();
     const { data } = useList<AccountsBranchesTree>({
-        resource: "accounts_branches",
+        resource: "branches",
         filters: [
             {
                 field: 'tree',
@@ -41,7 +41,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
 
     const accountTypes = data?.data ?? [{
         key: 1,
-        title: t('accounts_branches.form.first'),
+        title: t('branches.form.first'),
         id: 1,
         name: '',
         description: '',
@@ -51,7 +51,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
 
     const addType = (parent?) => {
         return go({
-            to: `${createUrl("accounts_branches")}`,
+            to: `${createUrl("branches")}`,
             query: {
                 to: pathname,
                 parent: parent
@@ -74,7 +74,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => addType()}
                 >
-                    {t("accounts_branches.form.add")}
+                    {t("branches.form.add")}
                 </CreateButton>,
             ]}
         >
@@ -90,7 +90,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
                     <Flex justify="space-between">
                         <Typography.Link
                         strong
-                        onClick={() => show("accounts_branches", item.key as any, "push")}
+                        onClick={() => show("branches", item.key as any, "push")}
                         style={{
                             whiteSpace: "nowrap",
                             color: token.colorTextHeading,

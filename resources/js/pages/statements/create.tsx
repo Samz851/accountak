@@ -15,12 +15,12 @@ import { useAccountTypesSelect } from "@/hooks/useAccountTypesSelect";
 import { useAccountsSelect } from "@/hooks/useAccountsSelect";
 import { useState, useEffect } from "react";
 import { IStatement } from "@/interfaces";
-import { Config, Puck } from "@measured/puck";
+import { Config, Puck, usePuck } from "@measured/puck";
 import "@/components/pageBuilder/puck.css";
 import { Flex, Form } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useStyles } from "./styled";
-import { EditorConfig } from "@/components";
+import { DrawerItems, EditorConfig, PageBuilderComponent, PageBuilderComponents, PageBuilderDrawer, PageBuilderFields, PageBuilderOutline, PageBuilderPreview, SampleConfig } from "@/components";
 
 
 export const StatementCreatePage = () => {
@@ -64,7 +64,7 @@ export const StatementCreatePage = () => {
     }
 
     const Header = ({ actions, children }) => {
-        console.log('Header', actions, children);
+        // console.log('Header', actions, children);
 
         return (
             <>
@@ -74,18 +74,34 @@ export const StatementCreatePage = () => {
         )
     }
 
+    const JSONRenderer = () => {
+        const { appState } = usePuck();
+       
+        return <div>{JSON.stringify(appState.data)}</div>;
+    };
+
+    // const drawerChildren: IDrawerItemObject[] = DrawerItems.map((item, i) => {
+    //     return {
+    //         name: item.name,
+    //         index: i,
+    //         children: item.children
+    //     }
+    // });
+
+    // console.log('config', SampleConfig)
     return (
         <PageContainer
             className={styles.acPageContainer}
         >
-            <Puck 
-                config={EditorConfig} 
+            <PageBuilderComponent 
+                config={SampleConfig} 
                 data={defaultData}
-                overrides={{
-                    header: Header
-                }}
+                // overrides={{
+                //     header: Header
+                // }}
                 onPublish={(data) => console.log(data)} 
-            />
+            >
+            </PageBuilderComponent>
         </PageContainer>
 
     );

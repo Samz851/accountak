@@ -59,6 +59,8 @@ class AccountsBranchSeeder extends Seeder
     public function run(): void
     {
         $accountsBranches = config('accounts_branches.branches');
+
         $this->generate(children: $accountsBranches);
+        AccountsBranch::factory()->create();
     }
 }

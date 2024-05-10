@@ -95,7 +95,8 @@
     "reject": "يرفض",
     "rejectAll": "رفض الكل",
     "nextStep": "التالي",
-    "previousStep": "سابق"
+    "previousStep": "سابق",
+    "return": "يعود"
   },
   "loading": "تحميل",
   "tags": {
@@ -595,96 +596,110 @@
     }
   },
   "accounts": {
-    "accounts": "الحسابات",
+    "accounts": "حسابات",
     "fields": {
-        "date": "التاريخ",
-        "name": "الأسم",
-        "account_type": "النوع",
-        "parent_account": "الحساب الرئيسي",
-        "child_accounts": "حسابات متفرعه",
-        "balance": "الرصيد"
+      "date": "تاريخ",
+      "name": "اسم",
+      "parent": "فرع",
+      "balance": "الإجمالي"
     },
     "show": {
-        "info": "معلومات الحساب"
+      "info": "معلومات الحساب"
     },
     "form": {
-        "add": "إضافة حساب جديد"
+      "add": "إضافة حساب جديد"
     },
-    "debit": "مدين",
-    "credit": "دائن"
+    "debit": "دَين",
+    "credit": "ائتمان"
   },
   "transactions": {
-    "transactions": "القيود",
-    "accruals": "الإستحقاقات",
-    "payments": "السداد",
+    "transactions": "المعاملات",
+    "accruals": "مستحقات",
+    "payments": "المدفوعات",
     "fields": {
-        "name":"الأسم",
-        "date": "التاريخ",
-        "description": "الشرح",
-        "amount": "القيمة",
-        "credit_account": "حساب دائن",
-        "debit_account": "حساب مدين",
-        "notes_pr": "الفاتورة",
-        "issue_payment": "اصدر قيد سداد؟",
-        "tax": "الضرائب"
+      "name": "اسم",
+      "date": "تاريخ",
+      "description": "وصف",
+      "amount": "كمية",
+      "credit_account": "حساب الائتمان",
+      "debit_account": "حساب الخصم",
+      "notes_pr": "فاتورة فاتورة",
+      "issue_payment": "إصدار الدفع؟",
+      "tax": "ضريبة"
     },
     "form": {
-        "add": "إضافة قيد جديد",
-        "add_debit": "إضافة حساب مدين",
-        "add_credit": "إضافة حساب دائن"
+      "add": "إضافة معاملة جديدة",
+      "add_debit": "إضافة حساب الخصم",
+      "add_credit": "إضافة حساب الائتمان",
+      "debit": "دَين",
+      "credit": "ائتمان"
     }
   },
   "taxes": {
     "taxes": "الضرائب",
     "fields": {
-        "name": "اسم",
-        "rate": "النسبة",
-        "total_collected": "اجمالي المحصل",
-        "total_paid": "اجمالي المدفوع"
+      "name": "اسم",
+      "rate": "معدل",
+      "total_collected": "مجموع المجمعة",
+      "total_paid": "مجموع المبالغ المدفوعة"
     },
     "form": {
-        "add" : "أضافة ضرائب جديدة"
+      "add": "إضافة ضريبة جديدة"
     }
   },
   "companies": {
-    "companies": "الشركات",
+    "companies": "شركات",
     "fields": {
-        "company_name": "الأسم",
-        "address": "عنوان",
-        "currency": "العملة",
-        "contact_information": "التلفون",
-        "contacts": "الأفراد"
+      "name": "اسم",
+      "address": "عنوان",
+      "currency": "عملة",
+      "contact_information": "هاتف",
+      "contacts": "الأفراد"
     },
     "form": {
-        "add" : "إضافة شركة جديدة"
+      "add": "إضافة شركة جديدة"
     }
   },
   "contacts": {
     "contacts": "الأفراد",
     "fields": {
-        "name": "الأسم",
-        "email": "الإيميل",
-        "phone_number": "التلفون",
-        "type": "النوع",
-        "company": "الشركة",
-        "accounts": "الحسابات"
+      "name": "اسم",
+      "email": "بريد إلكتروني",
+      "phone_number": "هاتف",
+      "type": "النوع",
+      "company": "شركة",
+      "accounts": "حسابات"
     },
     "form": {
-        "add" : "أضافة فرد جديد"
+      "add": "إضافة فرد جديدة"
     }
   },
-  "account_types": {
-    "account_types": "أنواع الحسابات",
+  "branches": {
+    "branches": "فروع الحسابات",
     "fields": {
-        "name": "الأسم",
-        "description": "الشرح",
-        "parent_type": "النوع الرئيسي",
-        "child_types": "انواع متفرعه",
-        "accounts": "الحسابات"
+      "name": "اسم",
+      "description": "وصف",
+      "parent": "الفرع الأم",
+      "children": "فروع الطفل",
+      "accounts": "حسابات"
     },
     "form": {
-        "add" : "إضافة نوع جديد",
-        "first" : "اضف اول نوع"
+      "add": "إضافة نوع جديد",
+      "first": "إنشاء النوع الأول"
+    }
+  },
+  "statements": {
+    "statements": "صياغات",
+    "fields": {
+      "name": "اسم",
+      "description": "وصف",
+      "parent": "الفرع الأم",
+      "children": "فروع الطفل",
+      "accounts": "حسابات"
+    },
+    "form": {
+      "add": "إضافة نوع جديد",
+      "first": "إنشاء النوع الأول"
     }
   }
 }

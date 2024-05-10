@@ -3,28 +3,26 @@
 namespace App\Models;
 
 use App\Contracts\BaseAccount as BaseAccountContract;
-use App\Enums\BaseAccountTaxonomy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
 
 class AccountsBranch extends BaseAccount implements BaseAccountContract
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
-    
     protected static function booted(): void
     {
-        static::creating(function($branch) {
-            if ( isset($branch->parent_id) ) {
+        static::creating(function ($branch) {
+            if (isset($branch->parent_id)) {
                 $last = self::where('parent_id', $branch->parent_id)
-                            ->latest('code')->first();
-                if ( $last ) {
+                    ->latest('code')->first();
+                if ($last) {
                     $lastCode = str_split($last->code, 2);
                     $codePart = array_pop($lastCode);
-                    $lastCode[] = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
+                    $lastCode[] = str_pad($codePart + 1, 2, '0', STR_PAD_LEFT);
                     $newCode = implode($lastCode);
                 } else {
                     $parentCode = self::where('id', intval($branch->parent_id))->first();
@@ -32,7 +30,7 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
                     $lastCode = str_split($parentCode->code, 2);
 
                     // $codePart = array_pop($lastCode);
-                    if ( count($lastCode) === 2  && $lastCode[1] === '00') {
+                    if (count($lastCode) === 2 && $lastCode[1] === '00') {
                         $codePart = array_pop($lastCode);
                         $lastCode[] = '01';
 
@@ -43,10 +41,10 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
                 }
             } else {
                 $last = self::whereNull('parent_id')
-                            ->latest('code')->first();
-                if ( $last ) {
+                    ->latest('code')->first();
+                if ($last) {
                     $codePart = $last->code;
-                    $newCode = str_pad($codePart+1, 2, "0", STR_PAD_LEFT);
+                    $newCode = str_pad($codePart + 1, 2, '0', STR_PAD_LEFT);
                 } else {
                     $newCode = '01';
                 }
@@ -71,7 +69,10 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
     {
 
         $children = $this->subbranches()->get();
-        if ($children->isEmpty()) $children = $this->accounts()->get();
+        if ($children->isEmpty()) {
+            $children = $this->accounts()->get();
+        }
+
         return $children;
     }
 
@@ -87,10 +88,20 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
         if ($this->subbranches()->exists()) {
             return true;
         }
-        if ( $this->accounts()->exists()) {
+        if ($this->accounts()->exists()) {
             return true;
         }
-        
+
         return false;
+    }
+
+    public function scopeLeaves(Builder $query): void
+    {
+        $query->doesntHave('subbranches');
+    }
+
+    public function scopeRoots(Builder $query): void
+    {
+        $query->doesntHave('parent');
     }
 }
