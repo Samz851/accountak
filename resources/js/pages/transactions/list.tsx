@@ -13,7 +13,8 @@ import {
     theme,
     InputNumber,
     Input, Button,
-    Row
+    Row,
+    DatePicker
 } from "antd";
 
 import { IAccount, ITransaction, ITransactionFilterVariables } from "../../interfaces";
@@ -21,11 +22,12 @@ import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal } from "../../components";
 import { PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
+import dayjs from "dayjs";
 
 export const TransactionsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl } = useNavigation();
+    const { showUrl, create } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -35,7 +37,13 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
         ITransactionFilterVariables
     >({
         filters: {
-            mode: "off",
+            initial: [
+                {
+                    field: 'date',
+                    operator: 'gte',
+                    value: dayjs('2024-03-01'),
+                }
+            ]
         },
         sorters: {
             mode: "off",
@@ -55,18 +63,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     {...props.createButtonProps}
                     key="create"
                     size="large"
-                    onClick={() => {
-                        return go({
-                            to: `${createUrl("transactions")}`,
-                            query: {
-                                to: pathname,
-                            },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
-                    }}
+                    onClick={() => create("transactions", "push")}
                 >
                     {t("transactions.form.add")}
                 </CreateButton>,
@@ -127,14 +124,11 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     defaultFilteredValue={getDefaultFilter(
                         "date",
                         filters,
-                        "contains",
+                        "gte",
                     )}
                     filterDropdown={(props) => (
                         <FilterDropdown {...props}>
-                            <Input
-                                style={{ width: "100%" }}
-                                placeholder={t("users.filter.name.placeholder")}
-                            />
+                            <DatePicker />
                         </FilterDropdown>
                     )}
                 />

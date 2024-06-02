@@ -12,7 +12,7 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return response(Contact::with(["company", "accounts"])->get());
+        return response(Contact::with(['company', 'accounts'])->get());
     }
 
     /**
@@ -21,6 +21,7 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $contact = Contact::create($request->all());
+
         return response($contact);
     }
 
@@ -31,6 +32,7 @@ class ContactController extends Controller
     {
         $contact->accounts;
         $contact->company;
+
         return response($contact);
     }
 

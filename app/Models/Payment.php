@@ -14,7 +14,7 @@ class Payment extends Model
         'amount',
         'payment_method',
         'trans_id',
-        'approved'
+        'approved',
     ];
 
     public function transaction()

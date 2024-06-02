@@ -16,7 +16,7 @@ class TransRecord extends Model
         'name',
         'description',
         'amount',
-        'tax_id'
+        'tax_id',
     ];
 
     public function noteable(): MorphTo
@@ -28,18 +28,18 @@ class TransRecord extends Model
     {
         // return $this->belongsTo(Account::class, 'debit_account_id');
         return $this->belongsToMany(Account::class, 'account_trans_record')
-                    ->using(AccountTransRecord::class)
-                    ->withPivot(['type', 'amount'])
-                    ->wherePivot('type', AccountTransactionTypes::DEBIT);
+            ->using(AccountTransRecord::class)
+            ->withPivot(['type', 'amount'])
+            ->wherePivot('type', AccountTransactionTypes::DEBIT);
     }
 
     public function creditAccounts()
     {
         // return $this->belongsTo(Account::class, 'credit_account_id');
         return $this->belongsToMany(Account::class, 'account_trans_record')
-                    ->using(AccountTransRecord::class)
-                    ->withPivot(['type', 'amount'])
-                    ->wherePivot('type', AccountTransactionTypes::CREDIT);
+            ->using(AccountTransRecord::class)
+            ->withPivot(['type', 'amount'])
+            ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
     public function payment()

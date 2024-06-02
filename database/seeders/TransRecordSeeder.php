@@ -25,7 +25,7 @@ class TransRecordSeeder extends Seeder
             $secondAmount = $faker->randomFloat(2, 100, 3000);
             $debitAccounts = $accounts->random($i % 10 == 0 ? 2 : 1);
             $creditAccounts = $accounts->random($i % 10 == 0 ? 1 : 2);
-            Log::info(['debitAccounts' => $debitAccounts, 'creditAccounts' => $creditAccounts], [__LINE__, __FILE__]);
+            //Log::info(['debitAccounts' => $debitAccounts, 'creditAccounts' => $creditAccounts], [__LINE__, __FILE__]);
             if ( $i % 10 == 0 ) {
                 TransRecord::factory()
                 ->state(['amount' => $firstAmount + $secondAmount])

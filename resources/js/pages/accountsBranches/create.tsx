@@ -46,13 +46,13 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
     >({
         action: "create",
         defaultVisible: true,
-        resource: "accounts_branches",
+        resource: "branches",
         redirect: false,
         warnWhenUnsavedChanges: !isOverModal,
     });
 
     const { data } = useList<IAccountsBranch>({
-        resource: "accounts_branches",
+        resource: "branches",
         filters: [
             {
                 field: 'selectOptions',
@@ -86,7 +86,7 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
                     type: "replace",
                 });
             }}
-            title={t("accounts_branches.form.add")}
+            title={t("branches.form.add")}
             width={512}
             closeIcon={<LeftOutlined />}
         >
@@ -125,21 +125,21 @@ export const AccountsBranchCreatePage = ({ isOverModal }: Props) => {
                 initialValues={initValues}
             >
                 <Form.Item
-                    label={t("accounts_branches.fields.name")}
+                    label={t("branches.fields.name")}
                     name="name"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.description")}
+                    label={t("branches.fields.description")}
                     name="description"
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label={t("accounts_branches.fields.parent")}
+                    label={t("branches.fields.parent")}
                     name="parent"
                     // rules={[{ required: true }]}
                 >

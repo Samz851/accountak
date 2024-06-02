@@ -56,7 +56,8 @@ export const Header: React.FC = () => {
     const { i18n } = useTranslation();
     const locale = useGetLocale();
     const changeLanguage = useSetLocale();
-    const { data: user } = useGetIdentity<IIdentity>();
+    const { data: identity } = useGetIdentity<IIdentity>();
+
     const screens = useBreakpoint();
     const t = useTranslate();
 
@@ -266,12 +267,12 @@ export const Header: React.FC = () => {
 
                         <Space size={screens.md ? 16 : 8} align="center">
                             <Text ellipsis className={styles.userName}>
-                                {user?.name}
+                                {identity?.user?.name}
                             </Text>
                             <Avatar
                                 size="large"
-                                src={user?.avatar}
-                                alt={user?.name}
+                                src={`/${identity?.organization?.logo}`}
+                                alt={identity?.user?.name}
                             />
                         </Space>
                     </Space>

@@ -41,17 +41,17 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
                     </Typography.Title>
                 </Flex>
             </Flex>
-            <CardWithContent title={t('accounts_branches.fields.description')}>
+            <CardWithContent title={t('branches.fields.description')}>
                 <Typography.Text>
                     {accountsBranch?.description}
                 </Typography.Text>
             </CardWithContent>
             {
                 accountsBranch?.parent &&
-                <CardWithContent title={t('accounts_branches.fields.parent')}>
+                <CardWithContent title={t('branches.fields.parent')}>
                     <Typography.Link
                         strong
-                        onClick={() => show('accounts_branches', accountsBranch.parent?.id || 0, 'push')}
+                        onClick={() => show('branches', accountsBranch.parent?.id || 0, 'push')}
                         style={{
                             whiteSpace: "nowrap",
                             color: token.colorTextHeading,
@@ -63,13 +63,13 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
             }
             {
                 accountsBranch?.children &&
-                <CardWithContent title={t('accounts_branches.fields.children')}>
+                <CardWithContent title={t('branches.fields.children')}>
                 {
                     accountsBranch?.children?.map(branch => (
                         <Flex vertical key={branch.id}>
                             <Typography.Link
                                 strong
-                                onClick={() => show('accounts_branches', branch.id, 'push')}
+                                onClick={() => show('branches', branch.id, 'push')}
                                 style={{
                                     whiteSpace: "nowrap",
                                     color: token.colorTextHeading,
@@ -82,7 +82,7 @@ export const AccountsBranchView = ({accountsBranch}: Props) => {
                 }
                 </CardWithContent>
             }
-            <CardWithContent title={t('accounts_branches.fields.accounts')}>
+            <CardWithContent title={t('branches.fields.accounts')}>
             {
                 accountsBranch?.accounts?.map(account => (
                     <Flex vertical key={account.id}>

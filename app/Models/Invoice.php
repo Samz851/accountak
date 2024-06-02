@@ -14,7 +14,7 @@ class Invoice extends Model
         'issue_date',
         'due_date',
         'total_amount',
-        'customer_id'
+        'customer_id',
     ];
 
     public function customer()

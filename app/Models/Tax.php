@@ -20,7 +20,7 @@ class Tax extends Model
      * @var array
      */
     protected $appends = [
-        'total'
+        'total',
     ];
 
     public function transactions()

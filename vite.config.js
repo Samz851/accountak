@@ -21,5 +21,10 @@ export default defineConfig({
         manifest: true,
         outDir: './public/build',
         emptyOutDir: false
-     }
+     },
+     esbuild: {
+        include: /\.(tsx?|jsx?)$/,
+        exclude: [],
+        loader: 'tsx'
+      },
 });

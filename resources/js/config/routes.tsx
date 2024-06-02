@@ -12,8 +12,45 @@ import { ContactShow } from "@/pages/contacts/show";
 import { TaxShow } from "@/pages/taxes/show";
 import { AccountsBranchCreatePage, AccountsBranchShow } from "@/pages/accountsBranches";
 import { AccountsBranchesListPage } from "@/pages/accountsBranches/newlist";
+import { CreateGeneralPage } from "@/pages/create";
+import { EditOptions, HandleOptionsView, OptionsWrapper, ShowOptions } from "@/pages/options";
+import { TransactionCreateForm } from "@/pages/create/forms/transaction";
+import { AccountCreateForm } from "@/pages/create/forms/account";
+import { AccountsBranchCreateForm } from "@/pages/create/forms/branches";
+import { TaxCreateForm } from "@/pages/create/forms/tax";
+import { StatementBuilder } from "@/pages/statements";
+import { OnboardPage } from "@/pages/onboard";
+import { loadState } from "@/helpers/localStorage";
+import { LocaleJsonEditor } from "@/pages/devSamples/localejson";
+
+const optionsLoader = () => {
+    const identity = loadState('identity');
+    if (!identity) return 0;
+    return identity.options.id;
+}
+
 export const routes: ReactElement[] = [
     <Route index element={<DashboardPage />} />,
+    <Route path="/jsonviewer" element={<LocaleJsonEditor />} />,
+    <Route path="/options">
+        <Route path="onboard" element={<OnboardPage />} />
+        <Route
+            // loader={optionsLoader}
+            path="show/:id"
+            element={<ShowOptions />}
+        />
+        <Route
+            // loader={optionsLoader}
+            path="edit/:id"
+            element={<EditOptions />}
+        />
+    </Route>,
+    <Route path="/create" element={<CreateGeneralPage />}>
+        <Route path="transactions" element={<TransactionCreateForm />} />
+        <Route path="accounts" element={<AccountCreateForm />} />
+        <Route path="branches" element={<AccountsBranchCreateForm />} />
+        <Route path="taxes" element={<TaxCreateForm />} />
+    </Route>,
     <Route path="/companies">
         <Route index element={<CompaniesList />} />
         <Route
@@ -42,20 +79,20 @@ export const routes: ReactElement[] = [
             path="show/:id"
             element={<AccountShow />}
         />
-            <Route
+        {/* <Route
             path="create"
-            element={<AccountCreatePage />}
-        />
+            element={<CreateGeneralPage />}
+        /> */}
     </Route>,
     <Route path="/transactions">
         <Route index element={<TransactionsList />} />
-        <Route
+        {/* <Route
             path="create"
-            element={<TransactionCreatePage />} />
+            element={<CreateGeneralPage />} /> */}
     </Route>,
-    // <Route path="/statements">
-    //     <Route index element={<StatementCreatePage />} />
-    // </Route>,
+    <Route path="/statements">
+        <Route index element={<StatementBuilder />} />
+    </Route>,
     <Route path="/taxes">
         <Route index element={<TaxesList />} />
         <Route
@@ -66,21 +103,25 @@ export const routes: ReactElement[] = [
             path="create"
             element={<TaxCreatePage />} />
     </Route>,
-    <Route path="/accounts_branches">
+    <Route path="/branches">
         <Route index element={<AccountsBranchesListPage />} />
         <Route
             path="show/:id"
             element={<AccountsBranchShow />}
         />
-        <Route
+        {/* <Route
             path="create"
-            element={<AccountsBranchCreatePage />}
-        />
+            element={<CreateGeneralPage />}
+        /> */}
     </Route>,
-    // <Route path="/dev_sample">
-    //     <Route index element={<FortuneBSheetComponent />} />
+    // <Route path="/orders">
+    //     <Route index element={<OrderList />} />
+    //     <Route
+    //         path="show/:id"
+    //         element={<OrderShow />}
+    //     />
     // </Route>,
-    // <Route path="/create_general">
-    //     <Route index element={<CreateGeneralPage />} />
-    // </Route>
+    <Route path="/create_general">
+        <Route index element={<CreateGeneralPage />} />
+    </Route>
 ]

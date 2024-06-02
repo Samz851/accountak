@@ -22,6 +22,4 @@ interface BaseAccount
     public function getHasChildrenAttribute(): bool;
 
     public function getCodeLabelAttribute(): string;
-
-
 }

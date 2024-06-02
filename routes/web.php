@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/{all?}', function () {
     return view('welcome');
-})->where('all', '.*');
+})->where('all', '.*')
+->name('home');
+
+Route::post('/users/login', [UserController::class, 'login']);

@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\BaseAccountTaxonomy;
 use App\Helpers\ArrayFormatters;
-use App\Models\Account;
 use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -17,42 +15,44 @@ class AccountsBranchController extends Controller
     private function getAll(): Collection
     {
         return AccountsBranch::with(['children', 'parent', 'accounts'])
-                            ->get();
+            ->get();
     }
 
     private function getTree(): array
     {
         $accountTypes = ArrayFormatters::removeEmptyItems(AccountsBranch::doesntHave('parent')->get()->toArray());
-        return array_map(fn($record)=> ArrayFormatters::rename_array_keys($record, [
-            "name" => "label",
-            "id" => "value",
-            "children" => "children"
+
+        return array_map(fn ($record) => ArrayFormatters::rename_array_keys($record, [
+            'name' => 'label',
+            'id' => 'value',
+            'children' => 'children',
         ]), $accountTypes);
 
     }
 
-    private function getAllByBranch(): Collection | array
+    private function getAllByBranch(): Collection|array
     {
         // $array = AccountsBranch::where('taxonomy', 'leaf')
         // ->where('name', '<>', 'Tax Expense')
         // ->get();
 
         $lastBranches = AccountsBranch::whereNull('parent_id')->get()->toArray();
-        return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
-            "name" => "label",
-            "code" => "value"
+
+        return array_map(fn ($record) => ArrayFormatters::rename_array_keys($record, [
+            'name' => 'label',
+            'code' => 'value',
         ]), $lastBranches);
         // foreach ($lastBranches as $branch) {
         //     // Log::info($branch, [__LINE__, __FILE__]);
         // }
         // $lastBranches= $lastBranches->groupBy('parent_accounts_branch')
         //                             ->collapse();
-        
+
         // foreach ($lastBranches as $lastBranch) {
         //     $parent = $lastBranch->parent()->select('id', 'name', 'code', 'parent_accounts_branch')->first();
         //     if ( isset($array[$parent->id]) ) {
         //         $array[$parent->id]['children'][] = $lastBranch->toArray();
-                
+
         //     } else {
         //         $array[$parent->id] = [
         //             'id' => $parent->id,
@@ -62,7 +62,7 @@ class AccountsBranchController extends Controller
         //             'children' => [$lastBranch->toArray()]
         //         ];
         //     }
-            
+
         // }
 
         // foreach ($array as $key => $value) {
@@ -77,21 +77,22 @@ class AccountsBranchController extends Controller
     {
         if ($noChildren) {
             $accountTypes = AccountsBranch::get()
-            ->toArray();
+                ->toArray();
         } else {
             $accountTypes = AccountsBranch::doesntHave('parent')
-            ->get()
-            ->toArray();
+                ->get()
+                ->toArray();
 
             $accountTypes = ArrayFormatters::removeLeafAccounts($accountTypes, 5);
         }
 
-        return array_map(fn($record) => ArrayFormatters::rename_array_keys($record, [
-            "name" => "title",
-            "id" => "key",
-            "children" => "children"
+        return array_map(fn ($record) => ArrayFormatters::rename_array_keys($record, [
+            'name' => 'title',
+            'id' => 'key',
+            'children' => 'children',
         ]), $accountTypes);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -101,11 +102,11 @@ class AccountsBranchController extends Controller
 
             $result = $this->getSelectOptions();
 
-        } else if ($request->has('tree')) {
+        } elseif ($request->has('tree')) {
             $result = $this->getAllByBranch();
-        } else if ($request->has('noChildren')) {
+        } elseif ($request->has('noChildren')) {
             $result = $this->getSelectOptions(true);
-        }else {
+        } else {
             $result = $this->getAll();
         }
 
@@ -118,6 +119,7 @@ class AccountsBranchController extends Controller
     public function store(Request $request)
     {
         $parent = AccountsBranch::create($request->all());
+
         return response($parent);
     }
 
@@ -129,6 +131,7 @@ class AccountsBranchController extends Controller
         $parent->accounts;
         $parent->child_types;
         $parent->parent;
+
         // Log::info($parent->parent, [__LINE__, __FILE__]);
         return response($parent);
     }
@@ -150,15 +153,15 @@ class AccountsBranchController extends Controller
         $delete = AccountsBranch::truncate();
         Schema::enableForeignKeyConstraints();
         $types = AccountsBranch::all();
+
         return response([$delete, $types]);
     }
-
-
 
     // DEV
     public function getParents(Request $request): Response
     {
         $parent = AccountsBranch::with('parent')->where('id', $request->query('id'))->get();
+
         return response($parent);
     }
 
@@ -166,12 +169,12 @@ class AccountsBranchController extends Controller
     {
         $accounts = AccountsBranch::whereNull('parent_id')->get()->pluck('code', 'id');
         $updatingAccounts = AccountsBranch::whereIn('id', $accounts->keys())
-                ->get();
+            ->get();
         foreach ($updatingAccounts as $account) {
             $account->update(['code' => substr($account->code, 0, 2)]);
         }
 
         return response(AccountsBranch::whereIn('id', $accounts->keys())
-        ->get());
+            ->get());
     }
 }
