@@ -37,8 +37,8 @@ class AccountQueryBuilder
     {
         $children = AccountsBranch::where('id', $parentId)
                     ->first()
-                    ->append('children')
-                    ->children;
+                    ->append('subitems')
+                    ->subitems;
         return $children;
     }
     public function setParentId(int $parentId): self
@@ -68,7 +68,7 @@ class AccountQueryBuilder
             $result = $result->offset($this->offset)->limit($this->limit);
         }
         
-        return $result->get();
+        return $result->get()->append('children');
     }
 
 

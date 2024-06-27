@@ -91,12 +91,12 @@ class AccountServices implements AccountServiceContract
                     $accounts = $accounts->executeAccountQuery();
                 }
                 $accounts = $accounts->toArray();
-                foreach ($accounts as &$value) {
-                    // Log::info([$value['has_children'], gettype($value['has_children']), $value['has_children'] === true && ! isset($value['children'])], [__LINE__, __FILE__]);
-                    if ( $value['has_children'] === true && ! isset($value['children'])) {
-                        $value['children'] = [];
-                    }
-                }
+                // foreach ($accounts as &$value) {
+                //     // Log::info([$value['has_children'], gettype($value['has_children']), $value['has_children'] === true && ! isset($value['children'])], [__LINE__, __FILE__]);
+                //     if ( $value['has_children'] === true && ! isset($value['children'])) {
+                //         $value['children'] = [];
+                //     }
+                // }
                 return $accounts;
             }
         } catch (\Throwable $th) {
