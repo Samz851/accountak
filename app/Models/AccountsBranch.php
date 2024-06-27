@@ -13,6 +13,13 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
 {
     use HasFactory, Searchable;
 
+    protected $appends = [
+        'balance',
+        'code_label',
+        'tree_path',
+        'has_children',
+        'children'
+    ];
     protected static function booted(): void
     {
         static::creating(function ($branch) {
@@ -65,21 +72,43 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
         return $this->hasMany(Account::class, 'parent_id');
     }
 
-    public function getChildrenAttribute()
+    public function getSubitemsAttribute()
     {
-
-        $children = $this->subbranches()->get();
-        if ($children->isEmpty()) {
-            $children = $this->accounts()->get();
+        $subitems = $this->subbranches()->get();
+        if ($subitems->isEmpty()) {
+            $subitems = $this->accounts()->get();
         }
 
-        return $children;
+        return $subitems;
+    }
+
+    // public function getChildrenAttribute()
+    // {
+
+    //     $children = $this->subbranches()->get();
+    //     if ($children->isEmpty()) {
+    //         $children = $this->accounts()->get();
+    //     }
+
+    //     return $children;
+    // }
+
+    public function getChildrenAttribute()
+    {
+        if ($this->subbranches()->exists()) {
+            return [];
+        }
+        if ($this->accounts()->exists()) {
+            return [];
+        }
+
+        return false;
     }
 
     public function getBalanceAttribute(): float
     {
         // Log::info([$this->children, $this->getAttributes(), $this->attributes], [__FILE__, __LINE__]);
-        return round($this->children->pluck('balance')->sum(), 2);
+        return round($this->subitems->pluck('balance')->sum(), 2);
     }
 
     public function getHasChildrenAttribute(): bool

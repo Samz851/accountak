@@ -91,6 +91,7 @@ export interface IBaseAccount {
     code: string;
     has_children?: boolean;
     taxonomy: string;
+    subitems: any;
     [Symbol.iterator]?(): IterableIterator<number>;
 }
 
