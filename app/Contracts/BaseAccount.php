@@ -15,7 +15,7 @@ interface BaseAccount
 
     public function parent(): BelongsTo;
 
-    public function getBalanceAttribute(): float;
+    // public function getBalanceAttribute(): float;
 
     public function getTreePathAttribute(): string;
 

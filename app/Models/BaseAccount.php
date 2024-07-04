@@ -25,7 +25,7 @@ abstract class BaseAccount extends Model
     ];
 
     protected $appends = [
-        'balance',
+        // 'balance',
         'code_label',
         'tree_path',
         'has_children',
@@ -81,5 +81,5 @@ abstract class BaseAccount extends Model
 
     abstract public function getHasChildrenAttribute(): bool;
 
-    abstract public function getBalanceAttribute(): float;
+    // abstract public function getBalanceAttribute(): float;
 }

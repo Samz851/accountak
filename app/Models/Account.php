@@ -6,6 +6,7 @@ use App\Contracts\BaseAccount as BaseAccountContract;
 use App\Enums\AccountTransactionTypes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Searchable;
 
@@ -52,12 +53,24 @@ class Account extends BaseAccount implements BaseAccountContract
             ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
-    public function getBalanceAttribute(): float
+    public function accountBalance(): HasOne
     {
-        $totalCredit = $this->creditTransactions()->get()->pluck('crtrans')->sum('amount') ?? 0;
-        $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum('amount') ?? 0;
+        return $this->hasOne(AccountBalance::class, 'account_id');
+    }
 
-        return round($totalCredit - $totalDebit, 2);
+    // public function getBalanceAttribute(): float
+    // {
+    //     // $totalCredit = $this->accountBalance()->get()->pluck('crtrans')->sum('amount') ?? 0;
+    //     // $totalDebit = $this->debitTransactions()->get()->pluck('dbtrans')->sum('amount') ?? 0;
+    //     $accB = $this->accountBalance()->first();
+    //     $balance = $accB->balance;
+    //     Log::info($accB, [__LINE__, __FILE__]);
+    //     return $accB;
+    // }
+
+    public function scopeWithAccountBalance(Builder $query): void
+    {
+        $query->leftJoin('account_balances', 'accounts.id', '=', 'account_balances.account_id');
     }
 
     public function contact()
