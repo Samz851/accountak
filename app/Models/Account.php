@@ -7,6 +7,7 @@ use App\Enums\AccountTransactionTypes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Searchable;
 
@@ -14,6 +15,7 @@ class Account extends BaseAccount implements BaseAccountContract
 {
     use HasFactory, Searchable;
 
+    // protected $with = ['accounts_balance'];
     protected static function booted(): void
     {
         static::creating(function ($account) {
@@ -53,9 +55,23 @@ class Account extends BaseAccount implements BaseAccountContract
             ->wherePivot('type', AccountTransactionTypes::CREDIT);
     }
 
-    public function accountBalance(): HasOne
+    // public function accountsBalance(): HasOne
+    // {
+    //     return $this->hasOne(AccountBalance::class, 'account_id');
+    // }
+
+    public function getAccountsBalanceAttribute()
     {
-        return $this->hasOne(AccountBalance::class, 'account_id');
+        $balance = DB::table('account_balances')
+                    ->select(['debit_total', 'credit_total', 'balance'])
+                    ->where('account_id', '=', $this->id)
+                    ->first();
+        // $attr = [
+        //     'debit_total' => $balances->pluck('debit_total')->sum(),
+        //     'credit_total' => $balances->pluck('credit_total')->sum(),
+        //     'balance' => $balances->pluck('balance')->sum(),
+        // ];
+        return $balance;
     }
 
     // public function getBalanceAttribute(): float

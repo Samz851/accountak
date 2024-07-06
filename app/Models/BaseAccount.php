@@ -29,6 +29,7 @@ abstract class BaseAccount extends Model
         'code_label',
         'tree_path',
         'has_children',
+        'accounts_balance'
     ];
 
     protected $casts = ['taxonomy' => BaseAccountTaxonomy::class];
