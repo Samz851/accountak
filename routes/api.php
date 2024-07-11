@@ -30,6 +30,8 @@ Route::get('/generateBalances', [TransactionsController::class, 'generateBalance
 
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/accounts', [AccountController::class, 'index']);
+    Route::get('/accounts/search', [AccountController::class,'search']);
+
     Route::apiResource('/accounts', AccountController::class);
     Route::get('/test_accounts', [AccountController::class, 'testAccounts']);
     Route::apiResource('/transactions', TransactionsController::class);

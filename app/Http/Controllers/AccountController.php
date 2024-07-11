@@ -53,6 +53,12 @@ class AccountController extends Controller
         return response($acc);
     }
 
+    public function search(Request $request): Response
+    {
+        $result = $this->accountServices->searchAccounts($request->query('code'));
+        return response(['success' => true, 'result' => $result]);
+    }
+
     /**
      * Update the specified resource in storage.
      */

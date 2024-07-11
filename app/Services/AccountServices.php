@@ -10,6 +10,7 @@ use BadMethodCallException;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Log;
 
 class AccountServices implements AccountServiceContract
@@ -19,6 +20,10 @@ class AccountServices implements AccountServiceContract
             'required' => true,
             'type' => 'string',
             'values' => ['account', 'branch', 'all'],
+        ],
+        'code' => [
+            'required' => false,
+            'type' => 'string'
         ],
         'taxonomy' => [
             'required' => false,
@@ -53,13 +58,14 @@ class AccountServices implements AccountServiceContract
                 $queries[$key] = $value;
             }
         }
-
+        Log::info($queries, [__LINE__, __FILE__]);
         return $queries;
     }
 
     public function getAccounts(array $filters = []): array
     {
         try {
+            Log::info($filters, [__LINE__, __FILE__]);
             if ( $filters ) {
                 $queries = $this->extractFilters($filters);
                 if ( isset($filters['_start']) && isset($filters['_end']) ) {
@@ -72,8 +78,15 @@ class AccountServices implements AccountServiceContract
 
                 if ( $queries['type'] === 'all' )
                 {
-                    if ( !isset($queries['parent']) )
+                    if ( isset($queries['code']) )
                     {
+                        Log::info($queries['code'], [__LINE__, __FILE__]);
+                        $accounts = $accounts->quickSearch($queries['code'])
+                                            ->executeAccountQuery();
+
+                    } elseif ( !isset($queries['parent']))
+                    {
+                        Log::info('CODE NOT SET', [__LINE__, __FILE__]);
                         $accounts = $accounts->setType('branch')
                                     ->setTaxonomy('root')
                                     ->executeAccountQuery();
@@ -97,11 +110,22 @@ class AccountServices implements AccountServiceContract
                 //         $value['children'] = [];
                 //     }
                 // }
+                Log::info($accounts, [__LINE__, __FILE__]);
+
                 return $accounts;
             }
         } catch (\Throwable $th) {
             throw $th;
         }
+
+    }
+
+    public function searchAccounts( string $code ): SupportCollection
+    {
+        $accounts = new AccountQueryBuilder();
+        $accounts = $accounts->quickSearch($code);
+        // $accounts = $accounts->flatten(2);
+        return $accounts;
 
     }
     private $filterCriterion = [
