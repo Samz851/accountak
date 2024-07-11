@@ -43,8 +43,8 @@ class AccountQueryBuilder
             $this->query->where('code', '=', $code );
         } else {
             $this->setType('branch');
-            $this->query->where('accounts_branches.code', 'like', $code . '%');
-            $this->query->unionAll(DB::table('accounts')->where('accounts.code', 'LIKE', $code .'%'));
+            $this->query->select(['id', 'code', 'name'])->where('accounts_branches.code', 'like', $code . '%');
+            $this->query->unionAll(DB::table('accounts')->select(['id', 'code', 'name'])->where('accounts.code', 'LIKE', $code .'%'));
             // $this->query->leftJoin('accounts', function ( $join ) use ($code) {
             //     $join->on('accounts.code', 'LIKE', DB::raw("CONCAT(accounts_branches.code, '%')"));
             // });

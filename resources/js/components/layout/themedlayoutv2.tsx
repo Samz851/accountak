@@ -8,6 +8,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
 import { useApiUrl, useNavigation } from "@refinedev/core";
 import { Request } from "@/helpers/httpHelper";
+import { SearchModal } from "../accountSearch/model";
 
 export const ThemedLayoutV2: React.FC<RefineThemedLayoutV2Props> = ({
   children,
@@ -53,7 +54,8 @@ export const ThemedLayoutV2: React.FC<RefineThemedLayoutV2Props> = ({
         <AntdLayout>
           <HeaderToRender />
           <AntdLayout.Content>
-            <Modal open={isModalOpen}>
+            <SearchModal open={isModalOpen} setOpen={setIsModalOpen} />
+            {/* <Modal open={isModalOpen}>
               <Input 
                 type="text" 
                 placeholder="Enter Account Code to search"
@@ -74,7 +76,7 @@ export const ThemedLayoutV2: React.FC<RefineThemedLayoutV2Props> = ({
                 )
                 }
                 />
-            </Modal>
+            </Modal> */}
             <FloatButton 
               icon={<SearchOutlined />}
               onClick={()=> toggleModal()}
