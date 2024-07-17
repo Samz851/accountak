@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AccountTransactionTypes;
+use App\Models\Account;
+use App\Models\AccountBalance;
 use App\Models\TransRecord;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -37,6 +39,16 @@ class TransactionsController extends Controller
         $transaction = TransRecord::create($data);
         if ($debitAccounts) {
             foreach ($debitAccounts as $debitAccount) {
+                // Update Account balance table
+                $accountModel = Account::find($debitAccount['id']);
+                $debitBalance = AccountBalance::updateOrCreate(['account_id'=> $accountModel->id], [
+                    'account_id'=> $accountModel->id,
+                    'code'=> $accountModel->code
+                ]);
+
+                $debitBalance->debit_total -= $debitAccount['amount'];
+
+                $debitBalance->save();
                 $transaction->debitAccounts()->attach($debitAccount['id'], [
                     'type' => AccountTransactionTypes::DEBIT,
                     'amount' => $debitAccount['amount'],
@@ -45,7 +57,17 @@ class TransactionsController extends Controller
         }
         if ($creditAccounts) {
             foreach ($creditAccounts as $creditAccount) {
-                $transaction->debitAccounts()->attach($creditAccount['id'], [
+                $accountModel = Account::find($creditAccount['id']);
+                $creditBalance = AccountBalance::updateOrCreate(['account_id'=> $accountModel->id], [
+                    'account_id'=> $accountModel->id,
+                    'code'=> $accountModel->code
+                ]);
+
+                $creditBalance->credit_total -= $creditAccount['amount'];
+
+                $creditBalance->save();
+
+                $transaction->creditAccounts()->attach($creditAccount['id'], [
                     'type' => AccountTransactionTypes::CREDIT,
                     'amount' => $creditAccount['amount'],
                 ]);
@@ -62,6 +84,23 @@ class TransactionsController extends Controller
         return response($transaction);
     }
 
+    public function generateBalances(Request $request)
+    {
+        $accounts = Account::all();
+        foreach ($accounts as $account) {
+            $debit_total = $account->debitTransactions()->get()->pluck('dbtrans')->sum('amount') ?? 0;
+            $credit_total = $account->creditTransactions()->get()->pluck('crtrans')->sum('amount')?? 0;
+            $accountBalance = AccountBalance::create([
+                'account_id' => $account->id,
+                'code' => $account->code,
+                'debit_total' => -$debit_total,
+                'credit_total' => $credit_total,
+            ]);
+
+            $accountBalance->save();
+        }
+        return response(['message' => 'Balances generated successfully.']);
+    }
     /**
      * Display the specified resource.
      */

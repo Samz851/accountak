@@ -254,9 +254,9 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 />
                 <Table.Column
                     key="balance"
-                    dataIndex={["balance"]}
+                    dataIndex={["accounts_balance"]}
                     title={t("accounts.fields.balance")}
-                    render={(_, record) => _.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
+                    render={(_, record) => _.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
                 />
                 <Table.Column<IAccount>
                     fixed="right"

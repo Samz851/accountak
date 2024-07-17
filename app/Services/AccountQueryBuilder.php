@@ -7,6 +7,7 @@ use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AccountQueryBuilder
@@ -31,6 +32,26 @@ class AccountQueryBuilder
         }
 
         return $this;
+    }
+
+    public function quickSearch(string $code): Collection
+    {
+        $codeCount = strlen($code);
+        Log::info([$code, $codeCount], [__LINE__, __FILE__]);
+        if ( $codeCount == 10 ) {
+            $this->setType('account');
+            $this->query->where('code', '=', $code );
+        } else {
+            $this->setType('branch');
+            $this->query->select(['id', 'code', 'name'])->where('accounts_branches.code', 'like', $code . '%');
+            $this->query->unionAll(DB::table('accounts')->select(['id', 'code', 'name'])->where('accounts.code', 'LIKE', $code .'%'));
+            // $this->query->leftJoin('accounts', function ( $join ) use ($code) {
+            //     $join->on('accounts.code', 'LIKE', DB::raw("CONCAT(accounts_branches.code, '%')"));
+            // });
+        }
+
+        $accounts = $this->executeAccountQuery();
+        return $accounts;
     }
 
     public static function getChildren(int $parentId): Collection|array
@@ -68,7 +89,7 @@ class AccountQueryBuilder
             $result = $result->offset($this->offset)->limit($this->limit);
         }
         
-        return $result->get()->append('children');
+        return $result->get();
     }
 
 

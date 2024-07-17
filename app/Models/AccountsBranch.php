@@ -6,6 +6,7 @@ use App\Contracts\BaseAccount as BaseAccountContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Searchable;
 
@@ -14,11 +15,12 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
     use HasFactory, Searchable;
 
     protected $appends = [
-        'balance',
+        // 'balance',
         'code_label',
         'tree_path',
         'has_children',
-        'children'
+        'children',
+        'accounts_balance'
     ];
     protected static function booted(): void
     {
@@ -105,11 +107,24 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
         return false;
     }
 
-    public function getBalanceAttribute(): float
+    public function getAccountsBalanceAttribute()
     {
-        // Log::info([$this->children, $this->getAttributes(), $this->attributes], [__FILE__, __LINE__]);
-        return round($this->subitems->pluck('balance')->sum(), 2);
+        $balances = DB::table('account_balances')
+                    ->select(['debit_total', 'credit_total', 'balance'])
+                    ->where('code', 'like', $this->code . '%')
+                    ->get();
+        $attr = [
+            'debit_total' => $balances->pluck('debit_total')->sum(),
+            'credit_total' => $balances->pluck('credit_total')->sum(),
+            'balance' => $balances->pluck('balance')->sum(),
+        ];
+        return $attr;
     }
+    // public function getBalanceAttribute(): float
+    // {
+    //     // Log::info([$this->children, $this->getAttributes(), $this->attributes], [__FILE__, __LINE__]);
+    //     return round($this->subitems->pluck('balance')->sum(), 2);
+    // }
 
     public function getHasChildrenAttribute(): bool
     {
