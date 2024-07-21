@@ -33,6 +33,8 @@ export const SearchModal = ({open, setOpen}) => {
     return (
         <Modal
             open={open}
+            onOk={()=>setOpen(!open)}
+            onCancel={()=>setOpen(false)}
         >
             <Layout>
                 <Header>

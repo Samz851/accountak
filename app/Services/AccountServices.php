@@ -81,8 +81,7 @@ class AccountServices implements AccountServiceContract
                     if ( isset($queries['code']) )
                     {
                         Log::info($queries['code'], [__LINE__, __FILE__]);
-                        $accounts = $accounts->quickSearch($queries['code'])
-                                            ->executeAccountQuery();
+                        $accounts = $accounts->quickSearch($queries['code']);
 
                     } elseif ( !isset($queries['parent']))
                     {
