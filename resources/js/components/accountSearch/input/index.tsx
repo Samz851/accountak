@@ -9,7 +9,7 @@ export const SearchInput = ({setSearchTerm}) => {
         <Input
         type="text"
         placeholder="Enter Code"
-        onChange={onSearchDebounce}
+        onPressEnter={onSearchDebounce}
         />
     )
 }
