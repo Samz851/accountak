@@ -1,5 +1,6 @@
 import React, { useState, useRef, useMemo } from 'react';
 import Spreadsheet, { CellBase, createEmptyMatrix } from "react-spreadsheet";// import StarterKit from '@tiptap/starter-kit'
+import { CreateVariable } from './createVariables';
 
 // const extensions = [
 //     StarterKit,
@@ -22,6 +23,9 @@ export const StatementBuilder = () => {
 
 
 	return (
+        <div>
+        <CreateVariable/>
 		<Spreadsheet data={empty} onChange={onChange}/>
+        </div>
 	);
 };
