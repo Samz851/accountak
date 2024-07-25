@@ -76,6 +76,7 @@ export const resources: IResourceItem[] = [
         name: "transactions",
         list: "/transactions",
         create: "/create/transactions",
+        show: "/transactions/show/:id",
         meta: {
             label: i18next.t("transactions.transactions"),
             icon: <DashboardOutlined />,

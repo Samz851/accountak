@@ -97,6 +97,7 @@ export interface IBaseAccount {
 
 export interface ITransaction {
     id: number;
+    name?: string;
     date: string;
     description: string;
     amount: number | string;

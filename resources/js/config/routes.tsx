@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { Route } from "react-router-dom";
 import { DashboardPage } from "@/pages/dashboard";
 import { AccountCreatePage, AccountShow, AccountsList } from "@/pages/accounts";
-import { TransactionCreatePage, TransactionsList } from "@/pages/transactions";
+import { TransactionCreatePage, TransactionShow, TransactionsList } from "@/pages/transactions";
 import { TaxesList, TaxCreatePage } from "@/pages/taxes";
 
 import { CompaniesList, CompanyCreatePage } from "@/pages/companies";
@@ -86,6 +86,10 @@ export const routes: ReactElement[] = [
     </Route>,
     <Route path="/transactions">
         <Route index element={<TransactionsList />} />
+        <Route
+            path="show/:id"
+            element={<TransactionShow />}
+        />
         {/* <Route
             path="create"
             element={<CreateGeneralPage />} /> */}
