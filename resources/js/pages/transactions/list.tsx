@@ -27,7 +27,7 @@ import dayjs from "dayjs";
 export const TransactionsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, create } = useNavigation();
+    const { showUrl, create, show } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -38,11 +38,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
     >({
         filters: {
             initial: [
-                {
-                    field: 'date',
-                    operator: 'gte',
-                    value: dayjs('2024-03-01'),
-                }
+
             ]
         },
         sorters: {
@@ -50,7 +46,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
         },
         syncWithLocation: true,
         pagination: {
-            mode: "server",
+            mode: "off",
           },
     });
 
@@ -196,24 +192,13 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     dataIndex={["noteable", "id"]}
                     title={t("transactions.fields.notes_pr")}
                 />
-                <Table.Column<IAccount>
+                <Table.Column<ITransaction>
                     fixed="right"
                     title={t("table.actions")}
                     render={(_, record) => (
                         <Button
                             icon={<EyeOutlined />}
-                            onClick={() => {
-                                return go({
-                                    to: `${showUrl("accounts", record.id)}`,
-                                    query: {
-                                        to: pathname,
-                                    },
-                                    options: {
-                                        keepQuery: true,
-                                    },
-                                    type: "replace",
-                                });
-                            }}
+                            onClick={() => show("transactions", record.id, 'push')}
                         />
                     )}
                 />

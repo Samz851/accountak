@@ -19,9 +19,9 @@ class TransactionsController extends Controller
     public function index(Request $request): Response
     {
         $transactions = TransRecord::with(['noteable', 'debitAccounts', 'creditAccounts', 'payment'])
-            ->where('date', '>=', '2024-03-01')
-            ->paginate()
-            ->items();
+            // ->where('date', '>=', '2024-03-01')
+            // ->paginate()
+            ->get();
 
         return response($transactions);
     }
@@ -104,9 +104,12 @@ class TransactionsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(TransRecord $transaction)
     {
-        //
+        $trans = TransRecord::where('id', $transaction->id)
+        ->with(['noteable', 'debitAccounts', 'creditAccounts', 'payment'])
+        ->first();
+        return response($trans);
     }
 
     /**

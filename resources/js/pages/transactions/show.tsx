@@ -2,23 +2,25 @@ import {
     useShow,
     IResourceComponentsProps,
     useNavigation,
+    useBack,
 } from "@refinedev/core";
-import { Flex, Grid } from "antd";
-import { IAccount } from "@/interfaces";
+import { Flex, Grid, Table } from "antd";
+import { IAccount, ITransaction } from "@/interfaces";
 import { CardWithContent, Drawer } from "@/components";
 
-export const AccountShow: React.FC<IResourceComponentsProps> = () => {
+export const TransactionShow: React.FC<IResourceComponentsProps> = () => {
+    const back = useBack();
     const { list } = useNavigation();
     const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IAccount>();
+    const { queryResult } = useShow<ITransaction>();
 
     const { data } = queryResult;
-    const account = data?.data;
-
+    const transaction = data?.data;
+    const { Column } = Table;
     return (
         <Drawer
             open
-            onClose={() => list("accounts")}
+            onClose={() => back()}
             width={breakpoint.sm ? "736px" : "100%"}
         >
             <Flex
@@ -28,7 +30,50 @@ export const AccountShow: React.FC<IResourceComponentsProps> = () => {
                     padding: "32px",
                 }}
             >
-                <CardWithContent title={account?.name} />
+                <CardWithContent title={transaction?.name}>
+                    <p>Date: {transaction?.date}</p>
+                    <p>
+                        Description: {transaction?.description}
+                    </p>
+                    <p>Amount: {transaction?.amount}</p>
+                    {
+                        transaction?.credit_accounts?.length && (
+                            <CardWithContent title={"Credit Accounts"}>
+                                <Table dataSource={transaction?.credit_accounts}>
+                                    <Column
+                                        title="Name"
+                                        dataIndex="name"
+                                        key="name"
+                                    />
+                                    <Column
+                                        title="Amount"
+                                        dataIndex={["pivot", "amount"]}
+                                        key="amount"
+                                    />
+                                </Table>
+                            </CardWithContent>
+                        )
+                    }
+                    {
+                        transaction?.debit_accounts?.length && (
+                            <CardWithContent title={"Debit Accounts"}>
+                                <Table dataSource={transaction?.debit_accounts}>
+                                    <Column
+                                        title="Name"
+                                        dataIndex="name"
+                                        key="name"
+                                    />
+                                    <Column
+                                        title="Amount"
+                                        dataIndex={["pivot", "amount"]}
+                                        key="amount"
+                                    />
+                                </Table>
+                            </CardWithContent>
+                        )
+                    }
+                </CardWithContent>
+
             </Flex>
         </Drawer>
     );
