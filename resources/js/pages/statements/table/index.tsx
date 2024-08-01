@@ -2,6 +2,11 @@ import React, { useRef, useEffect } from "react";
 import Handsontable from "handsontable";
 import "handsontable/dist/handsontable.full.css";
 import { HotTable, HotTableClass } from "@handsontable/react";
+import { HyperFormula } from 'hyperformula';
+import { registerAllModules } from 'handsontable/registry';
+
+// register Handsontable's modules
+registerAllModules();
 
 const ExcelTable: React.FC = () => {
   const hotTableRef = useRef<HotTableClass>(null);
@@ -33,7 +38,10 @@ const ExcelTable: React.FC = () => {
             rowHeaders={true}
             colHeaders={true}
             contextMenu={true}
-            formulas={true}
+            formulas={{
+              engine: HyperFormula,
+            }}
+            licenseKey="non-commercial-and-evaluation"
       ref={hotTableRef} />
     </div>
   );

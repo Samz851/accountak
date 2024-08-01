@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import Spreadsheet, { CellBase, createEmptyMatrix } from "react-spreadsheet";// import StarterKit from '@tiptap/starter-kit'
 import { CreateVariable } from './createVariables';
+import ExcelTable from './table';
 
 // const extensions = [
 //     StarterKit,
@@ -25,7 +26,8 @@ export const StatementBuilder = () => {
 	return (
         <div>
         <CreateVariable/>
-		<Spreadsheet data={empty} onChange={onChange}/>
+		{/* <Spreadsheet data={empty} onChange={onChange}/> */}
+        <ExcelTable />
         </div>
 	);
 };
