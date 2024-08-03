@@ -78,8 +78,8 @@ export interface IAccountsBranch extends IBaseAccount{
 export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
-    balance: number;
-    children: IBaseAccount[] | [{}];
+    balance?: number;
+    children?: IBaseAccount[] | [{}];
 }
 
 export interface IBaseAccount {
@@ -87,11 +87,12 @@ export interface IBaseAccount {
     name: string;
     parent?: IAccountsBranch;
     parent_id?: number;
-    description: string;
-    code: string;
+    description?: string;
+    code?: string;
     has_children?: boolean;
     taxonomy: string;
-    subitems: any;
+    subitems?: any;
+    isLeaf?: boolean;
     [Symbol.iterator]?(): IterableIterator<number>;
 }
 
