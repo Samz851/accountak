@@ -10,7 +10,11 @@ import {
 } from "@refinedev/antd";
 import {
     Table, Typography,
-    theme, Input, Button
+    theme, Input, Button,
+    Layout,
+    TreeSelect,
+    Skeleton,
+    Spin
 } from "antd";
 
 import { IAccount, IAccountFilterVariables } from "@/interfaces";
@@ -20,6 +24,55 @@ import { useStyles } from './styled'
 import { useLocation } from "react-router-dom";
 import { Key } from "antd/es/table/interface";
 
+import debounce from "lodash/debounce";
+import { title } from "process";
+
+const { SHOW_PARENT } = TreeSelect;
+
+
+const { Header, Footer, Sider, Content } = Layout;
+
+
+const SearchInput = ({term, setTerm}) => {
+    const onSearch = e => setTerm(e.target.value); 
+    const onSearchDebounce = debounce(onSearch, 1000);
+    return (
+        <Input 
+            value={term} 
+            onPressEnter={ onSearchDebounce } 
+            placeholder="Enter Code"
+            />
+    )
+}
+
+
+const SelectField = ({loading, data, selected, onChange}) => {
+
+    const tProps = {
+        // treeDataSimpleMode: {
+        //     id: 'id',
+        //     pid: 'parent_id',
+        //     title: 'name',
+        // },
+        treeData: data,
+        // value: selected,
+        onChange,
+        treeCheckable: true,
+        showCheckedStrategy: SHOW_PARENT,
+        placeholder: 'Please select',
+        style: {
+          width: '100%',
+        },
+      };
+      
+
+    return loading ? (<Spin />) : (
+        // <Skeleton loading={loading}>
+        <TreeSelect fieldNames={{ value: 'id', label: 'name' }} {...tProps} />
+        // </Skeleton>
+    )
+}
+
 export const SelectAccount = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
@@ -27,6 +80,7 @@ export const SelectAccount = ({ children }: PropsWithChildren) => {
     const t = useTranslate();
     const { token } = theme.useToken();
     const { styles} = useStyles();
+    const [ term, setTerm ] = useState('');
 
     const { tableProps, filters, setFilters, sorters } = useTable<
         IAccount,
@@ -56,6 +110,8 @@ export const SelectAccount = ({ children }: PropsWithChildren) => {
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
     const [ selectedRowKeys, setSelectedRowKeys ] = useState<Key[]>([]);
+    const [ selectedAccounts, setSelectedAccounts ] = useState([]);
+    // const [ loading, ]
     useEffect(()=>{
         console.log(tableProps);
         if ( ! tableProps.loading ) {
@@ -141,149 +197,158 @@ export const SelectAccount = ({ children }: PropsWithChildren) => {
         }),
     }
     return (
-        <List
-            breadcrumb={false}
-            headerButtons={(props) => [
-                // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
-                <CreateButton
-                    {...props.createButtonProps}
-                    key="create"
-                    size="large"
-                    onClick={() => {
-                        return go({
-                            to: `${createUrl("accounts")}`,
-                            query: {
-                                to: pathname,
-                            },
-                            options: {
-                                keepQuery: true,
-                            },
-                            type: "replace",
-                        });
-                    }}
-                >
-                    {t("accounts.form.add")}
-                </CreateButton>,
-            ]}
-        >
-            <Table
-                {...tableProps}
-                dataSource={accounts}
-                className={styles.expanded}
-                rowKey="code"
-                scroll={{ x: true }}
-                rowSelection={rowSelection}
-                expandable={{
-                    onExpand: onExpandAccount,
-                    // onExpandedRowsChange: (keys) => addExpandedKeysValue(keys),
-                    rowExpandable: isExpandable,
-                    indentSize: 30,
-                    expandedRowClassName: (record) => record.taxonomy,
-                    // expandedRowKeys: expandedRows
-                }}
-            >
-                <Table.Column
-                    key="code"
-                    dataIndex="code"
-                    title="ID #"
-                    rowScope="row"
-                    render={(value) => (
-                        <Typography.Text
-                            style={{
-                                whiteSpace: "nowrap",
-                            }}
-                        >
-                            {value}
-                        </Typography.Text>
-                    )}
-                    filterIcon={(filtered) => (
-                        <SearchOutlined
-                            style={{
-                                color: filtered
-                                    ? token.colorPrimary
-                                    : undefined,
-                            }}
-                        />
-                    )}
-                    defaultFilteredValue={getDefaultFilter(
-                        "code",
-                        filters,
-                        "contains",
-                    )}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Input
-                                addonBefore="#"
-                                style={{ width: "100%" }}
-                                placeholder={t("orders.filter.id.placeholder")}
-                            />
-                        </FilterDropdown>
-                    )}
-                    // onCell={(record: IAccount, index) => { 
-                    //     console.log(index, record);
-                    //     if ( record.has_children && record.children?.length ) {
-                    //         return { 
-                    //             rowSpan: record.children.length + 1,
-                    //             colSpan: record.code.split(/(.{2})/).filter(O=>O).length
-                    //         }
-                    //     }
-                    //     return { }
-                    // }}
-                />
-                <Table.Column
-                    key="name"
-                    dataIndex="name"
-                    title={t("users.fields.name")}
-                    defaultFilteredValue={getDefaultFilter(
-                        "name",
-                        filters,
-                        "contains",
-                    )}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Input
-                                style={{ width: "100%" }}
-                                placeholder={t("users.filter.name.placeholder")}
-                            />
-                        </FilterDropdown>
-                    )}
-                />
-                <Table.Column
-                    key="parent"
-                    dataIndex={["parent", "name"]}
-                    title={t("accounts.fields.parent")}
-                    defaultFilteredValue={getDefaultFilter(
-                        "parent",
-                        filters,
-                        "contains",
-                    )}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Input
-                                style={{ width: "100%" }}
-                                placeholder={t("users.filter.gsm.placeholder")}
-                            />
-                        </FilterDropdown>
-                    )}
-                />
-                <Table.Column
-                    key="balance"
-                    dataIndex={["accounts_balance"]}
-                    title={t("accounts.fields.balance")}
-                    render={(_, record) => _.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
-                />
-                <Table.Column<IAccount>
-                    fixed="right"
-                    title={t("table.actions")}
-                    render={(_, record) => (
-                        <Button
-                            icon={<EyeOutlined />}
-                            onClick={() => show('accounts', record.id, "push")}
-                        />
-                    )}
-                />
-            </Table>
-            {children}
-        </List>
+        // <List
+        //     breadcrumb={false}
+        //     headerButtons={(props) => [
+        //         // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,
+        //         <CreateButton
+        //             {...props.createButtonProps}
+        //             key="create"
+        //             size="large"
+        //             onClick={() => {
+        //                 return go({
+        //                     to: `${createUrl("accounts")}`,
+        //                     query: {
+        //                         to: pathname,
+        //                     },
+        //                     options: {
+        //                         keepQuery: true,
+        //                     },
+        //                     type: "replace",
+        //                 });
+        //             }}
+        //         >
+        //             {t("accounts.form.add")}
+        //         </CreateButton>,
+        //     ]}
+        // >
+        //     <Table
+        //         {...tableProps}
+        //         dataSource={accounts}
+        //         className={styles.expanded}
+        //         rowKey="code"
+        //         scroll={{ x: true }}
+        //         rowSelection={rowSelection}
+        //         expandable={{
+        //             onExpand: onExpandAccount,
+        //             // onExpandedRowsChange: (keys) => addExpandedKeysValue(keys),
+        //             rowExpandable: isExpandable,
+        //             indentSize: 30,
+        //             expandedRowClassName: (record) => record.taxonomy,
+        //             // expandedRowKeys: expandedRows
+        //         }}
+        //     >
+        //         <Table.Column
+        //             key="code"
+        //             dataIndex="code"
+        //             title="ID #"
+        //             rowScope="row"
+        //             render={(value) => (
+        //                 <Typography.Text
+        //                     style={{
+        //                         whiteSpace: "nowrap",
+        //                     }}
+        //                 >
+        //                     {value}
+        //                 </Typography.Text>
+        //             )}
+        //             filterIcon={(filtered) => (
+        //                 <SearchOutlined
+        //                     style={{
+        //                         color: filtered
+        //                             ? token.colorPrimary
+        //                             : undefined,
+        //                     }}
+        //                 />
+        //             )}
+        //             defaultFilteredValue={getDefaultFilter(
+        //                 "code",
+        //                 filters,
+        //                 "contains",
+        //             )}
+        //             filterDropdown={(props) => (
+        //                 <FilterDropdown {...props}>
+        //                     <Input
+        //                         addonBefore="#"
+        //                         style={{ width: "100%" }}
+        //                         placeholder={t("orders.filter.id.placeholder")}
+        //                     />
+        //                 </FilterDropdown>
+        //             )}
+        //             // onCell={(record: IAccount, index) => { 
+        //             //     console.log(index, record);
+        //             //     if ( record.has_children && record.children?.length ) {
+        //             //         return { 
+        //             //             rowSpan: record.children.length + 1,
+        //             //             colSpan: record.code.split(/(.{2})/).filter(O=>O).length
+        //             //         }
+        //             //     }
+        //             //     return { }
+        //             // }}
+        //         />
+        //         <Table.Column
+        //             key="name"
+        //             dataIndex="name"
+        //             title={t("users.fields.name")}
+        //             defaultFilteredValue={getDefaultFilter(
+        //                 "name",
+        //                 filters,
+        //                 "contains",
+        //             )}
+        //             filterDropdown={(props) => (
+        //                 <FilterDropdown {...props}>
+        //                     <Input
+        //                         style={{ width: "100%" }}
+        //                         placeholder={t("users.filter.name.placeholder")}
+        //                     />
+        //                 </FilterDropdown>
+        //             )}
+        //         />
+        //         <Table.Column
+        //             key="parent"
+        //             dataIndex={["parent", "name"]}
+        //             title={t("accounts.fields.parent")}
+        //             defaultFilteredValue={getDefaultFilter(
+        //                 "parent",
+        //                 filters,
+        //                 "contains",
+        //             )}
+        //             filterDropdown={(props) => (
+        //                 <FilterDropdown {...props}>
+        //                     <Input
+        //                         style={{ width: "100%" }}
+        //                         placeholder={t("users.filter.gsm.placeholder")}
+        //                     />
+        //                 </FilterDropdown>
+        //             )}
+        //         />
+        //         <Table.Column
+        //             key="balance"
+        //             dataIndex={["accounts_balance"]}
+        //             title={t("accounts.fields.balance")}
+        //             render={(_, record) => _.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })}
+        //         />
+        //         <Table.Column<IAccount>
+        //             fixed="right"
+        //             title={t("table.actions")}
+        //             render={(_, record) => (
+        //                 <Button
+        //                     icon={<EyeOutlined />}
+        //                     onClick={() => show('accounts', record.id, "push")}
+        //                 />
+        //             )}
+        //         />
+        //     </Table>
+        //     {children}
+        // </List>
+        <Layout>
+      <Header>
+        <SearchInput term={term} setTerm={setTerm} />
+      </Header>
+      <Content>
+        <SelectField loading={tableProps.loading} data={accounts} selected={selectedAccounts} onChange={(newValue) => setSelectedAccounts(newValue)} />
+      </Content>
+      <Footer>Footer</Footer>
+    </Layout>
     );
 };
