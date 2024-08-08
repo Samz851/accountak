@@ -10,7 +10,8 @@ import {
 } from "@refinedev/antd";
 import {
     Table, Typography,
-    theme, Input, Button
+    theme, Input, Button,
+    TableColumnsType
 } from "antd";
 
 import { IAccount, IAccountFilterVariables } from "@/interfaces";
@@ -109,6 +110,89 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         }
     }
 
+    const columns: TableColumnsType<IAccount> = [
+        {
+            dataIndex: "code",
+            title: "ID #",
+            rowScope:"row",
+            render:(value) => (
+                <Typography.Text
+                    style={{
+                        whiteSpace: "nowrap",
+                    }}
+                >
+                    {value}
+                </Typography.Text>
+            ),
+            filterIcon: (filtered) => (
+                <SearchOutlined
+                    style={{
+                        color: filtered
+                            ? token.colorPrimary
+                            : undefined,
+                    }}
+                />
+            ),
+            defaultFilteredValue:getDefaultFilter(
+                "code",
+                filters,
+                "contains",
+            ),
+            filterDropdown: (props) => (
+                <FilterDropdown {...props}>
+                    <Input
+                        addonBefore="#"
+                        style={{ width: "100%" }}
+                        placeholder={t("orders.filter.id.placeholder")}
+                    />
+                </FilterDropdown>
+            )
+        },
+        {
+            dataIndex:"name",
+            title:t("users.fields.name"),
+            defaultFilteredValue:getDefaultFilter(
+                "name",
+                filters,
+                "contains",
+            ),
+            filterDropdown:(props) => (
+                <FilterDropdown {...props}>
+                    <Input
+                        style={{ width: "100%" }}
+                        placeholder={t("users.filter.name.placeholder")}
+                    />
+                </FilterDropdown>
+            )
+        },
+        {
+            dataIndex:["accounts_balance"],
+            title:"Total Debit",
+            render:(_, record) => _.debit_total.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
+        },
+        {
+            dataIndex:["accounts_balance"],
+            title:"Total Credit",
+            render:(_, record) => _.credit_total.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
+        },
+        {
+            dataIndex:["accounts_balance"],
+            title:"Balance",
+            render:(_, record) => _.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
+        },
+        {
+            fixed:"right",
+            title:t("table.actions"),
+            render:(_, record) => (
+                <Button
+                    icon={<EyeOutlined />}
+                    onClick={() => show('accounts', record.id, "push")}
+                />
+            ),
+        }
+
+    ]
+
     const addExpandedKeysValue = (keys) => {
         let key = keys.pop();
         console.log(key);
@@ -167,8 +251,9 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     expandedRowClassName: (record) => record.taxonomy,
                     // expandedRowKeys: expandedRows
                 }}
-            >
-                <Table.Column
+                columns={columns}
+            />
+                {/* <Table.Column
                     key="code"
                     dataIndex="code"
                     title="ID #"
@@ -268,7 +353,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         />
                     )}
                 />
-            </Table>
+            </Table> */}
             {children}
         </List>
     );

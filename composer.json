@@ -15,7 +15,9 @@
         "meilisearch/meilisearch-php": "^1.7"
     },
     "require-dev": {
+        "beyondcode/laravel-query-detector": "^1.8",
         "fakerphp/faker": "^1.9.1",
+        "kevincobain2000/laravel-erd": "^1.7",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
