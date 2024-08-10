@@ -2,6 +2,7 @@ import { useLocation, useOutletContext, useSearchParams } from "react-router-dom
 
 import { Create, SaveButton, useForm, useModalForm, useSelect, useTable } from "@refinedev/antd";
 import {
+    BaseOption,
     HttpError, useBack, useGetToPath,
     useGo, useNavigation, useParsed, useTranslate
 } from "@refinedev/core";
@@ -21,11 +22,13 @@ import {
 import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
 
 import { useEffect, useState } from "react";
+import { BaseOptionType, DefaultOptionType } from "antd/es/select";
 
 type FormValues = {
     name: string;
     parent_id: number;
     description: string;
+    tags: string[];
 };
 
 export const AccountCreateForm = () => {
@@ -78,9 +81,9 @@ export const AccountCreateForm = () => {
     const { selectProps, queryResult } = useSelect<ITag>({
         resource: 'tags',
         optionLabel: "label",
-  optionValue: "id",
+  optionValue: "label",
     })
-    const handleChange = (value: string[]) => {
+    const handleChange = (value: BaseOption, option: DefaultOptionType) => {
         console.log(`selected ${value}`);
       };
     const onExpandAccount = (keys) => {
@@ -91,7 +94,7 @@ export const AccountCreateForm = () => {
     }
 
     useEffect(()=>{
-        console.log('tags', queryResult);
+        console.log('tags', queryResult, selectProps);
         if ( ! AccountselectProps.loading ) {
             if ( accountsOptions.length === 0 ) {
                 setAccountsOptions([...AccountselectProps.dataSource as any]);
@@ -145,7 +148,8 @@ export const AccountCreateForm = () => {
                         const data = await onFinish({
                             name: values.name,
                             parent_id: values.parent_id,
-                            description: values.description
+                            description: values.description,
+                            tags: values.tags
                         });
                         back();
                     } catch (error) {
@@ -207,7 +211,8 @@ export const AccountCreateForm = () => {
       style={{ width: '100%' }}
       placeholder="Please select"
       onChange={handleChange}
-      options={queryResult?.data?.data as any}
+    //   options={queryResult?.data?.data as any}
+    {...selectProps}
       
     />
 
