@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 
-import { useModalForm, useTable } from "@refinedev/antd";
+import { useModalForm, useSelect, useTable } from "@refinedev/antd";
 import {
     HttpError, useGetToPath,
     useGo, useTranslate
@@ -13,10 +13,10 @@ import {
 import {
     Form,
     Input,
-    Modal, TreeSelect
+    Modal, Select, TreeSelect
 } from "antd";
 
-import { IAccount, IAccountFilterVariables } from "@/interfaces";
+import { IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
 
 import { useEffect, useState } from "react";
 
@@ -61,6 +61,10 @@ export const AccountCreatePage = (props) => {
           },
     });
 
+    const { selectProps, queryResult } = useSelect<ITag>({
+        resource: 'tags'
+    })
+
     const onExpandAccount = (keys) => {
         let parentID = keys.pop();
         setExpandedAccount(parentID);
@@ -100,7 +104,9 @@ export const AccountCreatePage = (props) => {
         }
 
     }, [AccountselectProps.dataSource]);
-
+    const handleChange = (value: string[]) => {
+        console.log(`selected ${value}`);
+      };
     return (
         <Modal
             {...modalProps}
@@ -181,6 +187,22 @@ export const AccountCreatePage = (props) => {
                         allowClear={true}
                         onTreeExpand={onExpandAccount}
                         />
+
+                </Form.Item>
+                <Form.Item
+                    label={t("accounts.fields.parent")}
+                    name="account_branch_id"
+                    rules={[{ required: true }]}
+                >
+                        <Select
+      mode="multiple"
+      allowClear
+      style={{ width: '100%' }}
+      placeholder="Please select"
+      onChange={handleChange}
+      options={queryResult.data as any}
+      
+    />
 
                 </Form.Item>
             </Form>

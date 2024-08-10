@@ -82,6 +82,11 @@ export interface IAccount extends IBaseAccount{
     children?: IBaseAccount[] | [{}];
 }
 
+export interface ITag {
+    id: number;
+    label: string;
+    label_ar: string;
+}
 export interface IBaseAccount {
     id: number;
     name: string;
@@ -93,6 +98,7 @@ export interface IBaseAccount {
     taxonomy: string;
     subitems?: any;
     isLeaf?: boolean;
+    tags: ITag[];
     [Symbol.iterator]?(): IterableIterator<number>;
 }
 
