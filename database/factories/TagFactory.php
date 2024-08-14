@@ -17,7 +17,8 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'label' => $this->faker->name(),
+            'description' => $this->faker->realTextBetween($minNbChars = 160, $maxNbChars = 200, $indexSize = 2),
         ];
     }
 }

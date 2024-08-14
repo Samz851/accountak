@@ -28,7 +28,7 @@ type FormValues = {
     name: string;
     parent_id: number;
     description: string;
-    tags: string[];
+    tags: number[];
 };
 
 export const AccountCreateForm = () => {
@@ -81,10 +81,10 @@ export const AccountCreateForm = () => {
     const { selectProps, queryResult } = useSelect<ITag>({
         resource: 'tags',
         optionLabel: "label",
-  optionValue: "label",
+  optionValue: "id",
     })
     const handleChange = (value: BaseOption, option: DefaultOptionType) => {
-        console.log(`selected ${value}`);
+        console.log(`selected ${value}`, value, typeof value);
       };
     const onExpandAccount = (keys) => {
         console.log(keys);

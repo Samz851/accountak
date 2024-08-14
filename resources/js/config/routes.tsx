@@ -22,6 +22,8 @@ import { StatementBuilder } from "@/pages/statements";
 import { OnboardPage } from "@/pages/onboard";
 import { loadState } from "@/helpers/localStorage";
 import { LocaleJsonEditor } from "@/pages/devSamples/localejson";
+import { TagCreateForm } from "@/pages/create/forms/tag";
+import { TagShow, TagsList } from "@/pages/tags";
 
 const optionsLoader = () => {
     const identity = loadState('identity');
@@ -50,6 +52,7 @@ export const routes: ReactElement[] = [
         <Route path="accounts" element={<AccountCreateForm />} />
         <Route path="branches" element={<AccountsBranchCreateForm />} />
         <Route path="taxes" element={<TaxCreateForm />} />
+        <Route path="tags" element={<TagCreateForm />} />
     </Route>,
     <Route path="/companies">
         <Route index element={<CompaniesList />} />
@@ -78,6 +81,17 @@ export const routes: ReactElement[] = [
         <Route
             path="show/:id"
             element={<AccountShow />}
+        />
+        {/* <Route
+            path="create"
+            element={<CreateGeneralPage />}
+        /> */}
+    </Route>,
+    <Route path="/tags">
+        <Route index element={<TagsList />} />
+        <Route
+            path="show/:id"
+            element={<TagShow />}
         />
         {/* <Route
             path="create"

@@ -13,16 +13,11 @@ class Tag extends Model
 
     protected $fillable = [
         'label',
-        'label_ar'
+        'description'
     ];
 
-    public function accounts(): MorphToMany
-    {
-        return $this->morphedByMany(Account::class, 'taggable');
-    }
-
-    public function branches(): MorphToMany
-    {
-        return $this->morphedByMany(AccountsBranch::class, 'taggable');
-    }
+    public function taggable()
+{
+    return $this->morphedByMany([Account::class, AccountsBranch::class], 'taggable');
+}
 }

@@ -14,15 +14,15 @@ class TagSeeder extends Seeder
     public function run(): void
     {
         $tags = [
-            'cash' => 'نقد',
-            'assets' => 'اصول',
-            'operation' => 'عمليات',
-            'expenses' => 'مصاريف'
+            'cash' ,
+            'assets' ,
+            'operation' ,
+            'expenses'
         ];
 
-        foreach($tags as $k => $v) {
+        foreach($tags as $k) {
             Tag::factory()
-                ->state(['label' => $k, 'label_ar' => $v])
+                ->state(['label' => $k])
                 ->create();
         }
     }
