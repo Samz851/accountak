@@ -203,7 +203,7 @@ export const AccountCreateForm = () => {
                 <Form.Item
                     label="tags"
                     name="tags"
-                    rules={[{ required: true }]}
+                    rules={[{ required: false }]}
                 >
                         <Select
       mode="multiple"
@@ -213,6 +213,17 @@ export const AccountCreateForm = () => {
       onChange={handleChange}
     //   options={queryResult?.data?.data as any}
     {...selectProps}
+    dropdownRender={(menu) => (
+        <>
+        {menu}
+        <Divider style={{ margin: '8px 0' }} />
+        <Space style={{ padding: '0 8px 4px' }}>
+            <Button type="text" icon={<PlusOutlined />} onClick={() => goToCreateForm(form.getFieldsValue(true), 'tags')}>
+            Add item
+            </Button>
+        </Space>
+        </>
+    )}
       
     />
 
