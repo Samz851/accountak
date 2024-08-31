@@ -4,6 +4,7 @@ import { CreateVariable } from './createVariables';
 import ExcelTable from './table';
 import TreeTransfer from './selectItems';
 import { SelectAccount } from './selectAccounts';
+import { StatementEditor } from './components/CKEditor/StatementEditor';
 
 // const extensions = [
 //     StarterKit,
@@ -27,11 +28,12 @@ export const StatementBuilder = () => {
 
 	return (
         <div>
-            <SelectAccount />
+            {/* <SelectAccount /> */}
         {/* <TreeTransfer />
         <CreateVariable/> */}
 		{/* <Spreadsheet data={empty} onChange={onChange}/> */}
-        <ExcelTable />
+        {/* <ExcelTable /> */}
+        <StatementEditor />
         </div>
 	);
 };
