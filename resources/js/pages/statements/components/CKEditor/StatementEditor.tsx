@@ -66,10 +66,13 @@ import {
 	TodoList,
 	Underline,
 	Undo,
-    EditorConfig
+    EditorConfig,
+	Mention
 } from 'ckeditor5';
 
 import 'ckeditor5/ckeditor5.css';
+import { useList } from '@refinedev/core';
+import { ITag } from '@/interfaces';
 
 // import './App.css';
 
@@ -77,6 +80,9 @@ export const StatementEditor = () =>{
 	const editorContainerRef = useRef(null);
 	const editorRef = useRef(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
+	const { data } = useList<ITag>({
+		resource: 'tags'
+	})
 
 	useEffect(() => {
 		setIsLayoutReady(true);
@@ -84,6 +90,25 @@ export const StatementEditor = () =>{
 		return () => setIsLayoutReady(false);
 	}, []);
 
+	const getFeedItems = ( queryText ) => {
+		// As an example of an asynchronous action, return a promise
+		// that resolves after a 100ms timeout.
+		// This can be a server request or any sort of delayed action.
+		return new Promise( resolve => {
+			const items = data?.filter( item => item.label.toLowerCase().includes( queryText.toLowerCase() ) );
+			resolve(items);
+			// setTimeout( () => {
+			// 	const itemsToDisplay = items
+			// 		// Filter out the full list of all items to only those matching the query text.
+			// 		.filter( isItemMatching )
+			// 		// Return 10 items max - needed for generic queries when the list may contain hundreds of elements.
+			// 		.slice( 0, 10 );
+	
+			// 	resolve( itemsToDisplay );
+			// }, 100 );
+		} );
+	}
+	
 	const editorConfig: EditorConfig = {
 		toolbar: {
 			items: [
@@ -166,6 +191,7 @@ export const StatementEditor = () =>{
 			Link,
 			List,
 			ListProperties,
+			Mention,
 			MediaEmbed,
 			Paragraph,
 			PasteFromOffice,
@@ -361,8 +387,21 @@ export const StatementEditor = () =>{
 		},
 		table: {
 			contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+		},
+		mention: {
+            feeds: [
+                {
+                    marker: '@',
+                    feed: getFeedItems as any,
+                    minimumCharacters: 1
+                }
+            ]
 		}
+        
 	};
+
+
+	
 
 	return (
 		<div>
