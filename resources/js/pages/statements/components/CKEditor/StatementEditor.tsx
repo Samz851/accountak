@@ -76,11 +76,17 @@ import { ITag } from '@/interfaces';
 
 // import './App.css';
 
+type ItemType = {
+	tag_id: number;
+	id: string;
+	name: string
+}
+
 export const StatementEditor = () =>{
 	const editorContainerRef = useRef(null);
 	const editorRef = useRef(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
-	const [ tags, setTags ] = useState<ITag[]>([]);
+	const [ tags, setTags ] = useState<ItemType[]>([]);
 	const { data, isLoading } = useList<ITag>({
 		resource: 'tags'
 	})
@@ -95,12 +101,13 @@ export const StatementEditor = () =>{
         if(isLoading) return;
 		setIsLayoutReady(true);
 		console.log('Loading', data);
-        setTags(data?.data || []);
+
+        setTags(data?.data.map(i => { return {tag_id: i.id, id: `@${i.label}`, name: i.label}}) || []);
     }, [isLoading]);
 
 	const getFeed = ( qt ) => {
 		console.log('Getting', tags, data, qt);
-			const items = tags?.filter( item => item.label.toLowerCase().includes( qt.toLowerCase() ) );
+			const items = tags?.filter( item => item.name.toLowerCase().includes( qt.toLowerCase() ) );
 			console.log('got',items, tags ,data, qt);
 			return items;
 	}
@@ -110,7 +117,7 @@ export const StatementEditor = () =>{
 		// This can be a server request or any sort of delayed action.
 		return new Promise( resolve => {
 			console.log('Getting', tags, data, queryText);
-			const items = tags?.filter( item => item.label.toLowerCase().includes( queryText.toLowerCase() ) );
+			const items = tags?.filter( item => item.name.toLowerCase().includes( queryText.toLowerCase() ) );
 			console.log('got',items, tags ,data, queryText);
 
 			resolve(items);
