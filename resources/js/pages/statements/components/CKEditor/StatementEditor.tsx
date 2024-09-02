@@ -106,6 +106,17 @@ export const StatementEditor = () =>{
     }, [isLoading]);
 
 	const getFeed = ( qt ) => {
+		const markers = [
+			{id: 'tag\d', name: 'Tag - Debit'},
+			{id: 'tag\c', name: 'Tag - Credit'},
+			{id: 'tag\b', name: 'Tag - Balance'},
+			{id: 'tag\n', name: 'Tag - Name'},
+			{id: 'acc\d', name: 'Account - Debit'},
+			{id: 'acc\c', name: 'Account - Credit'},
+			{id: 'acc\b', name: 'Account - Balance'},
+			{id: 'acc\n', name: 'Account - Name'},
+		];
+		// const markers = ['tag\d','tag\c','tag\b','tag\n','@acc\d','@acc\c','@acc\b','@acc\n',]
 		console.log('Getting', tags, data, qt);
 			const items = tags?.filter( item => item.name.toLowerCase().includes( qt.toLowerCase() ) );
 			console.log('got',items, tags ,data, qt);
@@ -415,7 +426,42 @@ export const StatementEditor = () =>{
 		mention: {
             feeds: [
                 {
-                    marker: '@',
+                    marker: '@tag\d',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@tag\c',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@tag\b',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@tag\n',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@acc\d',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@acc\c',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@acc\b',
+                    feed: getFeed as any,
+                    minimumCharacters: 1
+                },
+				{
+                    marker: '@acc\n',
                     feed: getFeed as any,
                     minimumCharacters: 1
                 }
