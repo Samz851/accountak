@@ -80,22 +80,39 @@ export const StatementEditor = () =>{
 	const editorContainerRef = useRef(null);
 	const editorRef = useRef(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
-	const { data } = useList<ITag>({
+	const [ tags, setTags ] = useState<ITag[]>([]);
+	const { data, isLoading } = useList<ITag>({
 		resource: 'tags'
 	})
 
+	// useEffect(() => {
+	// 	setIsLayoutReady(true);
+
+	// 	return () => setIsLayoutReady(false);
+	// }, []);
+
 	useEffect(() => {
+        if(isLoading) return;
 		setIsLayoutReady(true);
+		console.log('Loading', data);
+        setTags(data?.data || []);
+    }, [isLoading]);
 
-		return () => setIsLayoutReady(false);
-	}, []);
-
+	const getFeed = ( qt ) => {
+		console.log('Getting', tags, data, qt);
+			const items = tags?.filter( item => item.label.toLowerCase().includes( qt.toLowerCase() ) );
+			console.log('got',items, tags ,data, qt);
+			return items;
+	}
 	const getFeedItems = ( queryText ) => {
 		// As an example of an asynchronous action, return a promise
 		// that resolves after a 100ms timeout.
 		// This can be a server request or any sort of delayed action.
 		return new Promise( resolve => {
-			const items = data?.filter( item => item.label.toLowerCase().includes( queryText.toLowerCase() ) );
+			console.log('Getting', tags, data, queryText);
+			const items = tags?.filter( item => item.label.toLowerCase().includes( queryText.toLowerCase() ) );
+			console.log('got',items, tags ,data, queryText);
+
 			resolve(items);
 			// setTimeout( () => {
 			// 	const itemsToDisplay = items
@@ -392,7 +409,7 @@ export const StatementEditor = () =>{
             feeds: [
                 {
                     marker: '@',
-                    feed: getFeedItems as any,
+                    feed: getFeed as any,
                     minimumCharacters: 1
                 }
             ]
