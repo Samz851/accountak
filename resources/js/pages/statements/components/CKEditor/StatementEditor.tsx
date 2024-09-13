@@ -67,8 +67,10 @@ import {
 	Underline,
 	Undo,
     EditorConfig,
-	Mention
+	Mention,
+	Dialog
 } from 'ckeditor5';
+import CustomPlugin from './plugin/TemplatingPlugin';
 
 import 'ckeditor5/ckeditor5.css';
 import { useList } from '@refinedev/core';
@@ -118,8 +120,8 @@ export const StatementEditor = () =>{
 		];
 		// const markers = ['tag\d','tag\c','tag\b','tag\n','@acc\d','@acc\c','@acc\b','@acc\n',]
 		console.log('Getting', tags, data, qt);
-			const items = tags?.filter( item => item.name.toLowerCase().includes( qt.toLowerCase() ) );
-			console.log('got',items, tags ,data, qt);
+			const items = markers?.filter( item => item.name.toLowerCase().startsWith( qt.toLowerCase() ) );
+			console.log('got',items, markers ,data, qt);
 			return items;
 	}
 	const getFeedItems = ( queryText ) => {
@@ -147,6 +149,7 @@ export const StatementEditor = () =>{
 	const editorConfig: EditorConfig = {
 		toolbar: {
 			items: [
+				'tags', 'accounts', 'transactions',
 				'undo',
 				'redo',
 				'|',
@@ -226,7 +229,7 @@ export const StatementEditor = () =>{
 			Link,
 			List,
 			ListProperties,
-			Mention,
+			// Mention,
 			MediaEmbed,
 			Paragraph,
 			PasteFromOffice,
@@ -254,10 +257,12 @@ export const StatementEditor = () =>{
 			TextTransformation,
 			TodoList,
 			Underline,
-			Undo
+			Undo,
+			CustomPlugin
 		],
-		balloonToolbar: ['bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
+		balloonToolbar: ['tags', 'accounts', 'transactions', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
 		blockToolbar: [
+			'tags', 'accounts', 'transactions',
 			'fontSize',
 			'fontColor',
 			'fontBackgroundColor',
@@ -423,50 +428,50 @@ export const StatementEditor = () =>{
 		table: {
 			contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
 		},
-		mention: {
-            feeds: [
-                {
-                    marker: '@tag\d',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@tag\c',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@tag\b',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@tag\n',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@acc\d',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@acc\c',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@acc\b',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                },
-				{
-                    marker: '@acc\n',
-                    feed: getFeed as any,
-                    minimumCharacters: 1
-                }
-            ]
-		}
+		// mention: {
+        //     feeds: [
+        //         {
+        //             marker: '@tag\d',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@tag\c',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@tag\b',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@tag\n',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@acc\d',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@acc\c',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@acc\b',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         },
+		// 		{
+        //             marker: '@acc\n',
+        //             feed: getFeed as any,
+        //             minimumCharacters: 1
+        //         }
+        //     ]
+		// }
         
 	};
 
