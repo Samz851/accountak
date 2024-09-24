@@ -34,7 +34,11 @@ export interface IIdentity {
 }
 
 export type CreateContextType = string[] | Distpatch<SetStateAction<string[]>>;
-export interface IStatement extends any {}
+export interface IStatement {
+    id: number;
+    title: string;
+    content: string;
+}
 export interface ICompany {
     id: number;
     company_name: string;

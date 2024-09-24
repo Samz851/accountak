@@ -33,7 +33,7 @@ export const StatementBuilder = () => {
         <CreateVariable/> */}
 		{/* <Spreadsheet data={empty} onChange={onChange}/> */}
         {/* <ExcelTable /> */}
-        <StatementEditor />
+        {/* <StatementEditor content={content} setContent={setContent} /> */}
         </div>
 	);
 };
