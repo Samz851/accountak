@@ -15,7 +15,7 @@ class Account extends BaseAccount implements BaseAccountContract
 {
     use HasFactory, Searchable;
 
-    protected $appends = ['accounts_balance'];
+    // protected $appends = ['accounts_balance'];
     protected static function booted(): void
     {
         static::creating(function ($account) {

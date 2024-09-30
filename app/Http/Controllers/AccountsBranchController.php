@@ -118,7 +118,8 @@ class AccountsBranchController extends Controller
      */
     public function store(Request $request)
     {
-        $parent = AccountsBranch::create($request->all());
+        $parent = AccountsBranch::create($request->except('tags'));
+        if ( $request->has('tags') ) $parent->attach($request->input('tags'));
 
         return response($parent);
     }

@@ -28,7 +28,9 @@ class AccountController extends Controller
      */
     public function store(Request $request): Response
     {
-        $account = Account::create($request->all());
+        $account = Account::create($request->except('tags'));
+
+        if ( $request->has('tags') ) $account->attach($request->input('tags'));
 
         return response($account);
     }
