@@ -71,7 +71,7 @@ import {
 	Dialog
 } from 'ckeditor5';
 import CustomPlugin from './plugin/TemplatingPlugin';
-import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
+// import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 
 import 'ckeditor5/ckeditor5.css';
 import 'ckeditor5-premium-features/ckeditor5-premium-features.css';
