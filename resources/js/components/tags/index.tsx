@@ -14,7 +14,7 @@ import { ITag } from '@/interfaces';
 //   verticalAlign: 'top',
 // };
 
-export const DisplayTags = ({initialTags, handleTagsUpdate}) => {
+export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const [tags, setTags] = useState<ITag[]>(initialTags);
@@ -154,7 +154,7 @@ export const DisplayTags = ({initialTags, handleTagsUpdate}) => {
           New Tag
         </Tag>
       )}
-      <Button type="primary" disabled={!showUpdateBtn}>Update</Button>
+      <Button type="primary" disabled={!showUpdateBtn} onClick={() => handleTagsUpdate(recordID, tags)}>Update</Button>
     </Flex>
   );
 };

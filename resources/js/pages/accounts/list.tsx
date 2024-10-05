@@ -2,7 +2,8 @@ import {
     useTranslate,
     HttpError,
     getDefaultFilter, useGo,
-    useNavigation
+    useNavigation,
+    useUpdate
 } from "@refinedev/core";
 import {
     List,
@@ -120,8 +121,17 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         }
     }
 
-    const handleTagsChange = (itags, id) => {
-        setEditTags(true)  
+    const { mutate } = useUpdate<IAccount>({
+        resource: 'accounts'
+    })
+
+    const handleTagsUpdate = (id, tags) => {
+        mutate({
+            id: id,
+            values: {
+                tags: tags
+            }
+        })
     }
     const columns: TableColumnsType<IAccount> = [
         {
@@ -230,7 +240,12 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
 //                 onClick={() => show('accounts', record.id, "push")}
 //                     />
 //                 </Row>
-                <DisplayTags initialTags={record.tags} handleTagsUpdate={handleTagsChange} />
+                <DisplayTags 
+                    initialTags={record.tags}
+                    recordID={record.id}
+                    // handleTagsUpdate={handleTagsChange} 
+                    handleTagsUpdate={handleTagsUpdate}
+                />
             )
         },
         {
