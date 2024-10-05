@@ -230,7 +230,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
 //                 onClick={() => show('accounts', record.id, "push")}
 //                     />
 //                 </Row>
-                <DisplayTags initialTags={record.tags} handleTagsChange={handleTagsChange} />
+                <DisplayTags initialTags={record.tags} handleTagsUpdate={handleTagsChange} />
             )
         },
         {

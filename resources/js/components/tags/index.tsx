@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import type { InputRef } from 'antd';
+import { Button, InputRef } from 'antd';
 import { Flex, Input, Tag, theme, Tooltip } from 'antd';
 import { useStyles } from './styled';
 import { Select } from 'antd/lib';
@@ -14,7 +14,7 @@ import { ITag } from '@/interfaces';
 //   verticalAlign: 'top',
 // };
 
-export const DisplayTags = ({initialTags, handleTagsChange}) => {
+export const DisplayTags = ({initialTags, handleTagsUpdate}) => {
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const [tags, setTags] = useState<ITag[]>(initialTags);
@@ -24,7 +24,7 @@ export const DisplayTags = ({initialTags, handleTagsChange}) => {
   const [editInputValue, setEditInputValue] = useState('');
   const inputRef = useRef<InputRef>(null);
   const editInputRef = useRef<InputRef>(null);
-
+  const [showUpdateBtn,setShowUpdateBtn] = useState(false);
   const { selectProps } = useSelect<ITag>({
     resource: 'tags',
     optionLabel: 'label',
@@ -39,11 +39,18 @@ export const DisplayTags = ({initialTags, handleTagsChange}) => {
   useEffect(() => {
     editInputRef.current?.focus();
   }, [editInputValue]);
-
+  const handleTagsChange = (value, option) => {
+    const newTag = {id : option.value, label : option.label}
+    setTags([...tags, newTag]);
+    console.log('tags', tags, option)
+    setShowUpdateBtn(true);
+    setInputVisible(false);
+  }
   const handleClose = (removedTag: number) => {
     const newTags = tags.filter((tag) => tag.id !== removedTag);
     console.log(newTags);
     setTags(newTags);
+    setInputVisible(false);
   };
 
   const showInput = () => {
@@ -147,6 +154,7 @@ export const DisplayTags = ({initialTags, handleTagsChange}) => {
           New Tag
         </Tag>
       )}
+      <Button type="primary" disabled={!showUpdateBtn}>Update</Button>
     </Flex>
   );
 };
