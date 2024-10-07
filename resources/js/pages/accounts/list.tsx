@@ -129,7 +129,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         mutate({
             id: id,
             values: {
-                tags: tags
+                tags: [...tags.map(tag => tag.id)]
             }
         })
     }
