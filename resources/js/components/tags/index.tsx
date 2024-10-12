@@ -6,6 +6,7 @@ import { useStyles } from './styled';
 import { Select } from 'antd/lib';
 import { useSelect } from '@refinedev/antd';
 import { ITag } from '@/interfaces';
+import { DefaultOptionType } from 'antd/es/select';
 
 // const tagInputStyle: React.CSSProperties = {
 //   width: 64,
@@ -25,11 +26,30 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
   const inputRef = useRef<InputRef>(null);
   const editInputRef = useRef<InputRef>(null);
   const [showUpdateBtn,setShowUpdateBtn] = useState(false);
-  const { selectProps } = useSelect<ITag>({
+  const { selectProps, query } = useSelect<ITag>({
     resource: 'tags',
     optionLabel: 'label',
     optionValue: 'id',
+    filters: [
+      {
+        field: 'label',
+        operator: 'nin',
+        value: [...initialTags.map(({label}) => label)]
+      }
+    ]
   })
+  console.log('query', query);
+  const [optionTags, setOptionTags] = useState<DefaultOptionType[] | undefined>([]);
+
+  useEffect(() => {
+    if (query.isSuccess) {
+      const existingTags = initialTags.map(({label}) => label);
+      const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
+      console.log('updating', existingTags, filteredTags, selectProps.options, query);
+
+      setOptionTags(filteredTags)
+    }
+  }, [selectProps.options])
   useEffect(() => {
     if (inputVisible) {
       inputRef.current?.focus();
@@ -42,7 +62,7 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
   const handleTagsChange = (value, option) => {
     const newTag = {id : option.value, label : option.label}
     setTags([...tags, newTag]);
-    console.log('tags', tags, option)
+    // console.log('tags', tags, option)
     setShowUpdateBtn(true);
     setInputVisible(false);
   }
@@ -148,6 +168,7 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
         className={styles.tagInput}
         onChange={handleTagsChange}
         {...selectProps}
+        options={optionTags}
         />      
       ) : (
         <Tag className={styles.tagPlus} icon={<PlusOutlined />} onClick={showInput}>
