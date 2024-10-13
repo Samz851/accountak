@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, InputRef } from 'antd';
+import { Button, InputRef, Typography } from 'antd';
 import { Flex, Input, Tag, theme, Tooltip } from 'antd';
 import { useStyles } from './styled';
 import { Select } from 'antd/lib';
@@ -38,18 +38,17 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
       }
     ]
   })
-  console.log('query', query);
+  // console.log('query', query);
   const [optionTags, setOptionTags] = useState<DefaultOptionType[] | undefined>([]);
 
-  useEffect(() => {
-    if (query.isSuccess) {
-      const existingTags = initialTags.map(({label}) => label);
-      const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
-      console.log('updating', existingTags, filteredTags, selectProps.options, query);
+  // useEffect(() => {
+  //   if (query.isSuccess) {
+  //     const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
+  //     // console.log('updating', existingTags, filteredTags, selectProps.options, query);
 
-      setOptionTags(filteredTags)
-    }
-  }, [selectProps.options])
+  //     setOptionTags(filteredTags)
+  //   }
+  // }, [selectProps.options])
   useEffect(() => {
     if (inputVisible) {
       inputRef.current?.focus();
@@ -59,10 +58,21 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
   useEffect(() => {
     editInputRef.current?.focus();
   }, [editInputValue]);
+
+  useEffect(() => {
+    const existingTags = tags.map(({label}) => label);
+
+    const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label as any));
+    setOptionTags(filteredTags)
+
+  }, [tags]);
+
   const handleTagsChange = (value, option) => {
+    
     const newTag = {id : option.value, label : option.label}
     setTags([...tags, newTag]);
-    // console.log('tags', tags, option)
+    console.log('tags', value, option)
+    // const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
     setShowUpdateBtn(true);
     setInputVisible(false);
   }
@@ -165,6 +175,7 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
         //   onPressEnter={handleInputConfirm}
         // />
         <Select
+        placeholder={<Typography.Text>New Tag</Typography.Text>}
         className={styles.tagInput}
         onChange={handleTagsChange}
         {...selectProps}

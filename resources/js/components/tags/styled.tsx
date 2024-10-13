@@ -3,7 +3,7 @@ import { createStyles } from "antd-style";
 export const useStyles = createStyles(({token}) => {
     return {
         tagInput : {
-            width: '100%',
+            // width: '100%',
             marginInlineEnd: 8,
             verticalAlign: 'top',
         },
