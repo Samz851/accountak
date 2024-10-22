@@ -15,9 +15,13 @@ class Tag extends Model
         'label',
         'description'
     ];
-
-    public function taggable()
+protected $with = ['accounts','branches'];
+    public function accounts()
 {
-    return $this->morphedByMany([Account::class, AccountsBranch::class], 'taggable');
+    return $this->morphedByMany(Account::class, 'taggable');
+}
+public function branches()
+{
+    return $this->morphedByMany(AccountsBranch::class, 'taggable');
 }
 }

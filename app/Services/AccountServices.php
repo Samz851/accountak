@@ -229,4 +229,18 @@ class AccountServices implements AccountServiceContract
         }
         return $accounts;
     }
+
+    public static function isDescendantOrAncestorById(int $ancestorId, int $decendantId): bool
+    {
+        $decendantType = 
+        $ancestorCode = AccountsBranch::where('id', $ancestorId)->first()->code;
+        $decendantCode = AccountsBranch::where('id', $decendantId)->first()->code;
+
+        return str_starts_with($decendantCode, $ancestorCode);
+    }
+
+    public static function isDescendantOrAncestorByCode(string $ancestorCode, string $decendantCode): bool
+    {
+        return str_starts_with($decendantCode, $ancestorCode);
+    }
 }

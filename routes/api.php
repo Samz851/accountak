@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/generateBalances', [TransactionsController::class, 'generateBalances']);
-
+Route::get('/getTagMembers', [TagController::class, 'getTagMembers']);
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/accounts', [AccountController::class, 'index']);
     Route::get('/accounts/search', [AccountController::class,'search']);
