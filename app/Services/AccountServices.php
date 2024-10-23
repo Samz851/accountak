@@ -44,6 +44,15 @@ class AccountServices implements AccountServiceContract
         ]
     ];
 
+    private $filterCriterion = [
+        'branch' => 'getAllByBranch',
+        'select' => 'getSelectOptions',
+        'parent' => 'getAllByBranch',
+        'leaf' => 'getLeaves'
+    ];
+
+    public function __construct(){}
+
     private function extractFilters (array $filters): array
     {
         $keys = array_keys($this->filters);
@@ -127,12 +136,6 @@ class AccountServices implements AccountServiceContract
         return $accounts;
 
     }
-    private $filterCriterion = [
-        'branch' => 'getAllByBranch',
-        'select' => 'getSelectOptions',
-        'parent' => 'getAllByBranch',
-        'leaf' => 'getLeaves'
-    ];
 
     private function getLeaves()
     {
@@ -143,7 +146,6 @@ class AccountServices implements AccountServiceContract
             "children" => "children"
         ]), $accounts->toArray());
     }
-    public function __construct(){}
 
     private function getFilterMethodName(string $name): string
     {
@@ -165,6 +167,8 @@ class AccountServices implements AccountServiceContract
             throw $th;
         }
     }
+
+    
 
     // private function getBranches($filters): Collection
     // {
@@ -224,5 +228,19 @@ class AccountServices implements AccountServiceContract
             }
         }
         return $accounts;
+    }
+
+    public static function isDescendantOrAncestorById(int $ancestorId, int $decendantId): bool
+    {
+        $decendantType = 
+        $ancestorCode = AccountsBranch::where('id', $ancestorId)->first()->code;
+        $decendantCode = AccountsBranch::where('id', $decendantId)->first()->code;
+
+        return str_starts_with($decendantCode, $ancestorCode);
+    }
+
+    public static function isDescendantOrAncestorByCode(string $ancestorCode, string $decendantCode): bool
+    {
+        return str_starts_with($decendantCode, $ancestorCode);
     }
 }

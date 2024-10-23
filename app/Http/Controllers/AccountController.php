@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Services\AccountServices;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller
 {
@@ -28,8 +29,10 @@ class AccountController extends Controller
      */
     public function store(Request $request): Response
     {
-        $account = Account::create($request->all());
+        $account = Account::create($request->except('tags'));
 
+        if ( $request->has('tags') ) $account->tags()->attach($request->input('tags'));
+        
         return response($account);
     }
 
@@ -64,7 +67,12 @@ class AccountController extends Controller
      */
     public function update(Request $request, Account $account)
     {
-        //
+        $data = $request->all();
+        Log::info($data, [__LINE__, __FILE__]);
+        if ( $request->has('tags') ) $account->tags()->sync($request->input('tags'));
+        $newAccount = Account::where('id', $account->id)->first();
+        return response($newAccount);
+
     }
 
     /**

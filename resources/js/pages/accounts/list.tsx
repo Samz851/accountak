@@ -2,33 +2,40 @@ import {
     useTranslate,
     HttpError,
     getDefaultFilter, useGo,
-    useNavigation
+    useNavigation,
+    useUpdate
 } from "@refinedev/core";
 import {
     List,
-    useTable, FilterDropdown, CreateButton
+    useTable, FilterDropdown, CreateButton, useSelect
 } from "@refinedev/antd";
 import {
     Table, Typography,
     theme, Input, Button,
-    TableColumnsType
+    TableColumnsType,
+    Row,
+    Select,
+    Divider,
+    Space
 } from "antd";
 
-import { IAccount, IAccountFilterVariables } from "@/interfaces";
-import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
+import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useStyles } from "./styled";
 import { Key } from "antd/es/table/interface";
+import { Int } from "@uiw/react-json-view/cjs/types/Int";
+import { DisplayTags } from "@/components/tags";
 
 export const AccountsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { show, createUrl } = useNavigation();
+    const { show, createUrl, create } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
     const { styles} = useStyles();
-
+    const [editTags, setEditTags] = useState(false)
     const { tableProps, filters, setFilters, sorters } = useTable<
         IAccount,
         HttpError,
@@ -51,7 +58,11 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             mode: "off"
           },
     });
-
+    const { selectProps, queryResult } = useSelect<ITag>({
+        resource: 'tags',
+        optionLabel: "label",
+  optionValue: "id",
+    })
     const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
@@ -110,6 +121,18 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         }
     }
 
+    const { mutate } = useUpdate<IAccount>({
+        resource: 'accounts'
+    })
+
+    const handleTagsUpdate = (id, tags) => {
+        mutate({
+            id: id,
+            values: {
+                tags: [...tags.map(tag => tag.id)]
+            }
+        })
+    }
     const columns: TableColumnsType<IAccount> = [
         {
             dataIndex: "code",
@@ -181,13 +204,74 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             render:(_, record) => _.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
         },
         {
+            dataIndex:["tags"],
+            title:"tags",
+            render:(_, record) => (
+//                 <Row>
+// <Select
+//                 // disabled={!editTags}
+//                 mode="multiple"
+//                 allowClear
+//                 style={{ width: '100%' }}
+//                 placeholder="Please select"
+//                 defaultValue={[...record.tags.reduce<number[]>((acc, obj) => {
+//                     acc.push(obj.id);
+//                     return acc;
+//                   }, [])] as any}
+//                 onChange={handleTagsChange}
+//               //   options={queryResult?.data?.data as any}
+//               {...selectProps}
+//               dropdownRender={(menu) => (
+//                   <>
+//                   {menu}
+//                   <Divider style={{ margin: '8px 0' }} />
+//                   <Space style={{ padding: '0 8px 4px' }}>
+//                       <Button type="text" icon={<PlusOutlined />} onClick={() => create('tags')}>
+//                       Add item
+//                       </Button>
+//                   </Space>
+//                   </>
+//               )}
+                
+//               />
+//                 <Button
+//                 disabled={!editTags}
+//                 icon={<EyeOutlined />}
+//                 onClick={() => show('accounts', record.id, "push")}
+//                     />
+//                 </Row>
+                <DisplayTags 
+                    initialTags={record.tags}
+                    recordID={record.id}
+                    // handleTagsUpdate={handleTagsChange} 
+                    handleTagsUpdate={handleTagsUpdate}
+                />
+            )
+        },
+        {
             fixed:"right",
             title:t("table.actions"),
             render:(_, record) => (
-                <Button
-                    icon={<EyeOutlined />}
-                    onClick={() => show('accounts', record.id, "push")}
-                />
+                <>
+                <Row>
+                    <Button
+                        icon={<EyeOutlined />}
+                        onClick={() => show('accounts', record.id, "push")}
+                    />
+
+                </Row>
+                <Row>
+                    <Button
+                        icon={<EyeOutlined />}
+                        onClick={() => show('accounts', record.id, "push")}
+                    />
+                    <Button
+                        icon={<EyeOutlined />}
+                        onClick={() => show('accounts', record.id, "push")}
+                    />
+                </Row>
+                </>
+
             ),
         }
 
