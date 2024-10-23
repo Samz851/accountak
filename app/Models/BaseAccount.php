@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BaseAccountTaxonomy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 abstract class BaseAccount extends Model
 {
@@ -31,6 +32,8 @@ abstract class BaseAccount extends Model
         'has_children',
         'accounts_balance'
     ];
+
+    // protected $with = ['tags'];
 
     protected $casts = ['taxonomy' => BaseAccountTaxonomy::class];
 
@@ -81,6 +84,11 @@ abstract class BaseAccount extends Model
     }
 
     abstract public function getHasChildrenAttribute(): bool;
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
 
     // abstract public function getBalanceAttribute(): float;
 }

@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { useForm, Edit, useSelect, List, useThemedLayoutContext } from "@refinedev/antd";
+import { useForm, Edit, useSelect, List, useThemedLayoutContext, Create } from "@refinedev/antd";
 import {
     CreateResponse,
     HttpError,
@@ -17,11 +17,18 @@ import { useState, useEffect } from "react";
 import { IStatement } from "@/interfaces";
 import { Config, Puck, usePuck } from "@measured/puck";
 import "@/components/pageBuilder/puck.css";
-import { Flex, Form } from "antd";
+import { Flex, Form, Input } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useStyles } from "./styled";
 import { DrawerItems, EditorConfig, PageBuilderComponent, PageBuilderComponents, PageBuilderDrawer, PageBuilderFields, PageBuilderOutline, PageBuilderPreview, SampleConfig } from "@/components";
+import { StatementBuilder } from "./builder";
+import { StatementEditor } from "./components/CKEditor/StatementEditor";
 
+
+type FormValues = {
+    title: string;
+    content: string;
+}
 
 export const StatementCreatePage = () => {
     const getToPath = useGetToPath();
@@ -29,18 +36,19 @@ export const StatementCreatePage = () => {
     const { pathname } = useLocation();
     const go = useGo();
     const t = useTranslate();
+    const [ content, setContent ] = useState('');
     const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
     const { styles } = useStyles();
-    const { formProps, saveButtonProps, queryResult, onFinish } = useForm<IStatement, HttpError
+    const { form, formProps, onFinish, formLoading, saveButtonProps } = useForm<IStatement, HttpError, FormValues
     >({
         action: "create",
         warnWhenUnsavedChanges: true,
         resource: "statements",
         redirect: false,
     });
-    const { form } = formProps;
-    const statement = Form.useWatch('statement', form)
+    // const { form } = formProps;
+    // const statement = Form.useWatch('statement', form)
     const {
         mobileSiderOpen,
         setMobileSiderOpen,
@@ -57,6 +65,12 @@ export const StatementCreatePage = () => {
         setMobileSiderOpen(false);
         setSiderCollapsed(true);
     },[]);
+
+    useEffect(()=>{
+        form.setFieldsValue({
+            content: content
+        })
+    }, [content]);
 
     const defaultData = {
         content: [],
@@ -90,10 +104,57 @@ export const StatementCreatePage = () => {
 
     // console.log('config', SampleConfig)
     return (
-        <PageContainer
-            className={styles.acPageContainer}
-        >
-            <PageBuilderComponent 
+        <Create saveButtonProps={saveButtonProps}>
+
+        
+        <Form
+            {...formProps}
+            layout="vertical"
+            onFinish={async (values) => {
+                try {
+                    const data = await onFinish({
+                        title: values.title,
+                        content: values.content
+                    });
+                    close();
+                    go({
+                        to:
+                            searchParams.get("to") ??
+                            getToPath({
+                                action: "list",
+                            }) ??
+                            "",
+                        query: {
+                            to: undefined,
+                        },
+                        options: {
+                            keepQuery: true,
+                        },
+                        type: "replace",
+                    });
+
+                } catch (error) {
+                    Promise.reject(error);
+                }
+            }}
+            >
+                <Form.Item
+                    label="Title"
+                    name="title"
+                    rules={[{ required: true }]}
+                >
+                    <Input placeholder="Title" />
+                </Form.Item>
+                <Form.Item
+                    label="Content"
+                    name="content"
+                    rules={[{required: true}]}
+                >
+                <StatementEditor content={content} setContent={setContent} />
+
+                </Form.Item>
+            </Form>
+            {/* <PageBuilderComponent 
                 config={SampleConfig} 
                 data={defaultData}
                 // overrides={{
@@ -101,8 +162,8 @@ export const StatementCreatePage = () => {
                 // }}
                 onPublish={(data) => console.log(data)} 
             >
-            </PageBuilderComponent>
-        </PageContainer>
+            </PageBuilderComponent> */}
+        </Create>
 
     );
 };

@@ -2,45 +2,93 @@ import {
     useTranslate,
     HttpError,
     getDefaultFilter, useGo,
-    useNavigation,
-    useUpdate
+    useNavigation
 } from "@refinedev/core";
 import {
     List,
-    useTable, FilterDropdown, CreateButton, useSelect
+    useTable, FilterDropdown, CreateButton
 } from "@refinedev/antd";
 import {
     Table, Typography,
     theme, Input, Button,
-    TableColumnsType,
-    Row,
-    Select,
-    Divider,
-    Space
+    Layout,
+    TreeSelect,
+    Skeleton,
+    Spin
 } from "antd";
 
-import { IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
-import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { IAccount, IAccountFilterVariables } from "@/interfaces";
+import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PropsWithChildren, useEffect, useState } from "react";
+import { useStyles } from './styled'
 import { useLocation } from "react-router-dom";
-import { useStyles } from "./styled";
 import { Key } from "antd/es/table/interface";
-import { Int } from "@uiw/react-json-view/cjs/types/Int";
-import { DisplayTags } from "@/components/tags";
 
-export const AccountsList = ({ children }: PropsWithChildren) => {
+import debounce from "lodash/debounce";
+import { title } from "process";
+
+const { SHOW_PARENT } = TreeSelect;
+
+
+const { Header, Footer, Sider, Content } = Layout;
+
+
+const SearchInput = ({term, setTerm}) => {
+    const onSearch = e => setTerm(e.target.value); 
+    const onSearchDebounce = debounce(onSearch, 1000);
+    return (
+        <Input 
+            value={term} 
+            onPressEnter={ onSearchDebounce } 
+            placeholder="Enter Code"
+            />
+    )
+}
+
+
+const SelectField = ({loading, data, selected, onChange, onLoad}) => {
+
+    const tProps = {
+        // treeDataSimpleMode: {
+        //     id: 'id',
+        //     pid: 'parent_id',
+        //     title: 'name',
+        // },
+        treeData: data,
+        // value: selected,
+        onChange,
+        treeCheckable: true,
+        showCheckedStrategy: SHOW_PARENT,
+        placeholder: 'Please select',
+        style: {
+          width: '100%',
+        },
+      };
+      
+
+    return loading ? (<Spin />) : (
+        // <Skeleton loading={loading}>
+        <TreeSelect 
+        fieldNames={{ value: 'id', label: 'name' }} {...tProps} />
+        // </Skeleton>
+    )
+}
+
+export const SelectAccount = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { show, createUrl, create } = useNavigation();
+    const { show, createUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
     const { styles} = useStyles();
-    const [editTags, setEditTags] = useState(false)
+    const [ term, setTerm ] = useState('');
+
     const { tableProps, filters, setFilters, sorters } = useTable<
         IAccount,
         HttpError,
         IAccountFilterVariables
     >({
+        resource: "accounts",
         filters: {
             initial: [
                 {
@@ -53,20 +101,41 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         sorters: {
             mode: "off",
         },
-        syncWithLocation: true,
+        syncWithLocation: false,
         pagination: {
             mode: "off"
           },
     });
-    const { selectProps, queryResult } = useSelect<ITag>({
-        resource: 'tags',
-        optionLabel: "label",
-  optionValue: "id",
-    })
+
     const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
-
+    const [ selectedRowKeys, setSelectedRowKeys ] = useState<Key[]>([]);
+    const [ selectedAccounts, setSelectedAccounts ] = useState([]);
+    const genTreeNode = (parentId, isLeaf = false) => {
+        const random = Math.random();
+        return {
+          id: random,
+          parent_id: parentId,
+        //   value: random,
+            name: isLeaf ? 'Tree Node' : 'Expand to load',
+          isLeaf,
+        };
+      };
+      const onLoadData = ({ id }) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            const newAccounts = [...(accounts as any)?.map(account => {
+                if ( account.id === id ) {
+                    account.children = [genTreeNode(id, false), genTreeNode(id, true), genTreeNode(id, true)]
+                }
+                return account;
+            })]
+            setAccounts(newAccounts );
+            resolve(undefined);
+          }, 300);
+        });
+    // const [ loading, ]
     useEffect(()=>{
         console.log(tableProps);
         if ( ! tableProps.loading ) {
@@ -104,7 +173,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
 
 
     const onExpandAccount = (expanded: boolean, record: IAccount) => {
-        setExpandedAccount(record.code);
+        setExpandedAccount(record?.code ?? '');
         if ( ! record.children?.length && record.has_children ){
             setFilters([
                 {
@@ -120,162 +189,6 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
             ], 'replace');
         }
     }
-
-    const { mutate } = useUpdate<IAccount>({
-        resource: 'accounts'
-    })
-
-    const handleTagsUpdate = (id, tags) => {
-        mutate({
-            id: id,
-            values: {
-                tags: [...tags.map(tag => tag.id)]
-            }
-        })
-    }
-    const columns: TableColumnsType<IAccount> = [
-        {
-            dataIndex: "code",
-            title: "ID #",
-            rowScope:"row",
-            render:(value) => (
-                <Typography.Text
-                    style={{
-                        whiteSpace: "nowrap",
-                    }}
-                >
-                    {value}
-                </Typography.Text>
-            ),
-            filterIcon: (filtered) => (
-                <SearchOutlined
-                    style={{
-                        color: filtered
-                            ? token.colorPrimary
-                            : undefined,
-                    }}
-                />
-            ),
-            defaultFilteredValue:getDefaultFilter(
-                "code",
-                filters,
-                "contains",
-            ),
-            filterDropdown: (props) => (
-                <FilterDropdown {...props}>
-                    <Input
-                        addonBefore="#"
-                        style={{ width: "100%" }}
-                        placeholder={t("orders.filter.id.placeholder")}
-                    />
-                </FilterDropdown>
-            )
-        },
-        {
-            dataIndex:"name",
-            title:t("users.fields.name"),
-            defaultFilteredValue:getDefaultFilter(
-                "name",
-                filters,
-                "contains",
-            ),
-            filterDropdown:(props) => (
-                <FilterDropdown {...props}>
-                    <Input
-                        style={{ width: "100%" }}
-                        placeholder={t("users.filter.name.placeholder")}
-                    />
-                </FilterDropdown>
-            )
-        },
-        {
-            dataIndex:["accounts_balance"],
-            title:"Total Debit",
-            render:(_, record) => _.debit_total.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
-        },
-        {
-            dataIndex:["accounts_balance"],
-            title:"Total Credit",
-            render:(_, record) => _.credit_total.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
-        },
-        {
-            dataIndex:["accounts_balance"],
-            title:"Balance",
-            render:(_, record) => _.balance.toLocaleString('en-US', {style: 'currency', currency: 'EGP' })
-        },
-        {
-            dataIndex:["tags"],
-            title:"tags",
-            render:(_, record) => (
-//                 <Row>
-// <Select
-//                 // disabled={!editTags}
-//                 mode="multiple"
-//                 allowClear
-//                 style={{ width: '100%' }}
-//                 placeholder="Please select"
-//                 defaultValue={[...record.tags.reduce<number[]>((acc, obj) => {
-//                     acc.push(obj.id);
-//                     return acc;
-//                   }, [])] as any}
-//                 onChange={handleTagsChange}
-//               //   options={queryResult?.data?.data as any}
-//               {...selectProps}
-//               dropdownRender={(menu) => (
-//                   <>
-//                   {menu}
-//                   <Divider style={{ margin: '8px 0' }} />
-//                   <Space style={{ padding: '0 8px 4px' }}>
-//                       <Button type="text" icon={<PlusOutlined />} onClick={() => create('tags')}>
-//                       Add item
-//                       </Button>
-//                   </Space>
-//                   </>
-//               )}
-                
-//               />
-//                 <Button
-//                 disabled={!editTags}
-//                 icon={<EyeOutlined />}
-//                 onClick={() => show('accounts', record.id, "push")}
-//                     />
-//                 </Row>
-                <DisplayTags 
-                    initialTags={record.tags}
-                    recordID={record.id}
-                    // handleTagsUpdate={handleTagsChange} 
-                    handleTagsUpdate={handleTagsUpdate}
-                />
-            )
-        },
-        {
-            fixed:"right",
-            title:t("table.actions"),
-            render:(_, record) => (
-                <>
-                <Row>
-                    <Button
-                        icon={<EyeOutlined />}
-                        onClick={() => show('accounts', record.id, "push")}
-                    />
-
-                </Row>
-                <Row>
-                    <Button
-                        icon={<EyeOutlined />}
-                        onClick={() => show('accounts', record.id, "push")}
-                    />
-                    <Button
-                        icon={<EyeOutlined />}
-                        onClick={() => show('accounts', record.id, "push")}
-                    />
-                </Row>
-                </>
-
-            ),
-        }
-
-    ]
 
     const addExpandedKeysValue = (keys) => {
         let key = keys.pop();
@@ -294,6 +207,18 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const isExpandable = (record: IAccount) => {
         console.log('expandable', record);
         return record.has_children ?? false;
+    }
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (newSelectedRowKeys: React.Key[], selectedRows: IAccount[]) => {
+          console.log(`selectedRowKeys: ${newSelectedRowKeys}`, 'selectedRows: ', selectedRows);
+          setSelectedRowKeys(newSelectedRowKeys)
+        },
+        getCheckboxProps: (record: IAccount) => ({
+          disabled: ! selectedRowKeys.includes(record.code as Key) && selectedRowKeys.some( key =>  record.code?.startsWith(key as string)), // Column configuration not to be checked
+          name: record.name,
+        }),
     }
     return (
         <List
@@ -327,6 +252,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 className={styles.expanded}
                 rowKey="code"
                 scroll={{ x: true }}
+                rowSelection={rowSelection}
                 expandable={{
                     onExpand: onExpandAccount,
                     // onExpandedRowsChange: (keys) => addExpandedKeysValue(keys),
@@ -335,9 +261,8 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                     expandedRowClassName: (record) => record.taxonomy,
                     // expandedRowKeys: expandedRows
                 }}
-                columns={columns}
-            />
-                {/* <Table.Column
+            >
+                <Table.Column
                     key="code"
                     dataIndex="code"
                     title="ID #"
@@ -350,29 +275,6 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         >
                             {value}
                         </Typography.Text>
-                    )}
-                    filterIcon={(filtered) => (
-                        <SearchOutlined
-                            style={{
-                                color: filtered
-                                    ? token.colorPrimary
-                                    : undefined,
-                            }}
-                        />
-                    )}
-                    defaultFilteredValue={getDefaultFilter(
-                        "code",
-                        filters,
-                        "contains",
-                    )}
-                    filterDropdown={(props) => (
-                        <FilterDropdown {...props}>
-                            <Input
-                                addonBefore="#"
-                                style={{ width: "100%" }}
-                                placeholder={t("orders.filter.id.placeholder")}
-                            />
-                        </FilterDropdown>
                     )}
                     // onCell={(record: IAccount, index) => { 
                     //     console.log(index, record);
@@ -437,8 +339,17 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         />
                     )}
                 />
-            </Table> */}
+            </Table>
             {children}
         </List>
+    //     <Layout>
+    //   <Header>
+    //     <SearchInput term={term} setTerm={setTerm} />
+    //   </Header>
+    //   <Content>
+    //     <SelectField loading={tableProps.loading} data={accounts} selected={selectedAccounts} onChange={(newValue) => setSelectedAccounts(newValue)} onLoad={onLoadData} />
+    //   </Content>
+    //   <Footer>Footer</Footer>
+    // </Layout>
     );
 };

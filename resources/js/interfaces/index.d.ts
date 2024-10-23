@@ -34,7 +34,11 @@ export interface IIdentity {
 }
 
 export type CreateContextType = string[] | Distpatch<SetStateAction<string[]>>;
-export interface IStatement extends any {}
+export interface IStatement {
+    id: number;
+    title: string;
+    content: string;
+}
 export interface ICompany {
     id: number;
     company_name: string;
@@ -78,20 +82,35 @@ export interface IAccountsBranch extends IBaseAccount{
 export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
-    balance: number;
-    children: IBaseAccount[] | [{}];
+    balance?: number;
+    children?: IBaseAccount[] | [{}];
 }
 
+export interface ITag {
+    id: number;
+    label: string;
+    description?: string;
+    accounts?: IBaseAccount[]
+}
+
+export interface IAccountBalance {
+    debit_total: number;
+    credit_total: number;
+    balance: number;
+}
 export interface IBaseAccount {
     id: number;
     name: string;
     parent?: IAccountsBranch;
     parent_id?: number;
-    description: string;
+    description?: string;
     code: string;
     has_children?: boolean;
     taxonomy: string;
-    subitems: any;
+    subitems?: any;
+    isLeaf?: boolean;
+    accounts_balance: IAccountBalance;
+    tags: ITag[];
     [Symbol.iterator]?(): IterableIterator<number>;
 }
 
@@ -157,6 +176,12 @@ export interface IAccountFilterVariables {
     name: string;
     parent: IAccountsBranch;
 }
+
+// export interface ITagFilterVariables {
+//     q: string;
+//     label: string;
+//     parent: IAccountsBranch;
+// }
 
 export interface IOrderChart {
     count: number;

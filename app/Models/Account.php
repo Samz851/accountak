@@ -15,7 +15,7 @@ class Account extends BaseAccount implements BaseAccountContract
 {
     use HasFactory, Searchable;
 
-    // protected $with = ['accounts_balance'];
+    // protected $appends = ['accounts_balance'];
     protected static function booted(): void
     {
         static::creating(function ($account) {
@@ -66,11 +66,11 @@ class Account extends BaseAccount implements BaseAccountContract
                     ->select(['debit_total', 'credit_total', 'balance'])
                     ->where('account_id', '=', $this->id)
                     ->first();
-        // $attr = [
-        //     'debit_total' => $balances->pluck('debit_total')->sum(),
-        //     'credit_total' => $balances->pluck('credit_total')->sum(),
-        //     'balance' => $balances->pluck('balance')->sum(),
-        // ];
+        $balance = $balance ?? [
+            'debit_total' => 0,
+            'credit_total' => 0,
+            'balance' => 0,
+        ];
         return $balance;
     }
 

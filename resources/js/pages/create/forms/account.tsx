@@ -1,9 +1,11 @@
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
-import { Create, SaveButton, useForm, useModalForm, useTable } from "@refinedev/antd";
+import { Create, SaveButton, useForm, useModalForm, useSelect, useTable } from "@refinedev/antd";
 import {
+    BaseOption,
     HttpError, useBack, useGetToPath,
-    useGo, useNavigation, useParsed, useTranslate
+    useGo, useNavigation, useParsed, useTranslate,
+    useUpdate
 } from "@refinedev/core";
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
 
@@ -15,17 +17,19 @@ import {
     Divider,
     Form,
     Input,
-    Modal, Space, TreeSelect
+    Modal, Select, Space, TreeSelect
 } from "antd";
 
-import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables } from "@/interfaces";
+import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
 
 import { useEffect, useState } from "react";
+import { BaseOptionType, DefaultOptionType } from "antd/es/select";
 
 type FormValues = {
     name: string;
     parent_id: number;
     description: string;
+    tags: number[];
 };
 
 export const AccountCreateForm = () => {
@@ -47,6 +51,7 @@ export const AccountCreateForm = () => {
         resource: "accounts",
         redirect: false,
     });
+
     // useEffect(() => {
     //     if ( ! formLoading ) {
     //         setOpenForms([...openForms, resource?.name])
@@ -60,21 +65,29 @@ export const AccountCreateForm = () => {
         filters: {
             initial: [
                 {
-                    field: "branch",
+                    field: "type",
                     operator: "eq",
-                    value: true
+                    value: "all",
                 }
             ],
         },
         sorters: {
             mode: "off",
         },
-        syncWithLocation: true,
+        syncWithLocation: false,
         pagination: {
             mode: "off"
           },
     });
 
+    const { selectProps, queryResult } = useSelect<ITag>({
+        resource: 'tags',
+        optionLabel: "label",
+  optionValue: "id",
+    })
+    const handleChange = (value: BaseOption, option: DefaultOptionType) => {
+        console.log(`selected ${value}`, value, typeof value);
+      };
     const onExpandAccount = (keys) => {
         console.log(keys);
         let parentID = keys.pop();
@@ -83,6 +96,7 @@ export const AccountCreateForm = () => {
     }
 
     useEffect(()=>{
+        console.log('tags', queryResult, selectProps);
         if ( ! AccountselectProps.loading ) {
             if ( accountsOptions.length === 0 ) {
                 setAccountsOptions([...AccountselectProps.dataSource as any]);
@@ -114,7 +128,7 @@ export const AccountCreateForm = () => {
             }
         }
 
-    }, [AccountselectProps.dataSource]);
+    }, [AccountselectProps.dataSource, queryResult.data]);
 
     useEffect(() => {
         const prevForm = createForms.find( (form) => form.key === key );
@@ -136,7 +150,8 @@ export const AccountCreateForm = () => {
                         const data = await onFinish({
                             name: values.name,
                             parent_id: values.parent_id,
-                            description: values.description
+                            description: values.description,
+                            tags: values.tags
                         });
                         back();
                     } catch (error) {
@@ -185,6 +200,34 @@ export const AccountCreateForm = () => {
                             </>
                         )}
                         />
+
+                </Form.Item>
+                <Form.Item
+                    label="tags"
+                    name="tags"
+                    rules={[{ required: false }]}
+                >
+                        <Select
+      mode="multiple"
+      allowClear
+      style={{ width: '100%' }}
+      placeholder="Please select"
+      onChange={handleChange}
+    //   options={queryResult?.data?.data as any}
+    {...selectProps}
+    dropdownRender={(menu) => (
+        <>
+        {menu}
+        <Divider style={{ margin: '8px 0' }} />
+        <Space style={{ padding: '0 8px 4px' }}>
+            <Button type="text" icon={<PlusOutlined />} onClick={() => goToCreateForm(form.getFieldsValue(true), 'tags')}>
+            Add item
+            </Button>
+        </Space>
+        </>
+    )}
+      
+    />
 
                 </Form.Item>
                 <SaveButton/>

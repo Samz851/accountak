@@ -100,9 +100,6 @@
     "return": "Return"
   },
   "loading": "Loading",
-  "tags": {
-    "clone": "Clone"
-  },
   "table": {
     "actions": "Actions",
     "inTotal": "in total"
@@ -701,6 +698,18 @@
     "form": {
         "add" : "Add new type",
         "first": "Create first type"
+    }
+  },
+  "tags": {
+    "tags": "Tags",
+    "fields": {
+      "label":"Label",
+      "label_ar": "Label in Arabic",
+      "description": "Description",
+      "description_ar": "Description in Arabic"
+    },
+    "form": {
+      "add": "Add new Tag"
     }
   }
 }

@@ -73,6 +73,17 @@ export const resources: IResourceItem[] = [
         },
     },
     {
+        name: 'tags',
+        list: '/tags',
+        show: "/tags/show/:id",
+        create: "/create/tags",
+        meta: {
+            label: "Tags",
+            icon: <DashboardOutlined />,
+            dataProviderName: "laravel"
+        },
+    },
+    {
         name: "transactions",
         list: "/transactions",
         create: "/create/transactions",

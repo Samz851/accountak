@@ -1,6 +1,6 @@
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 
-import { Create, useForm, useModalForm } from "@refinedev/antd";
+import { Create, useForm, useModalForm, useSelect, useTable } from "@refinedev/antd";
 import {
     HttpError, useBack, useGetToPath,
     useGo,
@@ -10,15 +10,18 @@ import {
 // import { GetFields, GetVariables } from "@refinedev/nestjs-query";
 
 import {
-    LeftOutlined
+    LeftOutlined,
+    PlusOutlined
 } from "@ant-design/icons";
 import {
+    Button,
+    Divider,
     Form,
     Input,
-    Modal, TreeSelect
+    Modal, Select, Space, TreeSelect
 } from "antd";
 
-import { CreateContextType, CreateFormPropsType, IAccountsBranch } from "@/interfaces";
+import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables, IAccountsBranch, ITag } from "@/interfaces";
 
 import { useEffect, useState } from "react";
 
@@ -30,6 +33,8 @@ type FormValues = {
     name: string;
     description: string;
     parent?: any;
+    tags: number[];
+
 };
 // type AccountsBranchesTree = IAccountsBranch & DataNode;
 export const AccountsBranchCreateForm = () => {
@@ -52,19 +57,106 @@ export const AccountsBranchCreateForm = () => {
         resource: "branches",
     });
 
-    const { data } = useList<IAccountsBranch>({
-        resource: "branches",
-        filters: [
-            {
-                field: 'selectOptions',
-                operator: 'eq',
-                value: true
-            }
-        ]
+    // const { data } = useList<IAccountsBranch>({
+    //     resource: "accounts",
+    //     filters: [
+    //         {
+    //             field: 'type',
+    //             operator: 'eq',
+    //             value: 'all'
+    //         }
+    //     ]
+    // });
+
+    const { tableProps, filters, setFilters, sorters } = useTable<
+        IAccount,
+        HttpError,
+        IAccountFilterVariables
+    >({
+        resource: "accounts",
+        filters: {
+            initial: [
+                {
+                    field: "type",
+                    operator: "eq",
+                    value: "all",
+                }
+            ]
+        },
+        sorters: {
+            mode: "off",
+        },
+        syncWithLocation: true,
+        pagination: {
+            mode: "off"
+          },
     });
+    const { selectProps, queryResult } = useSelect<ITag>({
+        resource: 'tags',
+        optionLabel: "label",
+        optionValue: "id",
+    })
 
-    const accountBranches = data?.data ?? [];
+    const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
+    const [ expandedAccount, setExpandedAccount ] = useState('');
+    // const accountBranches = data?.data ?? [];
 
+    useEffect(()=>{
+        console.log(tableProps);
+        if ( ! tableProps.loading ) {
+            if ( expandedAccount !== '' ) {
+                setAccounts((prevAccounts) => {
+                    const updateAccounts = (accounts) => {
+                        return [...(accounts as any)?.map(account => {
+                            if ( expandedAccount.startsWith(account.code) ) {
+                                if ( expandedAccount === account.code ) {
+                                    return {
+                                        ...account,
+                                        children: [...tableProps.dataSource as any]
+                                    }
+                                }
+                                if ( expandedAccount.length > account.code.length ) {
+                                    return {
+                                        ...account,
+                                        children: updateAccounts(account.children)
+                                    }
+                                }
+                            } else {
+                                return account;
+                            }
+                        })]
+                    }
+                    return [...updateAccounts(prevAccounts)];
+    
+                })
+            } else {
+                setAccounts([...tableProps.dataSource as any]);
+            }
+        }
+
+    }, [tableProps.dataSource]);
+
+    const onLoadData = (record) => {
+        console.log('on load data node', record);
+        setExpandedAccount(record.code);
+        setFilters([
+            {
+                field: 'type',
+                operator: 'eq',
+                value: 'all',
+            },
+            {
+                field: 'parent',
+                operator: 'eq',
+                value: record.id,
+            }
+        ], 'replace');
+        return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(undefined);
+            }, 300);
+          })
+    }
     useEffect(() => {
         const prevForm = createForms.find( (form) => form.key === key );
         if ( prevForm ) {
@@ -110,7 +202,8 @@ export const AccountsBranchCreateForm = () => {
                         const data = await onFinish({
                             name: values.name,
                             description: values.description,
-                            parent: values.parent
+                            parent: values.parent,
+                            tags: values.tags
                         });
                         back();
 
@@ -143,19 +236,47 @@ export const AccountsBranchCreateForm = () => {
                     <TreeSelect
                         style={{ width: '100%' }}
                         // value={typeValue}
-                        fieldNames={{label: "title", "value": "key", children: "children"}}
+                        fieldNames={{label: "code_label", "value": "code", children: "children"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountBranches}
+                        treeData={accounts}
                         placeholder="Please select"
-                        treeDefaultExpandAll
+                        // treeDefaultExpandAll
+                        loadData={onLoadData}
                         // onChange={onChangeType}
                         allowClear={true}
-                        disabled={accountBranches.length === 0}
+                        disabled={accounts?.length === 0}
                         // defaultValue={initValue}
                         />
 
                 </Form.Item>
-                
+                <Form.Item
+                    label="tags"
+                    name="tags"
+                    rules={[{ required: false }]}
+                >
+                        <Select
+      mode="multiple"
+      allowClear
+      style={{ width: '100%' }}
+      placeholder="Please select"
+    //   onChange={handleChange}
+    //   options={queryResult?.data?.data as any}
+    {...selectProps}
+    dropdownRender={(menu) => (
+        <>
+        {menu}
+        <Divider style={{ margin: '8px 0' }} />
+        <Space style={{ padding: '0 8px 4px' }}>
+            <Button type="text" icon={<PlusOutlined />} onClick={() => goToCreateForm(form.getFieldsValue(true), 'tags')}>
+            Add item
+            </Button>
+        </Space>
+        </>
+    )}
+      
+    />
+
+                </Form.Item>
             </Form>
         </Create>
         // </Modal>

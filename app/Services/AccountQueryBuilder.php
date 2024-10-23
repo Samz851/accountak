@@ -89,7 +89,7 @@ class AccountQueryBuilder
             $result = $result->offset($this->offset)->limit($this->limit);
         }
         
-        return $result->get();
+        return $result->with('tags')->get();
     }
 
 

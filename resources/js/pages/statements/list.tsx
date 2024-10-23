@@ -23,13 +23,13 @@ import {
     Row,
 } from "antd";
 
-import { ICompany, IContact } from "@/interfaces";
+import { ICompany, IContact, IStatement } from "@/interfaces";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal } from "@/components";
 import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
 
-export const CompaniesList = ({ children }: PropsWithChildren) => {
+export const StatementsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
     const { showUrl, createUrl } = useNavigation();
@@ -37,7 +37,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
     const { token } = theme.useToken();
 
     const { tableProps, filters, sorters } = useTable<
-        ICompany,
+        IStatement,
         HttpError
     >({
         filters: {
@@ -48,22 +48,10 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
         },
         syncWithLocation: true,
         pagination: {
-            mode: "server",
+            mode: "off",
           },
     });
 
-    const { isLoading, triggerExport } = useExport<ICompany>({
-        sorters,
-        filters,
-        pageSize: 50,
-        maxItemCount: 50,
-        mapData: (item) => {
-            return {
-                id: item.id,
-                fullName: item.id,
-            };
-        },
-    });
     return (
         <List
             breadcrumb={false}
@@ -75,7 +63,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => {
                         return go({
-                            to: `${createUrl("companies")}`,
+                            to: `${createUrl("statements")}`,
                             query: {
                                 to: pathname,
                             },
@@ -97,7 +85,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                 pagination={{
                     ...tableProps.pagination,
                     showTotal: (total) => (
-                        <PaginationTotal total={total} entityName="companies" />
+                        <PaginationTotal total={total} entityName="statements" />
                     ),
                 }}
             >
@@ -139,8 +127,8 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                     )}
                 />
                 <Table.Column
-                    key="company_name"
-                    dataIndex="company_name"
+                    key="title"
+                    dataIndex="title"
                     title={t("companies.fields.name")}
                     defaultFilteredValue={getDefaultFilter(
                         "date",
@@ -156,7 +144,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                         </FilterDropdown>
                     )}
                 />
-                <Table.Column
+                {/* <Table.Column
                     key="currency"
                     dataIndex="currency"
                     title={t("companies.fields.currency")}
@@ -183,7 +171,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                     key="address"
                     dataIndex="address"
                     title={t("companies.fields.address")}
-                />
+                /> */}
                 {/* <Table.Column<IAccount[]>
                     key="accounts"
                     dataIndex={["contacts", "accounts"]}
@@ -203,7 +191,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                         ))
                     }
                 /> */}
-                <Table.Column<IContact[]>
+                {/* <Table.Column<IContact[]>
                     key="contacts"
                     dataIndex={["contacts"]}
                     title={t("companies.fields.contacts")}
@@ -221,7 +209,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                             </Row>
                         ))
                     }
-                />
+                /> */}
                 {/* <Table.Column
                     key="createdAt"
                     dataIndex="createdAt"
@@ -256,7 +244,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                         </FilterDropdown>
                     )}
                 /> */}
-                <Table.Column<ICompany>
+                <Table.Column<IStatement>
                     fixed="right"
                     title={t("table.actions")}
                     render={(_, record) => (
@@ -264,7 +252,7 @@ export const CompaniesList = ({ children }: PropsWithChildren) => {
                             icon={<EyeOutlined />}
                             onClick={() => {
                                 return go({
-                                    to: `${showUrl("companies", record.id)}`,
+                                    to: `${showUrl("statements", record.id)}`,
                                     query: {
                                         to: pathname,
                                     },

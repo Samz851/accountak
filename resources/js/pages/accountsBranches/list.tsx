@@ -85,7 +85,7 @@ export const AccountsBranchesList = ({ children }: PropsWithChildren) => {
                 blockNode={true}
                 switcherIcon={<DownCircleOutlined />}
                 showLine={false}
-                treeData={accountTypes}
+                treeData={accountTypes as any}
                 titleRender={(item) =>
                     <Flex justify="space-between">
                         <Typography.Link
