@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/generateBalances', [TransactionsController::class, 'generateBalances']);
 Route::get('/getTagMembers', [TagController::class, 'getTagMembers']);
+Route::get('/getTagBalance', [TagController::class, 'getTagBalance']);
+
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/accounts', [AccountController::class, 'index']);
     Route::get('/accounts/search', [AccountController::class,'search']);

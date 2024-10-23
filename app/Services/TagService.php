@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helpers\ArrayFormatters;
 use App\Models\Tag;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class TagService
@@ -36,22 +37,20 @@ class TagService
         return $tag->delete();
     }
 
-    public function getTagMembers($id)
+    public function getTagMembers($id): Collection
     {
         $tag = $this->getTagById($id);
-        return ['accounts' => $tag->accounts,
-                'branches' => $tag->branches];
+        return $tag->accounts->concat($tag->branches);
     }
 
-    public function getTagMembersClean($id): array
+    public function getTagMembersClean($id): Collection
     {
         $members = $this->getTagMembers($id);
         // Log::info($members, [__LINE__, __FILE__]);
-        ['accounts' => $accounts, 'branches' => $branches] = $members;
+        // ['accounts' => $accounts, 'branches' => $branches] = $members;
         // $rawMembbers = [];
         // Check for root
-        $branchesCodes = $branches->pluck('code')->toArray();
-        $codes = array_merge($accounts->pluck('code')->toArray(), $branchesCodes);
+        $codes = $members->pluck('code')->toArray();
         $unique_codes = ArrayFormatters::eliminate_prefixes($codes);
         // usort($branchesCodes, function ($a, $b) { 
         //     if (strlen($a) > strlen($b)) {
@@ -62,35 +61,28 @@ class TagService
         //         return 0;
         //     }
         // });
-        Log::info($codes, [__LINE__, __FILE__]);
+        // Log::info($codes, [__LINE__, __FILE__]);
 
-                Log::info($unique_codes, [__LINE__, __FILE__]);
+        // Log::info($unique_codes, [__LINE__, __FILE__]);
 
-        $branches->each(function($branch) use ($accounts, $branches) {
-            if ($branch->parent_id === null) {
-                $branchCode = $branch->code;
-                $accounts = $accounts->filter(function($account) use ($branchCode) {
-
-                    $remove = AccountServices::isDescendantOrAncestorByCode($branchCode, $account->code);
-                    // Log::info([$branchCode, $account->code, $remove], [__LINE__, __FILE__]);
-                    return $remove === false;
-                });
-                // Log::info($accounts, [__LINE__, __FILE__]);
-
-                $branches = $branches->filter(function($branch) use ($branchCode) {
-                    if ($branch->code === $branchCode) {
-                        return false;
-                    }
-                    return ! AccountServices::isDescendantOrAncestorByCode($branchCode, $branch->code);
-                });
-            };
+        $result = $members->filter(function ($member) use ($unique_codes) {
+            return in_array($member->code, $unique_codes);
         });
 
-        return ['accounts' => $accounts, 'branches' => $branches];
+        // Log::info(get_class($result->values()), [__LINE__, __FILE__]);
+        return $result;
+
+        
     }
     public function getTagMembersBalance($id)
     {
+        $members = $this->getTagMembersClean($id);
+        return $members->pluck('accounts_balance')->sum('balance');
+    }
+
+    public function getTagLabel($id): string
+    {
         $tag = $this->getTagById($id);
-        return $tag->taggable->sum('balance');
+        return $tag->label;
     }
 }

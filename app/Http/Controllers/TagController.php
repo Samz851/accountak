@@ -40,4 +40,14 @@ class TagController extends Controller
             'tagMembersClean' => $tagMembersClean
         ]);
     }
+
+    public function getTagBalance(Request $request)
+    {
+        $service = new TagService();
+        $tagBalance = $service->getTagMembersBalance($request->id);
+
+        return response([
+            'tagBalance' => $tagBalance
+        ]);
+    }
 }
