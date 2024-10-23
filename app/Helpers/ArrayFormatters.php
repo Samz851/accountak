@@ -53,4 +53,30 @@ class ArrayFormatters
         }
         return $array;
     }
+
+    public static function eliminate_prefixes($arr) {
+        // Sort the array by string length in ascending order
+        usort($arr, function($a, $b) {
+            return strlen($a) - strlen($b);
+        });
+    
+        $result = [];
+    
+        foreach ($arr as $str) {
+            // Check if the current string is a prefix of any previously added string
+            $is_prefix = false;
+            foreach ($result as $resStr) {
+                if (strpos($str, $resStr) === 0) {
+                    $is_prefix = true;
+                    break;
+                }
+            }
+            // Add to the result if it is not a prefix
+            if (!$is_prefix) {
+                $result[] = $str;
+            }
+        }
+    
+        return $result;
+    }
 }

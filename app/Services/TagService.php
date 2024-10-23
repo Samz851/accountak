@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\ArrayFormatters;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Log;
 
@@ -50,17 +51,20 @@ class TagService
         // $rawMembbers = [];
         // Check for root
         $branchesCodes = $branches->pluck('code')->toArray();
-        usort($branchesCodes, function ($a, $b) { 
-            if (strlen($a) > strlen($b)) {
-                return 1;
-            } else if (strlen($a) < strlen($b)) {
-                return -1;
-            } else {
-                return 0;
-            }
-        });
+        $codes = array_merge($accounts->pluck('code')->toArray(), $branchesCodes);
+        $unique_codes = ArrayFormatters::eliminate_prefixes($codes);
+        // usort($branchesCodes, function ($a, $b) { 
+        //     if (strlen($a) > strlen($b)) {
+        //         return 1;
+        //     } else if (strlen($a) < strlen($b)) {
+        //         return -1;
+        //     } else {
+        //         return 0;
+        //     }
+        // });
+        Log::info($codes, [__LINE__, __FILE__]);
 
-                Log::info($branchesCodes, [__LINE__, __FILE__]);
+                Log::info($unique_codes, [__LINE__, __FILE__]);
 
         $branches->each(function($branch) use ($accounts, $branches) {
             if ($branch->parent_id === null) {
