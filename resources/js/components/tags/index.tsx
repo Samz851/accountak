@@ -67,6 +67,10 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
 
   }, [tags]);
 
+  useEffect(() => {
+    console.log(selectProps, tags, optionTags );
+  }, [selectProps])
+
   const handleTagsChange = (value, option) => {
     
     const newTag = {id : option.value, label : option.label}

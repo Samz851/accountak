@@ -68,7 +68,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
 
     useEffect(()=>{
-        console.log(tableProps);
+        // console.log(tableProps);
         if ( ! tableProps.loading ) {
             if ( expandedAccount !== '' ) {
                 setAccounts((prevAccounts) => {
@@ -76,12 +76,14 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         return [...(accounts as any)?.map(account => {
                             if ( expandedAccount.startsWith(account.code) ) {
                                 if ( expandedAccount === account.code ) {
+                                    // console.log(account.code, tableProps.dataSource)
                                     return {
                                         ...account,
                                         children: [...tableProps.dataSource as any]
                                     }
                                 }
                                 if ( expandedAccount.length > account.code.length ) {
+                                    // console.log(account.code, tableProps.dataSource)
                                     return {
                                         ...account,
                                         children: updateAccounts(account.children)
@@ -96,6 +98,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     
                 })
             } else {
+                console.log(tableProps.dataSource)
                 setAccounts([...tableProps.dataSource as any]);
             }
         }

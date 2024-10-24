@@ -57,10 +57,11 @@ class AccountQueryBuilder
     public static function getChildren(int $parentId): Collection|array
     {
         $children = AccountsBranch::where('id', $parentId)
+                    ->with('tags')
                     ->first()
                     ->append('subitems')
                     ->subitems;
-        return $children;
+        return $children->load('tags');
     }
     public function setParentId(int $parentId): self
     {
