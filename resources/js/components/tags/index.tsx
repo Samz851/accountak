@@ -71,15 +71,19 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
 
   // }, [tags]);
 
-  useEffect(() => {
-    console.log(selectProps, query);
-  }, [selectProps])
+  // useEffect(() => {
+  //   // console.log(selectProps, query);
+  // }, [selectProps])
 
   const handleTagsChange = (value, option) => {
     
     const newTag = {id : option.value, label : option.label}
     setTags([...tags, newTag]);
     console.log('tags', value, option)
+    const existingTags = tags.map(({label}) => label);
+    const filteredTags = optionTags?.filter(({label}) => !existingTags.includes(label as any));
+    console.log('filteredTags', filteredTags, optionTags, tags);
+    setOptionTags(filteredTags)
     // const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
     setShowUpdateBtn(true);
     setInputVisible(false);
