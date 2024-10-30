@@ -19,7 +19,7 @@ import {
     Space
 } from "antd";
 
-import { IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
+import { IAccount, IAccountFilterVariables, IAccountsBranch, ITag } from "@/interfaces";
 import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -68,7 +68,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     const [ expandedRows, setExpandedRows ] = useState<Key[]>();
 
     useEffect(()=>{
-        console.log(tableProps);
+        // console.log(tableProps);
         if ( ! tableProps.loading ) {
             if ( expandedAccount !== '' ) {
                 setAccounts((prevAccounts) => {
@@ -76,12 +76,14 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                         return [...(accounts as any)?.map(account => {
                             if ( expandedAccount.startsWith(account.code) ) {
                                 if ( expandedAccount === account.code ) {
+                                    // console.log(account.code, tableProps.dataSource)
                                     return {
                                         ...account,
                                         children: [...tableProps.dataSource as any]
                                     }
                                 }
                                 if ( expandedAccount.length > account.code.length ) {
+                                    // console.log(account.code, tableProps.dataSource)
                                     return {
                                         ...account,
                                         children: updateAccounts(account.children)
@@ -96,6 +98,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     
                 })
             } else {
+                console.log(tableProps.dataSource)
                 setAccounts([...tableProps.dataSource as any]);
             }
         }
@@ -121,17 +124,32 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
         }
     }
 
-    const { mutate } = useUpdate<IAccount>({
+    const { mutate: mutateAccount } = useUpdate<IAccount>({
         resource: 'accounts'
+    })
+    const { mutate: mutateBranch } = useUpdate<IAccountsBranch>({
+        resource: 'branches'
     })
 
     const handleTagsUpdate = (id, tags) => {
-        mutate({
-            id: id,
-            values: {
-                tags: [...tags.map(tag => tag.id)]
-            }
-        })
+        if ( id < 300 ) {
+            mutateBranch({
+                id: id,
+                values: {
+                    tags: [...tags.map(tag => tag.id)]
+                }
+            })
+            return;
+        } else {
+            mutateAccount({
+                id: id,
+                values: {
+                    tags: [...tags.map(tag => tag.id)]
+                }
+            })
+            return;
+        }
+
     }
     const columns: TableColumnsType<IAccount> = [
         {

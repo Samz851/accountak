@@ -19,13 +19,13 @@ class AccountsBranchSeeder extends Seeder
             foreach ($children as $childK => $childV) {
                 if (is_int($childK)) {
                     AccountsBranch::factory()
-                        ->hasAttached(Tag::all()->random(2))
+                        // ->hasAttached(Tag::all()->random(2))
                         ->state(['name' => $childV])
                         ->create();
                 } else {
                     $parentType = AccountsBranch::factory()
                         ->state(['name' => $childK])
-                        ->hasAttached(Tag::all()->random(2))
+                        // ->hasAttached(Tag::all()->random(2))
                         ->create();
                     $this->generate($childV, $parentType);
                 }
@@ -42,7 +42,7 @@ class AccountsBranchSeeder extends Seeder
                             'taxonomy' => BaseAccountTaxonomy::LEAF,
 
                         ])
-                        ->hasAttached(Tag::all()->random(2))
+                        // ->hasAttached(Tag::all()->random(2))
                         ->create();
                 } else {
                     $parentType = AccountsBranch::factory()
@@ -50,7 +50,7 @@ class AccountsBranchSeeder extends Seeder
                             'name' => $childK,
                             'parent_id' => $parent->id
                         ])
-                        ->hasAttached(Tag::all()->random(2))
+                        // ->hasAttached(Tag::all()->random(2))
                         ->create();
                     $this->generate($childV, $parentType);
                 }

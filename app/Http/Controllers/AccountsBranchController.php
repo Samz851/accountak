@@ -140,9 +140,13 @@ class AccountsBranchController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AccountsBranch $parent)
+    public function update(Request $request, int $accountsBranch)
     {
-        //
+        $data = $request->all();
+        Log::info([$data, $accountsBranch], [__LINE__, __FILE__]);
+        $newAccount = AccountsBranch::where('id', $accountsBranch)->first();
+        if ( $request->has('tags') ) $newAccount->tags()->sync($request->input('tags'));
+        return response($newAccount->refresh());
     }
 
     /**

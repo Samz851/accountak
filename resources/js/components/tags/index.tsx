@@ -30,25 +30,26 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
     resource: 'tags',
     optionLabel: 'label',
     optionValue: 'id',
-    filters: [
-      {
-        field: 'label',
-        operator: 'nin',
-        value: [...initialTags.map(({label}) => label)]
-      }
-    ]
+    // filters: [
+    //   {
+    //     field: 'label',
+    //     operator: 'nin',
+    //     value: [...initialTags.map(({label}) => label)]
+    //   }
+    // ]
   })
   // console.log('query', query);
   const [optionTags, setOptionTags] = useState<DefaultOptionType[] | undefined>([]);
 
-  // useEffect(() => {
-  //   if (query.isSuccess) {
-  //     const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
-  //     // console.log('updating', existingTags, filteredTags, selectProps.options, query);
+  useEffect(() => {
+    if (query.isSuccess && selectProps.options?.length) {
+      const existingTags = tags.map(({label}) => label);
+      const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label as any));
+      // console.log('updating', existingTags, filteredTags, selectProps.options, query);
 
-  //     setOptionTags(filteredTags)
-  //   }
-  // }, [selectProps.options])
+      setOptionTags(filteredTags)
+    }
+  }, [selectProps.options])
   useEffect(() => {
     if (inputVisible) {
       inputRef.current?.focus();
@@ -59,19 +60,30 @@ export const DisplayTags = ({recordID, initialTags, handleTagsUpdate}) => {
     editInputRef.current?.focus();
   }, [editInputValue]);
 
-  useEffect(() => {
-    const existingTags = tags.map(({label}) => label);
+  // useEffect(() => {
+    
+  //   const existingTags = tags.map(({label}) => label);
 
-    const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label as any));
-    setOptionTags(filteredTags)
+  //   const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label as any));
+  //   // console.log(selectProps, tags, filteredTags );
 
-  }, [tags]);
+  //   setOptionTags(filteredTags)
+
+  // }, [tags]);
+
+  // useEffect(() => {
+  //   // console.log(selectProps, query);
+  // }, [selectProps])
 
   const handleTagsChange = (value, option) => {
     
     const newTag = {id : option.value, label : option.label}
     setTags([...tags, newTag]);
     console.log('tags', value, option)
+    const existingTags = tags.map(({label}) => label);
+    const filteredTags = optionTags?.filter(({label}) => !existingTags.includes(label as any));
+    console.log('filteredTags', filteredTags, optionTags, tags);
+    setOptionTags(filteredTags)
     // const filteredTags = selectProps.options?.filter(({label}) => !existingTags.includes(label));
     setShowUpdateBtn(true);
     setInputVisible(false);
