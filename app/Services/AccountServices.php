@@ -100,6 +100,7 @@ class AccountServices implements AccountServiceContract
                                     ->executeAccountQuery();
                     } else {
                         $accounts = AccountQueryBuilder::getChildren($queries['parent']);
+                        Log::info($accounts, [__LINE__, __FILE__]);
                     }
                 } else {
                     $accounts = $accounts->setType($queries['type']);
