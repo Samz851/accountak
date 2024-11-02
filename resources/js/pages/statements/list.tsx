@@ -24,7 +24,7 @@ import {
 } from "antd";
 
 import { ICompany, IContact, IStatement } from "@/interfaces";
-import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { EyeOutlined, FileTextOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal } from "@/components";
 import { PropsWithChildren, useId } from "react";
 import { useLocation } from "react-router-dom";
@@ -248,6 +248,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                     fixed="right"
                     title={t("table.actions")}
                     render={(_, record) => (
+                        <>
                         <Button
                             icon={<EyeOutlined />}
                             onClick={() => {
@@ -263,6 +264,23 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                                 });
                             }}
                         />
+                        <Button
+                            icon={<FileTextOutlined />}
+                            onClick={() => {
+                                return go({
+                                    to: `${showUrl("statements", record.id)}`,
+                                    query: {
+                                        to: pathname,
+                                    },
+                                    options: {
+                                        keepQuery: true,
+                                    },
+                                    type: "push",
+                                });
+                            }}
+                        />
+                        </>
+                        
                     )}
                 />
             </Table>
