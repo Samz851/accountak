@@ -25,6 +25,8 @@ import { LocaleJsonEditor } from "@/pages/devSamples/localejson";
 import { TagCreateForm } from "@/pages/create/forms/tag";
 import { TagShow, TagsList } from "@/pages/tags";
 import { StatementShow } from "@/pages/statements/show";
+import { ReportCreatePage } from "@/pages/statements/published/create";
+import { StatemenReporttShow } from "@/pages/statements/published/show";
 
 const optionsLoader = () => {
     const identity = loadState('identity');
@@ -118,6 +120,18 @@ export const routes: ReactElement[] = [
         <Route
             path="create"
             element={<StatementCreatePage />}
+            />
+        {/* <Route index element={<StatementBuilder />} /> */}
+    </Route>,
+        <Route path="/reports">
+        <Route index element={<StatementsList />} />
+        <Route
+            path="show/:id"
+            element={<StatemenReporttShow />}
+        />
+        <Route
+            path="create/:id"
+            element={<ReportCreatePage />}
             />
         {/* <Route index element={<StatementBuilder />} /> */}
     </Route>,

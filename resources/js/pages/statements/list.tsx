@@ -12,6 +12,7 @@ import {
     FilterDropdown,
     ExportButton,
     CreateButton,
+    CloneButton,
 } from "@refinedev/antd";
 import {
     Table,
@@ -264,20 +265,21 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                                 });
                             }}
                         />
-                        <Button
+                        <CloneButton
                             icon={<FileTextOutlined />}
-                            onClick={() => {
-                                return go({
-                                    to: `${showUrl("statements", record.id)}`,
-                                    query: {
-                                        to: pathname,
-                                    },
-                                    options: {
-                                        keepQuery: true,
-                                    },
-                                    type: "push",
-                                });
-                            }}
+                            recordItemId={record.id}
+                            // onClick={() => {
+                            //     return go({
+                            //         to: `${showUrl("statements", record.id)}`,
+                            //         query: {
+                            //             to: pathname,
+                            //         },
+                            //         options: {
+                            //             keepQuery: true,
+                            //         },
+                            //         type: "push",
+                            //     });
+                            // }}
                         />
                         </>
                         

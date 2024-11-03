@@ -39,6 +39,16 @@ export interface IStatement {
     title: string;
     content: string;
 }
+
+export interface IReport {
+    id: number;
+    title: string;
+    content: string;
+    cycle?: Dayjs[];
+    from?: string;
+    to?: string;
+    template_id?: any;
+}
 export interface ICompany {
     id: number;
     company_name: string;

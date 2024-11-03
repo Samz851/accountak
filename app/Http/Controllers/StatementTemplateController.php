@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\StatementTemplate;
+use App\Models\Tag;
+use App\Services\TagService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+
 
 class StatementTemplateController extends Controller
 {
@@ -25,8 +29,34 @@ class StatementTemplateController extends Controller
         return response($template);
     }
 
-    public function show(StatementTemplate $statementTemplate): Response
+    private function templateParser(string $template): string
     {
-        return response($statementTemplate);
+        $service = new TagService();
+
+        $newtemplate = preg_match_all('/\{\{(\w+)\}\}/', $template, $matches);
+        $fields = array_combine($matches[0], $matches[1]);
+        $fieldsProcessed = [];
+        foreach ($fields as $key => $value) {
+            $tag = Tag::where('label', $value)->first();
+            $tagBalance = $service->getTagMembersBalance($tag->id);
+            $fieldsProcessed[$key] = $tagBalance;
+        }
+
+        $templateProcessed = str_replace(array_keys($fieldsProcessed), array_values($fieldsProcessed), $template);
+
+        Log::info($matches, [__LINE__, __FILE__]);
+        Log::info($fields, [__LINE__, __FILE__]);
+        Log::info($fieldsProcessed, [__LINE__, __FILE__]);
+        Log::info($templateProcessed, [__LINE__, __FILE__]);
+        return $templateProcessed;
+    }
+    public function show(Request $request, int $statementTemplate): Response
+    {
+        $template = StatementTemplate::find($statementTemplate);
+
+        $final = $this->templateParser($template->content);
+        $template->content = $final;
+        Log::info($statementTemplate, [__LINE__, __FILE__]);
+        return response($template);
     }
 }

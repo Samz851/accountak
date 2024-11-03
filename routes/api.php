@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountsBranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OptionsController;
+use App\Http\Controllers\StatementController;
 use App\Http\Controllers\StatementTemplateController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaxesController;
@@ -46,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/options', OptionsController::class);
     Route::apiResource('/tags', TagController::class);
     Route::apiResource('/statements', StatementTemplateController::class);
+    Route::apiResource('/reports', StatementController::class);
     Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
     Route::get('/accounts/select', [AccountController::class, 'getSelect']);
     Route::get('/users/autologin', [UserController::class, 'autlogin']);

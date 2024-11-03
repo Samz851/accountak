@@ -68,7 +68,8 @@ import {
 	Undo,
     EditorConfig,
 	Mention,
-	Dialog
+	Dialog,
+	CloudServices
 } from 'ckeditor5';
 import CustomPlugin from './plugin/TemplatingPlugin';
 // import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
@@ -182,6 +183,8 @@ export const StatementEditor = ({content, setContent}) =>{
 				'undo',
 				'redo',
 				'|',
+				'exportPdf',
+				'|',
 				'findAndReplace',
 				'selectAll',
 				'textPartLanguage',
@@ -223,6 +226,7 @@ export const StatementEditor = ({content, setContent}) =>{
 			shouldNotGroupWhenFull: false
 		},
 		plugins: [
+			CloudServices,
 			AccessibilityHelp,
 			MergeFields,
 			Template,
@@ -289,7 +293,9 @@ export const StatementEditor = ({content, setContent}) =>{
 			TodoList,
 			Underline,
 			Undo,
-			CustomPlugin
+			CustomPlugin,
+			ExportPdf
+
 		],
 		balloonToolbar: ['insertTemplate','insertMergeField','tags', 'accounts', 'transactions', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
 		blockToolbar: [
