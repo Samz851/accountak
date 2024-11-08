@@ -47,16 +47,16 @@ export const ReportCreatePage = () => {
     const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
     const { styles } = useStyles();
     const { id } = useResourceParams();
-    const { form, formProps, formLoading, saveButtonProps } = useForm<IStatement, HttpError, FormValues
-    >({
-        action: "clone",
-        warnWhenUnsavedChanges: true,
-        resource: "statements",
-        redirect: false,
-    });
+    // const { form, formProps, formLoading, saveButtonProps } = useForm<IStatement, HttpError, FormValues
+    // >({
+    //     action: "clone",
+    //     warnWhenUnsavedChanges: true,
+    //     resource: "statements",
+    //     redirect: false,
+    // });
 
-    const { onFinish } = useForm<IReport, HttpError, FormValues>({
-        action: "create",
+    const { form, formProps, formLoading, onFinish } = useForm<IReport, HttpError, FormValues>({
+        action: "edit",
         warnWhenUnsavedChanges: true,
         resource: "reports",
         redirect: false,
@@ -118,7 +118,7 @@ export const ReportCreatePage = () => {
 
     // console.log('config', SampleConfig)
     return (
-        <Create saveButtonProps={saveButtonProps}>
+        <Create >
 
         
         <Form
