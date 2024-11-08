@@ -13,6 +13,7 @@ import {
     ExportButton,
     CreateButton,
     CloneButton,
+    useModalForm,
 } from "@refinedev/antd";
 import {
     Table,
@@ -22,20 +23,49 @@ import {
     Input,
     Button,
     Row,
+    Popconfirm,
+    Modal,
+    Form,
+    DatePicker,
 } from "antd";
 
-import { ICompany, IContact, IStatement } from "@/interfaces";
+import { ICompany, IContact, IReport, IStatement } from "@/interfaces";
 import { EyeOutlined, FileTextOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal } from "@/components";
-import { PropsWithChildren, useId } from "react";
+import { PropsWithChildren, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Dayjs } from "dayjs";
 
+type FormValues = {
+    cycle?: Dayjs[] | undefined;
+    from?: string | undefined;
+    to?: string | undefined;
+    template_id?: any;
+}
 export const StatementsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl } = useNavigation();
+    const { showUrl, createUrl, cloneUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
+
+    const [ selected, setSelected] = useState();
+
+    const onPublishClick = (record) => {
+        setSelected(record);
+        cloneModalShow()
+    }
+
+    const {
+        modalProps: cloneModalProps,
+        formProps: cloneFormProps,
+        show: cloneModalShow,
+        onFinish
+      } = useModalForm<IReport, HttpError, FormValues>({
+        action: "create",
+        resource: "reports",
+
+      });
 
     const { tableProps, filters, sorters } = useTable<
         IStatement,
@@ -54,6 +84,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
     });
 
     return (
+        <>
         <List
             breadcrumb={false}
             headerButtons={(props) => [
@@ -265,21 +296,10 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                                 });
                             }}
                         />
-                        <CloneButton
+                        <Button
                             icon={<FileTextOutlined />}
-                            recordItemId={record.id}
-                            // onClick={() => {
-                            //     return go({
-                            //         to: `${showUrl("statements", record.id)}`,
-                            //         query: {
-                            //             to: pathname,
-                            //         },
-                            //         options: {
-                            //             keepQuery: true,
-                            //         },
-                            //         type: "push",
-                            //     });
-                            // }}
+                            // recordItemId={record.id}
+                            onClick={() => onPublishClick(record.id)}
                         />
                         </>
                         
@@ -288,5 +308,48 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
             </Table>
             {children}
         </List>
+        <Modal {...cloneModalProps}>
+        <Form {...cloneFormProps} layout="vertical"
+        onFinish={async (values) => {
+            console.log(values);
+            try {
+                const data = await onFinish({
+                    from: values.cycle?.[0]?.format('YYYY/MM/DD').toString() || '',
+                    to: values.cycle?.[1]?.format('YYYY/MM/DD').toString() || '',
+                    template_id: selected
+                });
+                close();
+                // go({
+                //     to:
+                //         searchParams.get("to") ??
+                //         getToPath({
+                //             action: "list",
+                //         }) ??
+                //         "",
+                //     query: {
+                //         to: undefined,
+                //     },
+                //     options: {
+                //         keepQuery: true,
+                //     },
+                //     type: "replace",
+                // });
+
+            } catch (error) {
+                Promise.reject(error);
+            }
+        }}
+        >
+        <Form.Item
+                    label="cycle"
+                    name="cycle"
+                    rules={[{ required: true }]}
+                >
+                    <DatePicker.RangePicker/>
+                </Form.Item>
+          
+        </Form>
+        </Modal>
+        </>
     );
 };
