@@ -35,6 +35,7 @@ import { PaginationTotal } from "@/components";
 import { PropsWithChildren, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Dayjs } from "dayjs";
+import { clone } from "lodash";
 
 type FormValues = {
     cycle?: Dayjs[] | undefined;
@@ -45,7 +46,7 @@ type FormValues = {
 export const StatementsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl, cloneUrl } = useNavigation();
+    const { showUrl, createUrl, cloneUrl, clone } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -318,6 +319,10 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                     to: values.cycle?.[1]?.format('YYYY/MM/DD').toString() || '',
                     template_id: selected
                 });
+                if (data) {
+                    console.log(data)
+                    clone('statements', selected as any);
+                }
                 close();
                 // go({
                 //     to:
