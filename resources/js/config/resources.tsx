@@ -112,6 +112,8 @@ export const resources: IResourceItem[] = [
         // create: "/reports/create",
         // clone: "/reports/create/:id",
         show: "/reports/show/:id",
+        edit: "/reports/edit/:id",
+        // clone: "/reports/clone/:id",
         meta: {
             label: i18next.t("reports.reports"),
             icon: <DashboardOutlined />,

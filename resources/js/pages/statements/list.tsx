@@ -46,7 +46,7 @@ type FormValues = {
 export const StatementsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl, cloneUrl, clone } = useNavigation();
+    const { showUrl, createUrl, cloneUrl, clone, show,edit } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -61,6 +61,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
         modalProps: cloneModalProps,
         formProps: cloneFormProps,
         show: cloneModalShow,
+        close,
         onFinish
       } = useModalForm<IReport, HttpError, FormValues>({
         action: "create",
@@ -320,8 +321,8 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                     template_id: selected
                 });
                 if (data) {
-                    console.log(data)
-                    clone('statements', selected as any);
+                    console.log(data.data.id)
+                    edit('reports', data.data.id);
                 }
                 close();
                 // go({

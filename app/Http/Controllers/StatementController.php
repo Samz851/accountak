@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Log;
 class StatementController extends Controller
 {
     //
+
+    public function index(Request $request): Response
+    {
+        $templates = Statement::all();
+
+        return response($templates);
+    }
+
     public function store(Request $request): Response
     {
         $data = $request->all();

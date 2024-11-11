@@ -127,29 +127,29 @@ export const ReportCreatePage = () => {
             onFinish={async (values) => {
                 console.log(values);
                 try {
-                    const data = await onFinish({
-                        title: values.title,
-                        content: values.content,
-                        from: values.cycle?.[0]?.format('YYYY/MM/DD').toString() || '',
-                        to: values.cycle?.[1]?.format('YYYY/MM/DD').toString() || '',
-                        template_id: id
-                    });
-                    close();
-                    go({
-                        to:
-                            searchParams.get("to") ??
-                            getToPath({
-                                action: "list",
-                            }) ??
-                            "",
-                        query: {
-                            to: undefined,
-                        },
-                        options: {
-                            keepQuery: true,
-                        },
-                        type: "replace",
-                    });
+                    // const data = await onFinish({
+                    //     title: values.title,
+                    //     content: values.content,
+                    //     from: values.cycle?.[0]?.format('YYYY/MM/DD').toString() || '',
+                    //     to: values.cycle?.[1]?.format('YYYY/MM/DD').toString() || '',
+                    //     template_id: id
+                    // });
+                    // close();
+                    // go({
+                    //     to:
+                    //         searchParams.get("to") ??
+                    //         getToPath({
+                    //             action: "list",
+                    //         }) ??
+                    //         "",
+                    //     query: {
+                    //         to: undefined,
+                    //     },
+                    //     options: {
+                    //         keepQuery: true,
+                    //     },
+                    //     type: "replace",
+                    // });
 
                 } catch (error) {
                     Promise.reject(error);
