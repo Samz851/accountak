@@ -28,6 +28,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 
 type FormValues = {
+    id: number | string;
     title: string;
     content: string;
     cycle?: Dayjs[] | undefined;
@@ -55,12 +56,7 @@ export const ReportEditPage = () => {
     //     redirect: false,
     // });
 
-    const { form, formProps, formLoading, onFinish } = useForm<IReport, HttpError, FormValues>({
-        action: "edit",
-        warnWhenUnsavedChanges: true,
-        resource: "reports",
-        redirect: false,
-    })
+    const { formProps, saveButtonProps, query } = useForm<IReport, HttpError, FormValues>()
     // const { form } = formProps;
     // const statement = Form.useWatch('statement', form)
     const {
@@ -71,9 +67,9 @@ export const ReportEditPage = () => {
     } = useThemedLayoutContext();
 
     useEffect(() => {
-        console.log(formProps);
+        console.log(query);
         setContent(formProps?.initialValues?.content as any);
-    },[formProps]);
+    },[query]);
 
     useEffect(() => {
         setMobileSiderOpen(false);
@@ -118,9 +114,11 @@ export const ReportEditPage = () => {
 
     // console.log('config', SampleConfig)
     return (
-        <div>
-            { }
-        </div>
+        <Edit saveButtonProps={saveButtonProps}>
+            <PageContainer>
+            
+            </PageContainer>
+        </Edit>
         // <Create >
 
         

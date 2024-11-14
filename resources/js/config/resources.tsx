@@ -98,7 +98,7 @@ export const resources: IResourceItem[] = [
         name: "statements",
         list: "/statements",
         create: "/statements/create",
-        clone: "/reports/create/:id",
+        // clone: "/reports/create/:id",
         show: "/statements/show/:id",
         meta: {
             label: i18next.t("statements.statements"),
