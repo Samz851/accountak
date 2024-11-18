@@ -47,7 +47,7 @@ export const ReportEditPage = () => {
     // const [ selectedCreditAccount, setSelectedCreditAccount ] = useState<number>(0);
     // const [ selectedDebitAccount, setSelectedDebitAccount ] = useState<number>(0);
     // const { styles } = useStyles();
-    // const { id } = useResourceParams();
+    const { id } = useResourceParams();
     // const { form, formProps, formLoading, saveButtonProps } = useForm<IStatement, HttpError, FormValues
     // >({
     //     action: "clone",
@@ -56,7 +56,20 @@ export const ReportEditPage = () => {
     //     redirect: false,
     // });
 
-    const { formProps, saveButtonProps, query } = useForm<IReport, HttpError, FormValues>()
+    const { formProps, saveButtonProps, query } = useForm<IReport, HttpError, FormValues>({
+        action: "edit",
+        warnWhenUnsavedChanges: true,
+        resource: "reports",
+        id: id,
+        redirect: false,
+        queryOptions: {
+            enabled: true,
+            onSuccess: (data) => {
+                console.log(data);
+                setContent(data?.data?.content as any);
+            }
+        }
+    })
     // const { form } = formProps;
     // const statement = Form.useWatch('statement', form)
     const {
@@ -67,9 +80,12 @@ export const ReportEditPage = () => {
     } = useThemedLayoutContext();
 
     useEffect(() => {
-        console.log(query);
-        setContent(formProps?.initialValues?.content as any);
-    },[query]);
+        // if (! query?.isLoading) {
+            console.log(content);
+        // setContent(formProps?.initialValues?.content as any);
+        // }
+
+    },[content]);
 
     useEffect(() => {
         setMobileSiderOpen(false);
@@ -115,16 +131,9 @@ export const ReportEditPage = () => {
     // console.log('config', SampleConfig)
     return (
         <Edit saveButtonProps={saveButtonProps}>
-            <PageContainer>
-            
-            </PageContainer>
-        </Edit>
-        // <Create >
-
-        
-        // <Form
-        //     {...formProps}
-        //     layout="vertical"
+                    <Form
+            {...formProps}
+            layout="vertical"
         //     onFinish={async (values) => {
         //         console.log(values);
         //         try {
@@ -156,30 +165,35 @@ export const ReportEditPage = () => {
         //             Promise.reject(error);
         //         }
         //     }}
-        //     >
-        //         <Form.Item
-        //             label="cycle"
-        //             name="cycle"
-        //             rules={[{ required: true }]}
-        //         >
-        //             <DatePicker.RangePicker/>
-        //         </Form.Item>
-        //         <Form.Item
-        //             label="Title"
-        //             name="title"
-        //             rules={[{ required: true }]}
-        //         >
-        //             <Input placeholder="Title" />
-        //         </Form.Item>
-        //         <Form.Item
-        //             label="Content"
-        //             name="content"
-        //             rules={[{required: true}]}
-        //         >
-        //         <StatementEditor content={content} setContent={setContent} />
+            >
+                 {/* <Form.Item
+                    label="cycle"
+                    name="cycle"
+                    rules={[{ required: true }]}
+                >
+                    <DatePicker.RangePicker/>
+                </Form.Item> */}
+                <Form.Item
+                    label="Title"
+                    name="title"
+                    rules={[{ required: true }]}
+                >
+                    <Input placeholder="Title" />
+                </Form.Item>
+                <Form.Item
+                    label="Content"
+                    name="content"
+                    rules={[{required: true}]}
+                >
+                <StatementEditor content={content} setContent={setContent} />
 
-        //         </Form.Item>
-        //     </Form>
+                </Form.Item>
+            </Form>
+        </Edit>
+        // <Create >
+
+        
+
         //     {/* <PageBuilderComponent 
         //         config={SampleConfig} 
         //         data={defaultData}

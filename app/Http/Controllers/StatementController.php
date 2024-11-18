@@ -29,7 +29,7 @@ class StatementController extends Controller
 
         $report = Statement::create([
             'title' => $template->title,
-            'content' => $this->templateParser($template->content),
+            'content' => $this->templateParser($template->content, $data['from'], $data['to']),
             'template_id' => $template->id,
             'from' => $data['from'],
             'to' => $data['to']
@@ -45,7 +45,7 @@ class StatementController extends Controller
         return response($statement);
     }
 
-    private function templateParser(string $template): string
+    private function templateParser(string $template, $from, $to): string
     {
         $service = new TagService();
 
@@ -54,7 +54,7 @@ class StatementController extends Controller
         $fieldsProcessed = [];
         foreach ($fields as $key => $value) {
             $tag = Tag::where('label', $value)->first();
-            $tagBalance = $service->getTagMembersBalance($tag->id);
+            $tagBalance = $service->getTagMembersBalanceByRange($tag->id, $from, $to);
             $fieldsProcessed[$key] = $tagBalance;
         }
 

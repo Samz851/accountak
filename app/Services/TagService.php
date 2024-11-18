@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\BaseAccountTaxonomy;
 use App\Helpers\ArrayFormatters;
 use App\Models\Tag;
 use Illuminate\Support\Collection;
@@ -78,6 +79,25 @@ class TagService
     {
         $members = $this->getTagMembersClean($id);
         return $members->pluck('accounts_balance')->sum('balance');
+    }
+
+    public function getTagMembersBalanceByRange($id, $from, $to)
+    {   
+        $from_date = date('Y-m-d', strtotime($from));
+        $to_date = date('Y-m-d', strtotime($to));
+        $members = $this->getTagMembersClean($id);
+        $sum = 0;
+        foreach ($members as &$member) {
+            if ($member->taxonomy !== BaseAccountTaxonomy::BRANCH) {
+                Log::info($member->taxonomy, [__LINE__, __FILE__]);
+
+                $debit_total = $member->debitTransactions()->where('created_at', '>=', $from_date)->where('created_at', '<=', $to_date)->get()->pluck('dbtrans')->sum('amount') ?? 0;
+                $credit_total = $member->creditTransactions()->where('created_at', '>=', $from_date)->where('created_at', '<=', $to_date)->get()->pluck('crtrans')->sum('amount')?? 0; 
+                $sum += $debit_total + $credit_total;
+            }
+
+        }
+        return $sum;
     }
 
     public function getTagLabel($id): string

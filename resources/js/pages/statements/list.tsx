@@ -46,7 +46,7 @@ type FormValues = {
 export const StatementsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
-    const { showUrl, createUrl, cloneUrl, clone, show,edit } = useNavigation();
+    const { showUrl, createUrl, cloneUrl, clone, show,edit, editUrl } = useNavigation();
     const t = useTranslate();
     const { token } = theme.useToken();
 
@@ -66,7 +66,8 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
       } = useModalForm<IReport, HttpError, FormValues>({
         action: "create",
         resource: "reports",
-
+        redirect: "edit",
+        
       });
 
     const { tableProps, filters, sorters } = useTable<
@@ -315,16 +316,34 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
         onFinish={async (values) => {
             console.log(values);
             try {
-                const data = await onFinish({
+                // const data = await onFinish({
+                //     from: values.cycle?.[0]?.format('YYYY/MM/DD').toString() || '',
+                //     to: values.cycle?.[1]?.format('YYYY/MM/DD').toString() || '',
+                //     template_id: selected
+                // });
+                const data = await cloneFormProps?.onFinish?.({
                     from: values.cycle?.[0]?.format('YYYY/MM/DD').toString() || '',
                     to: values.cycle?.[1]?.format('YYYY/MM/DD').toString() || '',
-                    template_id: selected
+                    template_id: selected,
                 });
                 if (data) {
-                    console.log(data.data.id)
-                    edit('reports', data.data.id);
+                    console.log(data)
+                    const rec = data as any;
+
+                    console.log(editUrl("reports",rec.data.id))
+                    // editUrl('reports', data.data.id);
+                    // go({
+                    //     to: `${editUrl("reports",rec.data.id)}`,
+                    //     // query: {
+                    //     //     to: pathname,
+                    //     // },
+                    //     options: {
+                    //         keepQuery: true,
+                    //     },
+                    //     type: "replace",
+                    // });
                 }
-                close();
+                // close();
                 // go({
                 //     to:
                 //         searchParams.get("to") ??
@@ -342,6 +361,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                 // });
 
             } catch (error) {
+                console.log(error);
                 Promise.reject(error);
             }
         }}
@@ -353,7 +373,14 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                 >
                     <DatePicker.RangePicker/>
                 </Form.Item>
-          
+          <Form.Item
+            label="template_id"
+            name="template_id"
+            hidden={true}
+            initialValue={selected}
+            >
+                <Input />
+            </Form.Item>
         </Form>
         </Modal>
         </>

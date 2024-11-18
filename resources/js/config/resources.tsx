@@ -109,7 +109,7 @@ export const resources: IResourceItem[] = [
     {
         name: "reports",
         list: "/reports",
-        // create: "/reports/create",
+        create: "/reports/create",
         // clone: "/reports/create/:id",
         show: "/reports/show/:id",
         edit: "/reports/edit/:id",
