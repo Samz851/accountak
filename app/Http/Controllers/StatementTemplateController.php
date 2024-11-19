@@ -54,9 +54,9 @@ class StatementTemplateController extends Controller
     {
         $template = StatementTemplate::find($statementTemplate);
 
-        $final = $this->templateParser($template->content);
-        $template->content = $final;
-        Log::info($statementTemplate, [__LINE__, __FILE__]);
+        // $final = $this->templateParser($template->content);
+        // $template->content = $final;
+        // Log::info($statementTemplate, [__LINE__, __FILE__]);
         return response($template);
     }
 }

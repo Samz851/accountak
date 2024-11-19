@@ -4,8 +4,10 @@ import {
     useNavigation,
     useBack,
 } from "@refinedev/core";
-import { Flex, Grid } from "antd";
-import { ICompany, IContact, IStatement } from "@/interfaces";
+import { usePDF } from 'react-to-pdf';
+
+import { Button, Flex, Grid, Typography } from "antd";
+import { ICompany, IContact, IReport, IStatement } from "@/interfaces";
 import {
     CardWithContent,
     CustomerInfoList,
@@ -15,16 +17,18 @@ import {
 } from "@/components";
 import { useEffect, useState } from "react";
 import { StatementEditor } from "../components/CKEditor/StatementEditor";
+import { Show } from "@refinedev/antd";
 
 export const StatemenReporttShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
     const back = useBack();
     const breakpoint = Grid.useBreakpoint();
-    const { query } = useShow<IStatement>();
+    const { query } = useShow<IReport>();
     const [ content, setContent] = useState('');
-
-
-    const { data } = query;
+    const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
+    const { data, isLoading } = query;
+    const record = data?.data;
+    const Content = record?.content;
     // const company = data?.data;
 
     useEffect(()=>{
@@ -32,16 +36,21 @@ export const StatemenReporttShow: React.FC<IResourceComponentsProps> = () => {
 
     },[query])
     return (
-        <Drawer
-            open
-            onClose={() => back()}
-            width={"100%"}
-            style={{ padding: "50px" }}
-        >
-            <h1>{data?.data.title as any}</h1>
-            <StatementEditor content={data?.data.content} setContent={setContent} />
+        <Show
+            isLoading ={isLoading}
+            headerButtons={({ defaultButtons }) => (
+                <>
+                  {defaultButtons}
+                  <Button type="primary" onClick={() => toPDF()}>Custom Button</Button>
+                </>
+              )}
 
+        >
+            <Typography.Title>
+                {record?.title}
+            </Typography.Title>
             {/* <CompanyView company={company} /> */}
-        </Drawer>
+            <div dangerouslySetInnerHTML={{ __html: Content as any }} ref={targetRef} />
+        </Show>
     );
 };

@@ -28,6 +28,7 @@ import { StatementShow } from "@/pages/statements/show";
 import { ReportCreatePage } from "@/pages/statements/published/create";
 import { StatemenReporttShow } from "@/pages/statements/published/show";
 import { ReportEditPage } from "@/pages/statements/published/edit";
+import { ReportsList } from "@/pages/statements/published/list";
 
 const optionsLoader = () => {
     const identity = loadState('identity');
@@ -125,10 +126,10 @@ export const routes: ReactElement[] = [
         {/* <Route index element={<StatementBuilder />} /> */}
     </Route>,
         <Route path="/reports">
-        <Route index element={<StatementsList />} />
+        <Route index element={<ReportsList />} />
         <Route
             path="show/:id"
-            element={<ReportCreatePage />}
+            element={<StatemenReporttShow />}
         />
         <Route
             path="create/:id"

@@ -4,7 +4,7 @@ import {
     useNavigation,
     useBack,
 } from "@refinedev/core";
-import { Flex, Grid } from "antd";
+import { Flex, Grid, Typography } from 'antd';
 import { ICompany, IContact, IStatement } from "@/interfaces";
 import {
     CardWithContent,
@@ -14,27 +14,34 @@ import {
     Drawer,
 } from "@/components";
 import { useEffect } from "react";
+import { MarkdownField, Show, Title } from "@refinedev/antd";
 
 export const StatementShow: React.FC<IResourceComponentsProps> = () => {
     const { list } = useNavigation();
     const back = useBack();
     const breakpoint = Grid.useBreakpoint();
-    const { queryResult } = useShow<IStatement>();
+    const { query } = useShow<IStatement>();
+    const { data, isLoading } = query;
+    const record = data?.data;
+    const Content = record?.content;
 
-    const { data } = queryResult;
+    // const { data } = queryResult;
     // const company = data?.data;
 
     useEffect(()=>{
-        console.log(queryResult, data);
+        console.log(query, data);
 
-    },[queryResult])
+    },[query])
     return (
-        <Drawer
-            open
-            onClose={() => back()}
-            width={breakpoint.sm ? "736px" : "100%"}
+        <Show
+            isLoading ={isLoading}
+
         >
+            <Typography.Title>
+                {record?.title}
+            </Typography.Title>
             {/* <CompanyView company={company} /> */}
-        </Drawer>
+            <div dangerouslySetInnerHTML={{ __html: Content as any }} />
+        </Show>
     );
 };

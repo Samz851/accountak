@@ -50,4 +50,25 @@ class TagController extends Controller
             'tagBalance' => $tagBalance
         ]);
     }
+
+    public function getTagLeafMembers(Request $request)
+    {
+        $service = new TagService();
+        $tagLeafMembers = $service->getTagLeafMembers($request->id);
+
+        return response([
+            'tagLeafMembers' => $tagLeafMembers,
+            'ids' => $tagLeafMembers->pluck('id')->toArray()
+        ]);
+    }
+
+    public function getTagBalanceByRanges(Request $request)
+    {
+        $service = new TagService();
+        $tagBalanceByRanges = $service->getTagMembersBalanceByRange($request->id, $request->from, $request->to);
+
+        return response([
+            'tagBalanceByRanges' => $tagBalanceByRanges
+        ]);
+    }
 }
