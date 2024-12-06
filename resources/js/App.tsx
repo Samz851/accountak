@@ -29,6 +29,7 @@ import { resources } from "./config/resources";
 import { routes } from "./config/routes";
 import { loadState } from "./helpers/localStorage";
 import { getCookie } from "./helpers/session";
+import * as monaco from "monaco-editor";
 
 const App: React.FC = () => {
     // This hook is used to automatically login the user.
@@ -46,10 +47,72 @@ const App: React.FC = () => {
     const { t, i18n } = useTranslation();
 
     const i18nProvider = {
-        translate: (key: string, params: object) => t(key, params),
+        translate: (key: string) => t(key),
         changeLocale: (lang: string) => i18n.changeLanguage(lang),
         getLocale: () => i18n.language,
     };
+
+
+    monaco.languages.register({ id: "formula-language" });
+
+    monaco.languages.setMonarchTokensProvider("formula-language", {
+        tokenizer: {
+            root: [
+                [/[A-Za-z_]\w*/, "identifier"], // Identifies valid field names or variables
+                [/[+\-*/=]/, "operator"],       // Recognizes operators
+                [/\d+/, "number"],              // Matches numbers
+                [/\(/, "delimiter.parenthesis"], // Matches opening parenthesis
+                [/\)/, "delimiter.parenthesis"], // Matches closing parenthesis
+            ],
+        },
+    });
+    
+    // Add autocomplete suggestions for the formula editor
+    monaco.languages.registerCompletionItemProvider("formula-language", {
+        provideCompletionItems: (): monaco.languages.CompletionList => {
+            const suggestions: monaco.languages.CompletionItem[] = [
+                {
+                    label: "SUM",
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    insertText: "SUM()",
+                    documentation: "Calculates the sum of a range of numbers.",
+                    range: {
+                        startLineNumber: 1,
+                        startColumn: 1,
+                        endLineNumber: 1,
+                        endColumn: 4,
+                    }
+                },
+                {
+                    label: "IF",
+                    kind: monaco.languages.CompletionItemKind.Function,
+                    insertText: "IF(condition, trueValue, falseValue)",
+                    documentation: "Returns a value based on a condition.",
+                    range: {
+                        startLineNumber: 1,
+                        startColumn: 1,
+                        endLineNumber: 1,
+                        endColumn: 4,
+                    }
+                },
+                {
+                    label: "AccountBalance",
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: "AccountBalance",
+                    documentation: "The current balance of the account.",
+                    range: {
+                        startLineNumber: 1,
+                        startColumn: 1,
+                        endLineNumber: 1,
+                        endColumn: 4,
+                    }
+                },
+            ];
+    
+            return { suggestions };
+        },
+    });
+
 
     // if (loading) {
     //     return null;

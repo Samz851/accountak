@@ -131,6 +131,17 @@ export const resources: IResourceItem[] = [
         }
     },
     {
+        name: "formula",
+        list: "/formula",
+        create: "/formula/create",
+        show: "/dev_sample_categories/show/:id",
+        meta: {
+            label: "formula",
+            icon: <DashboardOutlined />,
+            dataProviderName: "laravel"
+        }
+    },
+    {
         name: "dev_sample",
         list: "/dev_sample",
         create: "/dev_sample/create",
