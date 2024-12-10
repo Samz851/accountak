@@ -92,6 +92,7 @@ import {
 import { useList } from '@refinedev/core';
 import { ITag } from '@/interfaces';
 import { Button, Form } from 'antd';
+import FormulaPlugin from './plugin/formulaEditor';
 
 // import './App.css';
 
@@ -177,6 +178,7 @@ export const StatementEditor = ({content, setContent}) =>{
 		licenseKey: VITE_CKEDITOR_KEY,
 		toolbar: {
 			items: [
+				'insertFormula',
 				'tags', 'accounts', 'transactions',
 				'insertTemplate',
 				'insertMergeField',
@@ -226,6 +228,7 @@ export const StatementEditor = ({content, setContent}) =>{
 			shouldNotGroupWhenFull: false
 		},
 		plugins: [
+			FormulaPlugin,
 			CloudServices,
 			AccessibilityHelp,
 			MergeFields,
@@ -299,6 +302,7 @@ export const StatementEditor = ({content, setContent}) =>{
 		],
 		balloonToolbar: ['insertTemplate','insertMergeField','tags', 'accounts', 'transactions', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
 		blockToolbar: [
+			'insertFormula',
 			'tags', 'accounts', 'transactions',
 			'insertMergeField',
 			'insertTemplate',
