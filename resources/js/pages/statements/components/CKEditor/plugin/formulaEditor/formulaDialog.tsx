@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Modal, Input, Button } from 'antd';
 
 interface FormulaDialogProps {
-    visible: boolean;
+    visible?: boolean;
     predefinedVariables: string[];
     onSubmit: (formula: string) => void;
-    onCancel: () => void;
+    onCancel?: () => void;
 }
 
-const FormulaDialog: React.FC<FormulaDialogProps> = ({ visible, predefinedVariables, onSubmit, onCancel }) => {
+const FormulaDialog: React.FC<FormulaDialogProps> = ({predefinedVariables, onSubmit}) => {
     const [formula, setFormula] = useState<string>('');
+    const [visible, setVisible] = useState<boolean>(true);
 
     const handleOk = () => {
         // Basic validation: check if formula contains only allowed variables
@@ -28,9 +29,10 @@ const FormulaDialog: React.FC<FormulaDialogProps> = ({ visible, predefinedVariab
     return (
         <Modal
             title="Insert Formula"
-            visible={visible}
+            destroyOnClose={true}
+            open={visible}
             onOk={handleOk}
-            onCancel={onCancel}
+            onCancel={() => setVisible(false)}
             okText="Insert"
             cancelText="Cancel"
         >

@@ -92,7 +92,7 @@ import {
 import { useList } from '@refinedev/core';
 import { ITag } from '@/interfaces';
 import { Button, Form } from 'antd';
-import FormulaPlugin from './plugin/formulaEditor';
+import FormulaPlugin from './plugin/formulaEditor/formulaEditor';
 
 // import './App.css';
 
