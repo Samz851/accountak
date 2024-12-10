@@ -2,6 +2,11 @@
 // import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 // import { Editor } from '@ckeditor/ckeditor5-core';
 import { Plugin, ButtonView, View } from 'ckeditor5'
+import React from 'react';
+import ReactComponent from './ReactComponent';
+import ReactDOM from 'react-dom';
+
+import { createRoot } from 'react-dom/client';
 
 
 export default class FormulaPlugin extends Plugin {
@@ -14,7 +19,10 @@ export default class FormulaPlugin extends Plugin {
     // }
 
     public init(): void {
+        const predefinedVariables: string[] = ['x', 'y', 'z']; // Define allowed variables
+
         const editor = this.editor;
+        const dialog = this.editor.plugins.get( 'Dialog' );
 
         // Add the formula button to the toolbar
         editor.ui.componentFactory.add('insertFormula', locale => {
@@ -28,37 +36,149 @@ export default class FormulaPlugin extends Plugin {
 
             // Open formula input dialog on click
             button.on('execute', () => {
-                this.openFormulaDialog();
+                // const dialog = this.editor.plugins.get( 'Dialog' );
+                if ( button.isOn ) {
+                    dialog.hide();
+                    button.isOn = false;
+        
+                    return;
+                }
+
+                button.isOn = true;
+                const textView = new View( locale );
+
+                textView.setTemplate( {
+                    tag: 'div',
+                    attributes: {
+                        style: {
+                            padding: 'var(--ck-spacing-large)',
+                            whiteSpace: 'initial',
+                            width: '100%',
+                            maxWidth: '500px'
+                        },
+                        tabindex: -1
+                    },
+                    children: [
+                        'This is a sample content of the modal.',
+                        'You can put here text, images, inputs, buttons, etc.'
+                    ]
+                } );
+
+                // Tell the plugin to display a modal with the title, content, and one action button.
+                dialog.show( {
+                    isModal: true,
+                    id: 'tags',
+                    title: 'Modal with text',
+                    content: textView,
+                    actionButtons: [
+                        {
+                            label: 'OK',
+                            class: 'ck-button-action',
+                            withText: true,
+                            onExecute: () => dialog.hide()
+                        }
+                    ],
+                    onHide() { button.isOn = false; }
+                } );
             });
 
             return button;
         });
     }
+    _createTagsModal(): HTMLElement {
+        const container = document.createElement('div');
+        const table = document.createElement('table');
+        // Implement your table logic here
 
-    private openFormulaDialog(): void {
-        const editor = this.editor;
-        const predefinedVariables: string[] = ['x', 'y', 'z']; // Define allowed variables
+        const select = document.createElement('select');
+        const option1 = document.createElement('option');
+        option1.value = 'tag1';
+        option1.text = 'Tag 1';
 
-        const formula = prompt(
-            'Enter your formula using predefined variables like {x}, {y}, {z}.\nExample: SUM({x}, {y})'
-        );
+        const option2 = document.createElement('option');
+        option2.value = 'tag2';
+        option2.text = 'Tag 2';
 
-        if (formula) {
-            const isValid = predefinedVariables.every(variable =>
-                formula.includes(`{${variable}}`) || !formula.includes('{')
-            );
+    
+        select.add(option1);
+        select.add(option2);
 
-            if (!isValid) {
-                alert('Invalid formula! Use only predefined variables like {x}, {y}, {z}.');
-                return;
-            }
+        table.appendChild(select);
+        container.appendChild(table);
 
-            editor.model.change(writer => {
-                const formulaText = writer.createText(`Formula: ${formula}`);
-                const formulaElement = writer.createElement('span', { class: 'formula' });
-                writer.append(formulaText, formulaElement);
-                editor.model.insertContent(formulaElement, editor.model.document.selection);
-            });
-        }
+        return container;
     }
+    _createReactComponent(): HTMLElement {
+        const container = document.createElement('div');
+        // Assuming you have a React component you want to render
+        const root = createRoot(container);
+        const reactElement = React.createElement(ReactComponent);
+        root.render(reactElement);
+
+        return container;
+    }
+
+    // openFormulaDialog(): void {
+
+    //     const textView = new View( locale );
+
+    //             textView.setTemplate( {
+    //                 tag: 'div',
+    //                 attributes: {
+    //                     style: {
+    //                         padding: 'var(--ck-spacing-large)',
+    //                         whiteSpace: 'initial',
+    //                         width: '100%',
+    //                         maxWidth: '500px'
+    //                     },
+    //                     tabindex: -1
+    //                 },
+    //                 children: [
+    //                     'This is a sample content of the modal.',
+    //                     'You can put here text, images, inputs, buttons, etc.'
+    //                 ]
+    //             } );
+
+    //             // Tell the plugin to display a modal with the title, content, and one action button.
+    //             dialog.show( {
+    //                 isModal: true,
+    //                 id: 'tags',
+    //                 title: 'Modal with text',
+    //                 content: textView,
+    //                 actionButtons: [
+    //                     {
+    //                         label: 'OK',
+    //                         class: 'ck-button-action',
+    //                         withText: true,
+    //                         onExecute: () => dialog.hide()
+    //                     }
+    //                 ],
+    //                 onHide() { buttonView.isOn = false; }
+    //             } );
+    //     const editor = this.editor;
+
+    //     const predefinedVariables: string[] = ['x', 'y', 'z']; // Define allowed variables
+
+    //     const formula = prompt(
+    //         'Enter your formula using predefined variables like {x}, {y}, {z}.\nExample: SUM({x}, {y})'
+    //     );
+
+    //     if (formula) {
+    //         const isValid = predefinedVariables.every(variable =>
+    //             formula.includes(`{${variable}}`) || !formula.includes('{')
+    //         );
+
+    //         if (!isValid) {
+    //             alert('Invalid formula! Use only predefined variables like {x}, {y}, {z}.');
+    //             return;
+    //         }
+
+    //         editor.model.change(writer => {
+    //             const formulaText = writer.createText(`Formula: ${formula}`);
+    //             const formulaElement = writer.createElement('span', { class: 'formula' });
+    //             writer.append(formulaText, formulaElement);
+    //             editor.model.insertContent(formulaElement, editor.model.document.selection);
+    //         });
+    //     }
+    // }
 }
