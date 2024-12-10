@@ -1,4 +1,5 @@
 import { axiosInstance } from "@refinedev/simple-rest";
+import { Input } from "antd";
 import { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -24,41 +25,37 @@ const saveFormula = async (name, formula) => {
 };
 
 
-const FormulaBuilder = () => {
-    const [formula, setFormula] = useState("");
+const FormulaBuilder = ({formula, setFormula}) => {
+    // const [formula, setFormula] = useState("");
     const fields = ["Total Income", "Total Expenses", "Account Balance"];
 
-    const [, drop] = useDrop({
-        accept: "field",
-        drop: (item: any) => setFormula((prev) => `${prev} ${item.name}`),
-    });
+    // const [, drop] = useDrop({
+    //     accept: "field",
+    //     drop: (item: any) => setFormula((prev) => `${prev} ${item.name}`),
+    // });
 
-    const Field = ({ name }) => {
-        const [, drag] = useDrag({
-            type: "field",
-            item: { name },
-        });
+    // const Field = ({ name }) => {
+    //     const [, drag] = useDrag({
+    //         type: "field",
+    //         item: { name },
+    //     });
 
-        return (
-            <div ref={drag} style={{ padding: "5px", border: "1px solid gray", margin: "5px" }}>
-                {name}
-            </div>
-        );
-    };
+    //     return (
+    //         <div ref={drag} style={{ padding: "5px", border: "1px solid gray", margin: "5px" }}>
+    //             {name}
+    //         </div>
+    //     );
+    // };
 
     return (
         <div>
-            <h3>Formula Builder</h3>
-            <div>
-                <h4>Available Fields</h4>
-                {fields.map((field, index) => (
-                    <Field key={index} name={field} />
-                ))}
-            </div>
-            <div ref={drop} style={{ border: "1px dashed gray", padding: "10px", minHeight: "50px" }}>
-                <strong>Formula:</strong> {formula || "Drag fields here to build a formula"}
-            </div>
-            <button onClick={() => console.log("Formula:", formula)}>Save Formula</button>
+            <p>Enter your formula using predefined variables like .</p>
+            <Input.TextArea
+                rows={4}
+                value={formula}
+                onChange={e => setFormula(e.target.value)}
+                placeholder="Example: SUM({x}, {y})"
+            />
         </div>
     );
 };

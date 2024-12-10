@@ -59,6 +59,12 @@ export interface ICompany {
     accounts?: IAccount[];
 }
 
+export interface IFormula {
+    id: number;
+    name: string;
+    formula: string;
+}
+
 // export type OptionsOutletContextType = {
 //     meta?: {
 //         id?: number;

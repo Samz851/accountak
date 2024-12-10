@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Input, Button } from 'antd';
+import FormulaBuilder from '@/components/formulaBuilder/formulaBuilder';
 
 interface FormulaDialogProps {
     visible?: boolean;
@@ -14,14 +15,14 @@ const FormulaDialog: React.FC<FormulaDialogProps> = ({predefinedVariables, onSub
 
     const handleOk = () => {
         // Basic validation: check if formula contains only allowed variables
-        const isValid = predefinedVariables.every(variable =>
-            formula.includes(`{${variable}}`) || !formula.includes('{')
-        );
+        // const isValid = predefinedVariables.every(variable =>
+        //     formula.includes(`{${variable}}`) || !formula.includes('{')
+        // );
 
-        if (!isValid) {
-            alert('Invalid formula! Use only predefined variables like {x}, {y}, {z}.');
-            return;
-        }
+        // if (!isValid) {
+        //     alert('Invalid formula! Use only predefined variables like {x}, {y}, {z}.');
+        //     return;
+        // }
 
         onSubmit(formula);
     };
@@ -36,13 +37,14 @@ const FormulaDialog: React.FC<FormulaDialogProps> = ({predefinedVariables, onSub
             okText="Insert"
             cancelText="Cancel"
         >
-            <p>Enter your formula using predefined variables like {predefinedVariables.map(v => `{${v}}`).join(', ')}.</p>
+            {/* <p>Enter your formula using predefined variables like {predefinedVariables.map(v => `{${v}}`).join(', ')}.</p>
             <Input.TextArea
                 rows={4}
                 value={formula}
                 onChange={e => setFormula(e.target.value)}
                 placeholder="Example: SUM({x}, {y})"
-            />
+            /> */}
+            <FormulaBuilder formula={formula} setFormula={setFormula} />
         </Modal>
     );
 };

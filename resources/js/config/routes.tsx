@@ -31,6 +31,7 @@ import { ReportEditPage } from "@/pages/statements/published/edit";
 import { ReportsList } from "@/pages/statements/published/list";
 import CustomCalculation from "@/pages/formula/create";
 import { ReportBuilder } from "@/pages/formula/createReport";
+import { FormulasList } from "@/pages/formula/list";
 
 const optionsLoader = () => {
     const identity = loadState('identity');
@@ -144,7 +145,7 @@ export const routes: ReactElement[] = [
         {/* <Route index element={<StatementBuilder />} /> */}
     </Route>,
     <Route path="/formula">
-        <Route index element={<AccountsBranchesListPage />} />
+        <Route index element={<FormulasList />} />
         <Route path="create" element={<ReportBuilder/>}/>
     </Route>,
     <Route path="/taxes">

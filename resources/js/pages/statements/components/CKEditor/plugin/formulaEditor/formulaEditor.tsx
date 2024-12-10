@@ -132,7 +132,7 @@ export default class FormulaPlugin extends Plugin {
         const handleSubmit = (formula: string) => {
             // closeDialog();
             this.editor.model.change(writer => {
-                const formulaText = writer.createText(`Formula: ${formula}`);
+                const formulaText = writer.createText(`ƒƒ${formula}ƒƒ`);
                 const formulaElement = writer.createElement('span', { class: 'formula' });
                 writer.append(formulaText, formulaElement);
                 this.editor.model.insertContent(formulaElement, this.editor.model.document.selection);

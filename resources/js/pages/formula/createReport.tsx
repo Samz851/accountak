@@ -1,3 +1,8 @@
+import FormulaBuilder from "@/components/formulaBuilder/formulaBuilder";
+import { IFormula } from "@/interfaces";
+import { Create, useForm } from "@refinedev/antd";
+import { HttpError, useGo } from "@refinedev/core";
+import { Form, Input } from "antd";
 import { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -26,31 +31,87 @@ const Canvas = ({ onDrop }) => {
         </div>
     );
 };
-
+type FormValues = {
+    name: string;
+    formula: string;
+}
 export const ReportBuilder = () => {
+    const [formula, setFormula] = useState<string>('');
+
     const [fields, setFields] = useState<any[]>([]);
+    const go = useGo();
+    const { form, formProps, onFinish, formLoading, saveButtonProps } = useForm<IFormula, HttpError, FormValues
+    >({
+        action: "create",
+        warnWhenUnsavedChanges: true,
+        resource: "formula",
+        redirect: false,
+    });
 
     const handleDrop = (field) => {
         setFields((prev) => [...prev, field]);
     };
 
     return (
-        <div style={{ display: "flex" }}>
-            <div>
-                <h3>Field List</h3>
-                <Field name="Account Name" />
-                <Field name="Account Type" />
-                <Field name="Account Balance" />
-            </div>
-            <div>
-                <h3>Design Canvas</h3>
-                <Canvas onDrop={handleDrop} />
-                <ul>
-                    {fields.map((field, index) => (
-                        <li key={index}>{field}</li>
-                    ))}
-                </ul>
-            </div>
-        </div>
+        <Create saveButtonProps={saveButtonProps}>
+
+        
+        <Form
+            {...formProps}
+            layout="vertical"
+            onFinish={async (values) => {
+                try {
+                    const data = await onFinish({
+                        name: values.name,
+                        formula: values.formula
+                    });
+                    close();
+                    // go({
+                    //     to:
+                    //         searchParams.get("to") ??
+                    //         getToPath({
+                    //             action: "list",
+                    //         }) ??
+                    //         "",
+                    //     query: {
+                    //         to: undefined,
+                    //     },
+                    //     options: {
+                    //         keepQuery: true,
+                    //     },
+                    //     type: "replace",
+                    // });
+
+                } catch (error) {
+                    Promise.reject(error);
+                }
+            }}
+            >
+                <Form.Item
+                    label="Name"
+                    name="name"
+                    rules={[{ required: true }]}
+                >
+                    <Input placeholder="Title" />
+                </Form.Item>
+                <Form.Item
+                    label="Formula"
+                    name="formula"
+                    rules={[{required: true}]}
+                >
+                <FormulaBuilder formula={formula} setFormula={setFormula} />
+
+                </Form.Item>
+            </Form>
+            {/* <PageBuilderComponent 
+                config={SampleConfig} 
+                data={defaultData}
+                // overrides={{
+                //     header: Header
+                // }}
+                onPublish={(data) => console.log(data)} 
+            >
+            </PageBuilderComponent> */}
+        </Create>
     );
 };
