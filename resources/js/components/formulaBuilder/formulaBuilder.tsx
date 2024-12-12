@@ -151,19 +151,26 @@ const FormulaBuilder = ({formula, setFormula}) => {
     ];
 
     const handleSearch = (text, prefix) => {
-        console.log(`text: ${text}, prefix: ${prefix}`);
-        setTrigger(prefix)
-        if ( prefix === '@' ) {
-            setMentions([...formulaOptions.map(item => ({key: `${item.value}()`, label: item.label}))]);
-        } else if ( prefix === '{{' ) {
-            setMentions([...branchesSelectProps?.options?.map(item => ({key: item.value, label: item.label})) || []]);
+        if (/^[A-Za-z]+$/.test(text.at(- 1) || '') === false)
+        {
+            setTrigger(prefix)
+            if ( prefix === '@' ) {
+                console.log('prefix',prefix);
+                setMentions([...formulaOptions.map(item => ({key: `${item.value}()`, label: item.label}))]);
+            } else if ( prefix === '{{' ) {
+                console.log('prefix',prefix);
+                setMentions([...branchesSelectProps?.options?.map(item => ({key: item.value, label: item.label})) || []]);
+            }
         }
+        console.log(/^[A-Za-z]+$/.test(text.at(- 1) || ''),`search text: ${text}`, `prefix: ${prefix}`);
+        
     }
 
     const handleSelect = (option, prefix) => {
         let newFormula = '';
 
         if ( prefix === '{{' ) {
+            console.log('formula',formula);
             if ( formula.endsWith(')') ) {
                 newFormula = `${formula.slice(0, formula.length - 1)}${option.key}}}${formula.slice(formula.length-1)}`;
             }
@@ -174,7 +181,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
         else {
             newFormula = `${formula.replace('@','')}${option.key}`;
         }
-        console.log(option, formula, newFormula,textAreaRef.current?.textarea?.textLength,textAreaRef.current?.textarea?.selectionStart, textAreaRef.current?.textarea?.selectionEnd);
+        // console.log(option, formula, newFormula,textAreaRef.current?.textarea?.textLength,textAreaRef.current?.textarea?.selectionStart, textAreaRef.current?.textarea?.selectionEnd);
         setFormula(newFormula);
         // if ( prefix === '@' )
         // {
@@ -190,20 +197,18 @@ const FormulaBuilder = ({formula, setFormula}) => {
     }
 
     useEffect(()=>{
-        console.log('formula',formula);
-        if ( trigger === '@' )
+        // console.log('formula',formula);
+        if ( formula.endsWith(')') )
             {
-                console.log(`usef:${trigger}`,formula,textAreaRef.current?.textarea?.textContent,textAreaRef.current?.textarea?.textLength,textAreaRef.current?.textarea?.selectionStart, textAreaRef.current?.textarea?.selectionEnd);
                 if ( textAreaRef.current?.textarea?.selectionEnd ) {
                     // textAreaRef.current.textarea.value = newFormula;
                     textAreaRef.current.textarea.selectionStart = formula.length - 1;
                     textAreaRef.current.textarea.selectionEnd = formula.length - 1;
-                    console.log(textAreaRef.current);
+                    // console.log(textAreaRef.current);
     
                 }
             }
-        else if ( trigger === '{{' ) {
-            console.log(`usef:${trigger}`,formula,textAreaRef.current?.textarea?.textContent,textAreaRef.current?.textarea?.textLength,textAreaRef.current?.textarea?.selectionStart, textAreaRef.current?.textarea?.selectionEnd);
+        else {
             if ( textAreaRef.current?.textarea?.selectionEnd ) {
                 // textAreaRef.current.textarea.value = newFormula;
                 textAreaRef.current.textarea.selectionStart = formula.length;
@@ -211,10 +216,10 @@ const FormulaBuilder = ({formula, setFormula}) => {
                 // console.log(textAreaRef.current);
             }
         }
-        console.log('formula1',formula,textAreaRef.current);
+        // console.log('formula1',formula,textAreaRef.current);
     }, [formula])
     const handleChange = (value) => {
-        console.log('change',trigger,value, formula,textAreaRef.current);
+        // console.log('change',trigger,value, formula,textAreaRef.current);
         setFormula(value);
     }
 
@@ -280,8 +285,20 @@ const FormulaBuilder = ({formula, setFormula}) => {
                     onSearch={handleSearch}
                     onSelect={handleSelect}
                     onChange={handleChange}
-                    filterOption={(input, option) => 
-                        (option!.key as string).toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                    // validateSearch={(text, split)=>{
+                    //     console.log(`text:${text},split:${split}`);
+                    //     return /^[A-Za-z]+$/.test(text.at(- 1) || '') ? true : false;
+                    // }}
+                    filterOption={(input, option) => {
+                        console.log(`input:${input},option:${option}`);
+                        if (input.length > 0 && /^[A-Za-z0-9]+$/.test(input.at(- 1) || '')) {
+                            console.log(`length: ${input.length}  test: ${/^[AZa-z]+$/.test(input.at(- 1) || '')}`);
+                            return (option!.key as string).toLowerCase().startsWith(input.toLowerCase())
+                        }
+                        return true;
+                    }
+                }
+                        
                     // onChange={e => setSearchTerm(e)}
                     // onSelect={(value) => setFormula(prev => `${prev} ${value}`)}
                 />
