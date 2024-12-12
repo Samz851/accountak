@@ -6,31 +6,31 @@ import { Form, Input } from "antd";
 import { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-const Field = ({ name }) => {
-    const [, drag] = useDrag({
-        type: "field",
-        item: { name },
-    });
+// const Field = ({ name }) => {
+//     const [, drag] = useDrag({
+//         type: "field",
+//         item: { name },
+//     });
 
-    return (
-        <div ref={drag} style={{ padding: "10px", border: "1px solid gray", margin: "5px" }}>
-            {name}
-        </div>
-    );
-};
+//     return (
+//         <div ref={drag} style={{ padding: "10px", border: "1px solid gray", margin: "5px" }}>
+//             {name}
+//         </div>
+//     );
+// };
 
-const Canvas = ({ onDrop }) => {
-    const [, drop] = useDrop({
-        accept: "field",
-        drop: (item: any) => onDrop(item.name as any),
-    });
+// const Canvas = ({ onDrop }) => {
+//     const [, drop] = useDrop({
+//         accept: "field",
+//         drop: (item: any) => onDrop(item.name as any),
+//     });
 
-    return (
-        <div ref={drop} style={{ border: "1px dashed gray", minHeight: "200px", padding: "10px" }}>
-            Drop Fields Here
-        </div>
-    );
-};
+//     return (
+//         <div ref={drop} style={{ border: "1px dashed gray", minHeight: "200px", padding: "10px" }}>
+//             Drop Fields Here
+//         </div>
+//     );
+// };
 type FormValues = {
     name: string;
     formula: string;
