@@ -191,6 +191,11 @@ const FormulaInput = ({formula, setFormula}) => {
         setFormula(value);
     }
 
+    const handleChangeOnSelect = (trigger, slug) => {
+        console.log(trigger, slug);
+        return trigger === '@' ? slug : `{{${slug}}}`;
+    }
+
     // useEffect(()=>{
 
     //     setTimeout(()=>{
@@ -203,13 +208,17 @@ const FormulaInput = ({formula, setFormula}) => {
             <Space direction="vertical" style={{ width: '100%' }}>
                 
                 <TextInput 
+                    value={formula}
+                    spacer={''}
                     trigger={['@','{{']} 
+                    maxOptions={0}
                     options={mentions} 
-                    changeOnSelect={(trigger, slug) => { console.log(trigger, slug); return slug}}
+                    changeOnSelect={handleChangeOnSelect}
                     onSelect={(value) => { 
                         console.log(value);
                         console.log(accountSelectProps, mentions);
                     }}
+                    onChange={handleChange}
                 />
             </Space>
         </div>

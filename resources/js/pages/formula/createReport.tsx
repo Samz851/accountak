@@ -4,7 +4,7 @@ import { IFormula } from "@/interfaces";
 import { Create, useForm } from "@refinedev/antd";
 import { HttpError, useGo } from "@refinedev/core";
 import { Form, Input } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 // const Field = ({ name }) => {
@@ -52,6 +52,12 @@ export const ReportBuilder = () => {
     const handleDrop = (field) => {
         setFields((prev) => [...prev, field]);
     };
+
+    useEffect(() => {
+        console.log(formula);
+        console.log(form.getFieldValue('formula'), form.getFieldsValue());
+        form?.setFieldValue('formula', formula);
+    },[formula])
 
     return (
         <Create saveButtonProps={saveButtonProps}>
