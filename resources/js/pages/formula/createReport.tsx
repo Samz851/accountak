@@ -1,4 +1,5 @@
 import FormulaBuilder from "@/components/formulaBuilder/formulaBuilder";
+import FormulaInput from "@/components/formulaBuilder/formulaInput";
 import { IFormula } from "@/interfaces";
 import { Create, useForm } from "@refinedev/antd";
 import { HttpError, useGo } from "@refinedev/core";
@@ -99,7 +100,8 @@ export const ReportBuilder = () => {
                     name="formula"
                     rules={[{required: true}]}
                 >
-                <FormulaBuilder formula={formula} setFormula={setFormula} />
+                {/* <FormulaBuilder formula={formula} setFormula={setFormula} /> */}
+                <FormulaInput formula={formula} setFormula={setFormula} />
 
                 </Form.Item>
             </Form>
