@@ -10,6 +10,8 @@ import { MentionsOptionProps, MentionsRef, OptionProps } from 'antd/es/mentions'
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 
+ const { TextArea } = Input;
+
 
 const FormulaInput = ({formula, setFormula}) => {
     // Options for different autocompletes
@@ -208,6 +210,7 @@ const FormulaInput = ({formula, setFormula}) => {
             <Space direction="vertical" style={{ width: '100%' }}>
                 
                 <TextInput 
+                    // Component={TextArea}
                     value={formula}
                     spacer={''}
                     trigger={['@','{{']} 

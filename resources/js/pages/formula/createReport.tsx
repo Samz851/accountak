@@ -36,7 +36,7 @@ type FormValues = {
     name: string;
     formula: string;
 }
-export const ReportBuilder = () => {
+export const CreateFormula = () => {
     const [formula, setFormula] = useState<string>('');
 
     const [fields, setFields] = useState<any[]>([]);
