@@ -107,7 +107,7 @@ export const CreateFormula = () => {
                     rules={[{required: true}]}
                 >
                 {/* <FormulaBuilder formula={formula} setFormula={setFormula} /> */}
-                <FormulaInput formula={formula} setFormula={setFormula} />
+                <FormulaBuilder formula={formula} setFormula={setFormula} />
 
                 </Form.Item>
             </Form>

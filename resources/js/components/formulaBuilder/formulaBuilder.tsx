@@ -1,12 +1,17 @@
 import { Request } from "@/helpers/httpHelper";
-import { IAccount, IAccountsBranch, ITransaction } from "@/interfaces";
-import { useSelect } from "@refinedev/antd";
+import { IAccount, IAccountsBranch, ITag, ITransaction } from "@/interfaces";
+import { useSelect, useTable } from "@refinedev/antd";
 import { useApiUrl } from "@refinedev/core";
 import { axiosInstance } from "@refinedev/simple-rest";
-import { AutoComplete, Input, Mentions, Space } from "antd";
+import { AutoComplete, Input, Mentions, Space, TreeSelect } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { MentionsOptionProps, MentionsRef, OptionProps } from 'antd/es/mentions';
+import type { GetProp, TreeSelectProps } from 'antd';
+
+
+type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
+
 
 const validateFormula = async (formula) => {
     try {
@@ -48,50 +53,36 @@ const FormulaBuilder = ({formula, setFormula}) => {
       }
     }
 
-    const {selectProps: accountSelectProps} = useSelect<IAccount>({
+    const { tableProps: accountTableProps, filters, setFilters } = useTable<IAccount>({
         resource: "accounts",
-        optionLabel: "code" as any,
-        optionValue: "code" as any,
-        filters: [{
-            field: "type",
-            operator: "eq",
-            value: "account",
-        }]
-    })
+        filters: {
+            initial: [{
+                field: "type",
+                operator: "eq",
+                value: "all",
+            }]
+        },
+        sorters: {
+            mode: "off",
+        },
+        syncWithLocation: false,
+        pagination: {
+            mode: "off"
+          },
+    });
 
-    const {selectProps: branchesSelectProps} = useSelect<IAccountsBranch>({
-        resource: "accounts",
-        optionLabel: "code" as any,
-        optionValue: "code" as any,
-        filters: [{
-            field: "type",
-            operator: "eq",
-            value: "branch",
-        }]
-    })
-
-    const {selectProps: transactionSelectProps} = useSelect<ITransaction>({
-        resource: "transactions",
-        optionLabel: "name" as any,
-        optionValue: "name" as any
+    const {selectProps: tagsSelectProps} = useSelect<ITag>({
+        resource: "tags",
+        optionLabel: "label" as any,
+        optionValue: "label" as any
     })
 
     const [mentions, setMentions] = useState<any[]>([]);
 
-    
-    // useEffect(()=>{
-    //     console.log(accountSelectProps.options);
-    // },[accountSelectProps])
-
-    // const transactionOptions = [
-    //     { value: 'TotalTransactions', label: 'Total Transactions' },
-    //     { value: 'LastMonthTransactions', label: 'Last Month Transactions' },
-    // ];
-
-    // const accountOptions = [
-    //     { value: 'CashAccount', label: 'Cash Account' },
-    //     { value: 'BankAccount', label: 'Bank Account' },
-    // ];
+    const accountOptions = accountTableProps.dataSource?.map(account => ({
+        label: account.code,
+        value: account.code
+    })) || [];
 
     const formulaOptions = [
         { label: 'ABS', value: 'ABS' },
@@ -150,16 +141,16 @@ const FormulaBuilder = ({formula, setFormula}) => {
         { label: 'TRUNC', value: 'TRUNC' }
     ];
 
-    const handleSearch = (value) => {
-        if ( value === '@') {
-            setMentions([...formulaOptions.map(item => ({key: `${item.value}()`, label: item.label}))]);
-        } else if ( value === '{{') {
-            setMentions([...branchesSelectProps?.options?.map(item => ({key: item.value, label: item.label})) || []]);
-        }
-        // console.log(`search value: ${value}`);
-        // setFormula(value);
+    // const handleSearch = (value) => {
+    //     if ( value === '@') {
+    //         setMentions([...formulaOptions.map(item => ({key: `${item.value}()`, label: item.label}))]);
+    //     } else if ( value === '{{') {
+    //         setMentions([...branchOptions?.map(item => ({key: item.value, label: item.label})) || []]);
+    //     }
+    //     // console.log(`search value: ${value}`);
+    //     // setFormula(value);
         
-    }
+    // }
 
     const handleSelect = (value, option) => {
         // let newFormula = '';
@@ -231,10 +222,73 @@ const FormulaBuilder = ({formula, setFormula}) => {
     //     }, 3000)
     // },[formula])
 
+    // Transform account data into TreeSelect format
+    const [accountTreeData, setAccountTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>([
+        { id: 1, pId: 0, value: '1', title: 'Expand to load' },
+        { id: 2, pId: 0, value: '2', title: 'Expand to load' },
+        { id: 3, pId: 0, value: '3', title: 'Tree Node', isLeaf: true },
+      ]);
+    // const accountTreeData: Omit<DefaultOptionType, 'label'>[] = accountTableProps.dataSource?.map(account => ({
+    //     title: account.code,
+    //     value: account.code,
+    //     key: account.id,
+    //     isLeaf: account.taxonomy === 'leaf' ? true : false,
+    //     pId: account.parent_id ? account.parent_id : 0
+    // })) || [];
+
+    const formatAccountTreeData = (data: IAccount[]) => {
+        return data.map(account => ({
+            title: account.code,
+            value: account.code,
+            isLeaf: account.taxonomy === 'leaf' ? true : false,
+            pId: account.parent_id ? account.parent_id : 0,
+            id: account.id
+        }));
+    }
+
+    const [ selectedAccount, setSelectedAccount ] = useState<DefaultOptionType | null>(null);
+
+    useEffect(()=>{
+        console.log('record',selectedAccount);
+                if ( ! selectedAccount?.isLeaf ) {
+                    console.log('record.isLeaf',selectedAccount?.isLeaf);
+                setFilters([
+                    {
+                        field: 'type',
+                        operator: 'eq',
+                        value: 'all',
+                    },
+                    {
+                        field: 'parent',
+                        operator: 'eq',
+                        value: selectedAccount?.id,
+                        
+                    }
+                ], 'replace');
+            }
+    },[selectedAccount])
+    useEffect(()=>{
+        console.log('accountTableProps.dataSource',accountTableProps.dataSource);
+        if ( ! accountTableProps.loading ) {
+            setAccountTreeData([...accountTreeData, ...formatAccountTreeData(accountTableProps.dataSource as any)]);
+        }
+    },[accountTableProps.dataSource])
+
+
+    const onLoadData: TreeSelectProps['loadData'] = (record) => {
+        console.log('record',record);
+        return new Promise((resolve) => {
+                
+            setTimeout(()=>{
+                setSelectedAccount(record);
+            resolve(undefined);
+        }, 300)});
+        
+    };
     return (
         <div>
             <Space direction="vertical" style={{ width: '100%' }}>
-                {/* <Space>
+                <Space>
                     <AutoComplete
                         options={formulaOptions}
                         style={{ width: 200 }}
@@ -244,23 +298,25 @@ const FormulaBuilder = ({formula, setFormula}) => {
                             (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     />
                     <AutoComplete
-                        options={transactionSelectProps.options}
+                        options={tagsSelectProps.options}
                         style={{ width: 200 }}
-                        placeholder="Transactions"
+                        placeholder="Tags"
                         onSelect={(value) => setFormula(prev => `${prev} ${value}`)}
                         filterOption={(inputValue, option) => 
                             (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     />
-                    <AutoComplete
-                        options={accountSelectProps.options}
+                    <TreeSelect
                         style={{ width: 200 }}
                         placeholder="Accounts"
+                        treeData={accountTreeData}
+                        loadData={onLoadData}
                         onSelect={(value) => setFormula(prev => `${prev} ${value}`)}
-                        filterOption={(inputValue, option) => 
-                            (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-
+                        showSearch
+                        filterTreeNode={(search, item) => 
+                            (item?.title as any).toLowerCase().indexOf(search.toLowerCase()) >= 0
+                        }
                     />
-                    <AutoComplete
+                    {/* <AutoComplete
                         options={branchesSelectProps.options}
                         style={{ width: 200 }}
                         placeholder="Formulas"
@@ -268,9 +324,9 @@ const FormulaBuilder = ({formula, setFormula}) => {
                         filterOption={(inputValue, option) => 
                             (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
 
-                    />
-                </Space> */}
-                <AutoComplete
+                    /> */}
+                </Space>
+                {/* <AutoComplete
                     options={mentions}
                     value={formula}
                     style={{ width: 200 }}
@@ -290,14 +346,14 @@ const FormulaBuilder = ({formula, setFormula}) => {
                     }
                         
                 }
-                >
+                > */}
                 <Input.TextArea
                     rows={4}
                     value={formula}
                     // onChange={e => console.log(e.target.value)}
                     placeholder="Example: SUM({x}, {y})"
                 />
-                </AutoComplete>
+                {/* </AutoComplete> */}
                 
                 {/* <Mentions
                     ref={textAreaRef}
