@@ -3,11 +3,12 @@ import { IAccount, IAccountsBranch, ITag, ITransaction } from "@/interfaces";
 import { useSelect, useTable } from "@refinedev/antd";
 import { useApiUrl } from "@refinedev/core";
 import { axiosInstance } from "@refinedev/simple-rest";
-import { AutoComplete, Input, Mentions, Space, TreeSelect } from "antd";
+import { AutoComplete, Input, Mentions, Select, Space, TreeSelect } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { MentionsOptionProps, MentionsRef, OptionProps } from 'antd/es/mentions';
 import type { GetProp, TreeSelectProps } from 'antd';
+import { TextAreaRef } from "antd/es/input/TextArea";
 
 
 type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
@@ -37,7 +38,7 @@ const saveFormula = async (name, formula) => {
 const { getMentions } = Mentions;
 const FormulaBuilder = ({formula, setFormula}) => {
     // Options for different autocompletes
-    const textAreaRef = useRef<MentionsRef>(null);
+    const textAreaRef = useRef<TextAreaRef>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [ trigger, setTrigger ] = useState('');
 
@@ -48,7 +49,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
         let url = `${apiUrl}/accounts/search`;
         let res = await Request('GET', url, null, {params:{code: searchTerm}});
         if ( res.data.success ) {
-          setSearchResults([...res.data.result]);
+          setAccountTreeData([...formatAccountTreeData(res.data.result)]);
         }
       }
     }
@@ -182,36 +183,36 @@ const FormulaBuilder = ({formula, setFormula}) => {
         // // }
         const newFormula = `${formula.replace('@','')}${option.key}`;
         setFormula(newFormula);
-        console.log(`selectvalue: ${value}, formula: ${newFormula},option:`,option);
+        // console.log(`selectvalue: ${value}, formula: ${newFormula},option:`,option);
     }
 
-    useEffect(()=>{
-        // console.log('formula',formula);
-        if ( formula.endsWith(')') )
-            {
-                if ( textAreaRef.current?.textarea?.selectionEnd ) {
-                    // textAreaRef.current.textarea.value = newFormula;
-                    textAreaRef.current.textarea.selectionStart = formula.length - 1;
-                    textAreaRef.current.textarea.selectionEnd = formula.length - 1;
-                    // console.log(textAreaRef.current);
+    // useEffect(()=>{
+    //     // console.log('formula',formula);
+    //     if ( formula.endsWith(')') )
+    //         {
+    //             if ( textAreaRef.current?.textarea?.selectionEnd ) {
+    //                 // textAreaRef.current.textarea.value = newFormula;
+    //                 textAreaRef.current.textarea.selectionStart = formula.length - 1;
+    //                 textAreaRef.current.textarea.selectionEnd = formula.length - 1;
+    //                 // console.log(textAreaRef.current);
     
-                }
-            }
-        else {
-            if ( textAreaRef.current?.textarea?.selectionEnd ) {
-                // textAreaRef.current.textarea.value = newFormula;
-                textAreaRef.current.textarea.selectionStart = formula.length;
-                textAreaRef.current.textarea.selectionEnd = formula.length;
-                // console.log(textAreaRef.current);
-            }
-        }
-        // console.log('formula1',formula,textAreaRef.current);
-    }, [formula])
+    //             }
+    //         }
+    //     else {
+    //         if ( textAreaRef.current?.textarea?.selectionEnd ) {
+    //             // textAreaRef.current.textarea.value = newFormula;
+    //             textAreaRef.current.textarea.selectionStart = formula.length;
+    //             textAreaRef.current.textarea.selectionEnd = formula.length;
+    //             // console.log(textAreaRef.current);
+    //         }
+    //     }
+    //     // console.log('formula1',formula,textAreaRef.current);
+    // }, [formula])
     const handleChange = (value) => {
 
         // console.log('change',trigger,value, formula,textAreaRef.current);
         // setFormula(value);
-        console.log(`change value: ${value}`);
+        // console.log(`change value: ${value}`);
         setFormula(value);
     }
 
@@ -226,7 +227,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
             title: account.code,
             value: account.code,
             key: account.code,
-            isLeaf: account.taxonomy === 'leaf' ? true : false,
+            isLeaf: ! account.has_children,
             pId: account.parent_id ? account.parent_id : 0,
             id: account.id
         })) ?? [];
@@ -246,9 +247,9 @@ const FormulaBuilder = ({formula, setFormula}) => {
     const [ selectedAccount, setSelectedAccount ] = useState<DefaultOptionType | null>(null);
 
     useEffect(()=>{
-        console.log('record',selectedAccount);
+        // console.log('record',selectedAccount);
                 if ( ! selectedAccount?.isLeaf ) {
-                    console.log('record.isLeaf',selectedAccount?.isLeaf);
+                    // console.log('record.isLeaf',selectedAccount?.isLeaf);
                 setFilters([
                     {
                         field: 'type',
@@ -268,21 +269,53 @@ const FormulaBuilder = ({formula, setFormula}) => {
         console.log('accountTableProps.dataSource',accountTableProps.dataSource);
         if ( ! accountTableProps.loading ) {
             setAccountTreeData([...accountTreeData, ...formatAccountTreeData(accountTableProps.dataSource as any)]);
+            console.log('accountTreeData',accountTreeData);
+
         }
     },[accountTableProps.dataSource])
 
 
     const onLoadData: TreeSelectProps['loadData'] = (record) => {
-        console.log('record',record);
+        // console.log('record',record);
         return new Promise((resolve) => {
                 
             setTimeout(()=>{
-                console.log('accountTreeData',accountTreeData);
                 setSelectedAccount(record);
             resolve(undefined);
         }, 300)});
         
     };
+    useEffect(()=>{
+        console.log(searchTerm);
+        console.log('accountTreeData',accountTreeData);
+        getData()
+    }, [searchTerm])
+
+    const handleSearch = (searchValue: string) => {
+        // First try to filter existing treeData
+        console.log('searchValue',searchValue);
+        console.log('accountTreeData',accountTreeData);
+
+        const filteredData = accountTreeData.filter(item => 
+            (item.title as string).toLowerCase().includes(searchValue.toLowerCase())
+        );
+        console.log('filteredData',filteredData);
+        // If no results found in existing data, trigger API search
+        if (filteredData.length === 0) {
+            setSearchTerm(searchValue);
+        }
+    };
+
+    const handleTagsSelect = (value) => {
+        setFormula(prev => `${prev}{{${value}}}`);
+        textAreaRef.current?.focus();
+    }
+
+    const handleAccountsSelect = (value) => {
+        setFormula(prev => `${prev}{{${value}}}`);
+        textAreaRef.current?.focus();
+    }
+
     return (
         <div>
             <Space direction="vertical" style={{ width: '100%' }}>
@@ -295,25 +328,28 @@ const FormulaBuilder = ({formula, setFormula}) => {
                         filterOption={(inputValue, option) => 
                             (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     />
-                    <AutoComplete
+                    <Select
+                        showSearch
                         options={tagsSelectProps.options}
                         style={{ width: 200 }}
                         placeholder="Tags"
-                        onSelect={(value) => setFormula(prev => `${prev} ${value}`)}
+                        onSelect={handleTagsSelect}
                         filterOption={(inputValue, option) => 
                             (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     />
                     <TreeSelect
                         treeDataSimpleMode
                         style={{ width: 200 }}
+                        popupMatchSelectWidth={false}
                         placeholder="Accounts"
                         treeData={accountTreeData}
                         loadData={onLoadData}
-                        onSelect={(value) => setFormula(prev => `${prev} ${value}`)}
+                        onSelect={handleAccountsSelect}
                         showSearch
                         filterTreeNode={(search, item) => 
                             (item?.title as any).toLowerCase().indexOf(search.toLowerCase()) >= 0
                         }
+                        onSearch={handleSearch}
                     />
                     {/* <AutoComplete
                         options={branchesSelectProps.options}
@@ -349,7 +385,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
                 <Input.TextArea
                     rows={4}
                     value={formula}
-                    // onChange={e => console.log(e.target.value)}
+                    onChange={e => setFormula(e.target.value)}
                     placeholder="Example: SUM({x}, {y})"
                 />
                 {/* </AutoComplete> */}
