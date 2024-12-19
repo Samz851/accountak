@@ -221,13 +221,19 @@ const FormulaBuilder = ({formula, setFormula}) => {
     //         console.log('timeout', formula,textAreaRef.current);
     //     }, 3000)
     // },[formula])
+    const formatAccountTreeData = (data: IAccount[]) => {
+        return data?.map(account => ({
+            title: account.code,
+            value: account.code,
+            key: account.code,
+            isLeaf: account.taxonomy === 'leaf' ? true : false,
+            pId: account.parent_id ? account.parent_id : 0,
+            id: account.id
+        })) ?? [];
+    }
 
     // Transform account data into TreeSelect format
-    const [accountTreeData, setAccountTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>([
-        { id: 1, pId: 0, value: '1', title: 'Expand to load' },
-        { id: 2, pId: 0, value: '2', title: 'Expand to load' },
-        { id: 3, pId: 0, value: '3', title: 'Tree Node', isLeaf: true },
-      ]);
+    const [accountTreeData, setAccountTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>([...formatAccountTreeData(accountTableProps?.dataSource as any) ?? []]);
     // const accountTreeData: Omit<DefaultOptionType, 'label'>[] = accountTableProps.dataSource?.map(account => ({
     //     title: account.code,
     //     value: account.code,
@@ -236,16 +242,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
     //     pId: account.parent_id ? account.parent_id : 0
     // })) || [];
 
-    const formatAccountTreeData = (data: IAccount[]) => {
-        return data.map(account => ({
-            title: account.code,
-            value: account.code,
-            isLeaf: account.taxonomy === 'leaf' ? true : false,
-            pId: account.parent_id ? account.parent_id : 0,
-            id: account.id
-        }));
-    }
-
+    
     const [ selectedAccount, setSelectedAccount ] = useState<DefaultOptionType | null>(null);
 
     useEffect(()=>{
@@ -280,6 +277,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
         return new Promise((resolve) => {
                 
             setTimeout(()=>{
+                console.log('accountTreeData',accountTreeData);
                 setSelectedAccount(record);
             resolve(undefined);
         }, 300)});
@@ -306,6 +304,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
                             (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                     />
                     <TreeSelect
+                        treeDataSimpleMode
                         style={{ width: 200 }}
                         placeholder="Accounts"
                         treeData={accountTreeData}
