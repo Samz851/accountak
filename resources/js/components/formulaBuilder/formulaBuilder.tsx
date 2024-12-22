@@ -26,7 +26,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
         let res = await Request('GET', url, null, {params:{code: searchTerm}});
         if ( res.data.success ) {
             const newTreeData = formatAccountTreeData(res.data.result)
-            console.log('new result', newTreeData)
+            // console.log('new result', newTreeData)
           setAccountTreeData([...newTreeData]);
         }
       }
@@ -56,9 +56,24 @@ const FormulaBuilder = ({formula, setFormula}) => {
         optionValue: "label" as any
     })
 
+    const {selectProps: transactionsSelectProps} = useSelect<ITransaction>({
+        resource: "transactions",
+        optionLabel: "code" as any,
+        optionValue: "id" as any,
+        searchField: "code" as any,
+        onSearch: (value) => [
+            {
+              field: "code",
+              operator: "startswith",
+              value,
+            },
+          ],
+        
+    })
+
     const formatAccountTreeData = (data: IAccount[]) => {
         return data?.map(account => {
-            console.log('account', account)
+            // console.log('account', account)
             return {
             title: account.code,
             value: account.code,
@@ -78,10 +93,10 @@ const FormulaBuilder = ({formula, setFormula}) => {
     
 
     useEffect(()=>{
-        console.log('tree data', accountTableProps.dataSource)
+        // console.log('tree data', accountTableProps.dataSource)
         if ( ! accountTableProps.loading) {
             const newAccountData = formatAccountTreeData(accountTableProps.dataSource as any)
-            console.log('new account data', newAccountData)
+            // console.log('new account data', newAccountData)
             setAccountTreeData([...accountTreeData, ...newAccountData]);
 
         }
@@ -91,7 +106,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
     const onLoadData: TreeSelectProps['loadData'] = (record) => {
         const account = accountTreeData.find(account => account.id === record.id);
 
-        console.log('record',record, account);
+        // console.log('record',record, account);
         setSelectedAccount(record);
         if (account && ! account.isLeaf) {
             setFilters([
@@ -141,9 +156,16 @@ const FormulaBuilder = ({formula, setFormula}) => {
             cursor: 'end',
           });
     }
+    const handleTransactionSelect = (value) => {
+
+        setFormula(prev => `${prev}{{${value}}}`);
+        textAreaRef.current?.focus({
+            cursor: 'end',
+          });
+    }
 
     const handleAccountsSelect = (value) => {
-        console.log('ref',textAreaRef);
+        // console.log('ref',textAreaRef);
         setFormula(prev => `${prev}{{${value}}}`);
         setFilters([
             {
@@ -195,6 +217,18 @@ const FormulaBuilder = ({formula, setFormula}) => {
                         }
                         onSearch={handleSearch}
                     />
+                    <Select
+                        {...transactionsSelectProps}
+                        filterOption={(inputValue, option) => {
+                            // console.log('option', option);
+                            return (option!.label as string).toUpperCase().startsWith(inputValue.toUpperCase())
+                        }
+                        }
+                        style={{ width: 200 }}
+                        placeholder="Transactions"
+                        showSearch
+                        onSelect={handleTransactionSelect}
+                        />
                 </Space>
                 <Input.TextArea
                     rows={4}
