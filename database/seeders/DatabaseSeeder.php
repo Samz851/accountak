@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             TransRecordSeeder::class,
             OrganizationSeeder::class,
             UserSeeder::class,
+            FormulaSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

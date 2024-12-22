@@ -125,7 +125,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
     const handleSearch = debounce((searchValue: string) => {
 
         const filteredData = accountTreeData.filter(item => 
-            (item.title as string).toLowerCase().includes(searchValue.toLowerCase())
+            (item.title as string).toLowerCase().startsWith(searchValue.toLowerCase())
         );
         // console.log('filteredData',filteredData);
         // If no results found in existing data, trigger API search
@@ -145,6 +145,13 @@ const FormulaBuilder = ({formula, setFormula}) => {
     const handleAccountsSelect = (value) => {
         console.log('ref',textAreaRef);
         setFormula(prev => `${prev}{{${value}}}`);
+        setFilters([
+            {
+                field: 'type',
+                operator: 'eq',
+                value: 'all',
+            }
+        ], 'replace');
         textAreaRef.current?.focus({
               cursor: 'end',
             });
@@ -180,8 +187,11 @@ const FormulaBuilder = ({formula, setFormula}) => {
                         loadData={onLoadData}
                         onSelect={handleAccountsSelect}
                         showSearch
-                        filterTreeNode={(search, item) => 
-                            (item?.title as any).toLowerCase().indexOf(search.toLowerCase()) >= 0
+                        filterTreeNode={(search, item) => {
+
+                            return (item?.title as any).toLowerCase().startsWith(search.toLowerCase())
+                        }
+                            
                         }
                         onSearch={handleSearch}
                     />
