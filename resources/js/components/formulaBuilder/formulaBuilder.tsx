@@ -59,7 +59,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
     const {selectProps: transactionsSelectProps} = useSelect<ITransaction>({
         resource: "transactions",
         optionLabel: "code" as any,
-        optionValue: "id" as any,
+        optionValue: "code" as any,
         searchField: "code" as any,
         onSearch: (value) => [
             {
@@ -151,14 +151,14 @@ const FormulaBuilder = ({formula, setFormula}) => {
 
     const handleTagsSelect = (value) => {
 
-        setFormula(prev => `${prev}{{${value}}}`);
+        setFormula(prev => `${prev}{{T|${value}}}`);
         textAreaRef.current?.focus({
             cursor: 'end',
           });
     }
     const handleTransactionSelect = (value) => {
 
-        setFormula(prev => `${prev}{{${value}}}`);
+        setFormula(prev => `${prev}{{TR|${value}}}`);
         textAreaRef.current?.focus({
             cursor: 'end',
           });
@@ -166,7 +166,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
 
     const handleAccountsSelect = (value) => {
         // console.log('ref',textAreaRef);
-        setFormula(prev => `${prev}{{${value}}}`);
+        setFormula(prev => `${prev}{{A|${value}}}`);
         setFilters([
             {
                 field: 'type',
