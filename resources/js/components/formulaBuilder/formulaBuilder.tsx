@@ -18,13 +18,8 @@ const FormulaBuilder = ({formula, setFormula}) => {
 
     const textAreaRef = useRef<TextAreaRef>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const { PROD, VITE_DEV_APP_URL, VITE_PROD_APP_URL} = import.meta.env;
-    const API_URL = "https://api.finefoods.refine.dev";
-    const LARAVEL_API_URL = `${ PROD 
-                                ? VITE_PROD_APP_URL
-                                : VITE_DEV_APP_URL
-                            }/api`;
-    const apiUrl = LARAVEL_API_URL;
+
+    const apiUrl = useApiUrl('laravel');
     const getData = async () => {
       if ( searchTerm.length > 1 ) {
         let url = `${apiUrl}/accounts/search`;
