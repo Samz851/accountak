@@ -131,6 +131,7 @@ export interface IBaseAccount {
 }
 
 export interface ITransaction {
+    code: string;
     id: number;
     name?: string;
     date: string;
