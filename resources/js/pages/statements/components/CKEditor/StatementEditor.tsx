@@ -76,6 +76,7 @@ import CustomPlugin from './plugin/TemplatingPlugin';
 
 import 'ckeditor5/ckeditor5.css';
 import 'ckeditor5-premium-features/ckeditor5-premium-features.css';
+import './styles.css';
 import {
 	CaseChange,
 	DocumentOutline,
@@ -83,16 +84,18 @@ import {
 	ExportWord,
 	FormatPainter,
 	ImportWord,
-	MergeFields,
+	// MergeFields,
 	MultiLevelList,
 	PasteFromOfficeEnhanced,
 	TableOfContents,
-	Template
+	// Template
 } from 'ckeditor5-premium-features';
 import { useList } from '@refinedev/core';
 import { ITag } from '@/interfaces';
 import { Button, Form } from 'antd';
 import FormulaPlugin from './plugin/formulaEditor/formulaEditor';
+import FormulaBuilder from '@/components/formulaBuilder/formulaBuilder';
+import { InputFields } from '@/components/templateAutocomplete/inputFields';
 
 // import './App.css';
 
@@ -103,6 +106,7 @@ type ItemType = {
 }
 
 export const StatementEditor = ({content, setContent}) =>{
+	const [formula, setFormula] = useState<string>('');
 	const editorContainerRef = useRef(null);
 	const editorRef = useRef(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -110,6 +114,7 @@ export const StatementEditor = ({content, setContent}) =>{
 	const { data, isLoading } = useList<ITag>({
 		resource: 'tags'
 	})
+	const [editorInstance, setEditorInstance] = useState<BalloonEditor>();
 	// const [ content, setContent] = useState('<h2>Congratulations on setting up CKEditor 5! 🎉</h2>\n<p>\n    You\'ve successfully created a CKEditor 5 project. This powerful text editor will enhance your application, enabling rich text editing\n    capabilities that are customizable and easy to use.\n</p>\n<h3>What\'s next?</h3>\n<ol>\n    <li>\n        <strong>Integrate into your app</strong>: time to bring the editing into your application. Take the code you created and add to your\n        application.\n    </li>\n    <li>\n        <strong>Explore features:</strong> Experiment with different plugins and toolbar options to discover what works best for your needs.\n    </li>\n    <li>\n        <strong>Customize your editor:</strong> Tailor the editor\'s configuration to match your application\'s style and requirements. Or even\n        write your plugin!\n    </li>\n</ol>\n<p>\n    Keep experimenting, and don\'t hesitate to push the boundaries of what you can achieve with CKEditor 5. Your feedback is invaluable to us\n    as we strive to improve and evolve. Happy editing!\n</p>\n<h3>Helpful resources</h3>\n<ul>\n    <li>📝 <a href="https://orders.ckeditor.com/trial/premium-features">Trial sign up</a>,</li>\n    <li>📕 <a href="https://ckeditor.com/docs/ckeditor5/latest/installation/index.html">Documentation</a>,</li>\n    <li>⭐️ <a href="https://github.com/ckeditor/ckeditor5">GitHub</a> (star us if you can!),</li>\n    <li>🏠 <a href="https://ckeditor.com">CKEditor Homepage</a>,</li>\n    <li>🧑‍💻 <a href="https://ckeditor.com/ckeditor-5/demo/">CKEditor 5 Demos</a>,</li>\n</ul>\n<h3>Need help?</h3>\n<p>\n    See this text, but the editor is not starting up? Check the browser\'s console for clues and guidance. It may be related to an incorrect\n    license key if you use premium features or another feature-related requirement. If you cannot make it work, file a GitHub issue, and we\n    will help as soon as possible!\n</p>\n')
 	const editorData = {
 		textEditor: content,
@@ -125,7 +130,7 @@ export const StatementEditor = ({content, setContent}) =>{
 	useEffect(() => {
         if(isLoading) return;
 		setIsLayoutReady(true);
-		console.log('Loading', data);
+		// console.log('Loading', data);
 
         setTags(data?.data.map(i => { return {tag_id: i.id, id: i.label, label: i.label}}) || []);
     }, [isLoading]);
@@ -180,8 +185,8 @@ export const StatementEditor = ({content, setContent}) =>{
 			items: [
 				'insertFormula',
 				'tags', 'accounts', 'transactions',
-				'insertTemplate',
-				'insertMergeField',
+				// 'insertTemplate',
+				// 'insertMergeField',
 				'undo',
 				'redo',
 				'|',
@@ -231,8 +236,8 @@ export const StatementEditor = ({content, setContent}) =>{
 			FormulaPlugin,
 			CloudServices,
 			AccessibilityHelp,
-			MergeFields,
-			Template,
+			// MergeFields,
+			// Template,
 			Alignment,
 			Autoformat,
 			AutoImage,
@@ -300,12 +305,10 @@ export const StatementEditor = ({content, setContent}) =>{
 			ExportPdf
 
 		],
-		balloonToolbar: ['insertTemplate','insertMergeField','tags', 'accounts', 'transactions', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
+		balloonToolbar: ['tags', 'accounts', 'transactions', 'bold', 'italic', '|', 'link', 'insertImage', '|', 'bulletedList', 'numberedList'],
 		blockToolbar: [
 			'insertFormula',
 			'tags', 'accounts', 'transactions',
-			'insertMergeField',
-			'insertTemplate',
 			'fontSize',
 			'fontColor',
 			'fontBackgroundColor',
@@ -515,14 +518,33 @@ export const StatementEditor = ({content, setContent}) =>{
         //         }
         //     ]
 		// }
-		mergeFields: {
-            definitions: [...tags]
-        }
         
 	};
 
+	// useEffect(()=>{
+	// 	console.log('formula',formula);
+	// 	console.log('editorState',editor);
+	// 	console.log('editorData',editor.getData());
 
-	
+	// 	if (editorRef.current) {
+	// 	console.log('editor',editorRef);
+	// 	}
+	// },[formula])
+
+
+	useEffect(()=>{
+		console.log('editorInstance',editorInstance);
+	},[editorInstance])
+
+	const insertTemplateString = (template: string) => {
+		const templateData = `<span id="ac-template-string" class="ac_template_string">${template}</span>`
+		const viewFragment = editorInstance?.data.processor.toView(templateData)
+                const modelFragment = editorInstance?.data.toModel(viewFragment as any)
+		editorInstance?.model.change(writer => {
+			const insertPosition = editorInstance?.model.document.selection?.getFirstPosition()
+			writer.insert(modelFragment as any, insertPosition as any)
+		})
+	}
 
 	return (
 		// <Form
@@ -530,6 +552,7 @@ export const StatementEditor = ({content, setContent}) =>{
 		// >
 		// 	<Form.Item>
 			<div className="main-container">
+				<InputFields formula={formula} setFormula={setFormula} insertTemplate={insertTemplateString} />
 				<div
 					className="editor-container editor-container_balloon-editor editor-container_include-style editor-container_include-block-toolbar"
 					ref={editorContainerRef}
@@ -541,6 +564,9 @@ export const StatementEditor = ({content, setContent}) =>{
 									<CKEditor 
 										editor={BalloonEditor}
 										config={editorConfig}
+										onReady={(editor) => {
+											setEditorInstance(editor);
+										}}
 										// onReady={( editor ) => {
 										// 	// A function executed when the editor has been initialized and is ready.
 										// 	// It synchronizes the initial data state and saves the reference to the editor instance.

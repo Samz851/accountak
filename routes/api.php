@@ -52,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/statements', StatementTemplateController::class);
     Route::apiResource('/reports', StatementController::class);
     Route::apiResource('/formula', FormulaController::class);
+    Route::post('/formula/validate', [FormulaController::class, 'validateFormula']);
     Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
     Route::get('/accounts/select', [AccountController::class, 'getSelect']);
     Route::get('/users/autologin', [UserController::class, 'autlogin']);

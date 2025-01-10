@@ -1,8 +1,9 @@
 import FormulaBuilder from "@/components/formulaBuilder/formulaBuilder";
 import FormulaInput from "@/components/formulaBuilder/formulaInput";
+import { Request } from "@/helpers/httpHelper";
 import { IFormula } from "@/interfaces";
 import { Create, useForm } from "@refinedev/antd";
-import { HttpError, useGo } from "@refinedev/core";
+import { HttpError, useApiUrl, useGo } from "@refinedev/core";
 import { Form, Input } from "antd";
 import { useEffect, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
@@ -38,6 +39,22 @@ type FormValues = {
 }
 export const CreateFormula = () => {
     const [formula, setFormula] = useState<string>('');
+    const [formulaValidationStatus, setFormulaValidationStatus] = useState('validating')
+
+    const apiUrl = useApiUrl('laravel');
+    const validateFormula = async (value) => {
+        if (value) {
+            let url = `${apiUrl}/formula/validate`;
+            let res = await Request('POST', url, {formula: value});
+            console.log('validate', res);
+            if ( res.data.success ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return Promise.resolve();
+    }
 
     const [fields, setFields] = useState<any[]>([]);
     const go = useGo();
@@ -54,8 +71,8 @@ export const CreateFormula = () => {
     };
 
     useEffect(() => {
-        console.log(formula);
-        console.log(form.getFieldValue('formula'), form.getFieldsValue());
+        // console.log(formula);
+        // console.log(form.getFieldValue('formula'), form.getFieldsValue());
         form?.setFieldValue('formula', formula);
     },[formula])
 
@@ -67,6 +84,14 @@ export const CreateFormula = () => {
             {...formProps}
             layout="vertical"
             onFinish={async (values) => {
+                // Validate values
+                const valid = await validateFormula(values.formula);
+                console.log('valid', valid);
+                if ( ! valid ) {
+                    setFormulaValidationStatus('error');
+                    return false;
+                }
+                
                 try {
                     const data = await onFinish({
                         name: values.name,
@@ -104,10 +129,13 @@ export const CreateFormula = () => {
                 <Form.Item
                     label="Formula"
                     name="formula"
-                    rules={[{required: true}]}
+                    rules={[{required: true, message: "Please gix"}]}
+                    validateStatus={formulaValidationStatus as any}
+                    help={formulaValidationStatus === 'error' ? 'Formula is not valid' : ''}    
+                    
                 >
                 {/* <FormulaBuilder formula={formula} setFormula={setFormula} /> */}
-                <FormulaInput formula={formula} setFormula={setFormula} />
+                <FormulaBuilder formula={formula} setFormula={setFormula} />
 
                 </Form.Item>
             </Form>

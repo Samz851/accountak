@@ -14,12 +14,20 @@ import { debounce } from "lodash";
 
 type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
 
-const FormulaBuilder = ({formula, setFormula}) => {
+export const InputFields = ({formula, setFormula,insertTemplate}) => {
 
     const textAreaRef = useRef<TextAreaRef>(null);
     const [searchTerm, setSearchTerm] = useState('');
-
-    const apiUrl = useApiUrl('laravel');
+    const [tags, setTags] = useState<ITag[]>([]);
+    const [transactions, setTransactions] = useState<ITransaction[]>([]);
+    const [accounts, setAccounts] = useState<IAccount[]>([]);
+    const { PROD, VITE_DEV_APP_URL, VITE_PROD_APP_URL} = import.meta.env;
+    const API_URL = "https://api.finefoods.refine.dev";
+    const LARAVEL_API_URL = `${ PROD 
+                                ? VITE_PROD_APP_URL
+                                : VITE_DEV_APP_URL
+                            }/api`;
+    const apiUrl = LARAVEL_API_URL;
     const getData = async () => {
       if ( searchTerm.length > 1 ) {
         let url = `${apiUrl}/accounts/search`;
@@ -32,44 +40,73 @@ const FormulaBuilder = ({formula, setFormula}) => {
       }
     }
 
-    const { tableProps: accountTableProps, filters, setFilters } = useTable<IAccount>({
-        resource: "accounts",
-        filters: {
-            initial: [{
-                field: "type",
-                operator: "eq",
-                value: "all",
-            }]
-        },
-        sorters: {
-            mode: "off",
-        },
-        syncWithLocation: false,
-        pagination: {
-            mode: "off"
-          },
-    });
+    const accountOptionsRequest = async (query = {type: 'all', parent: null}) => {
+        let url = `${apiUrl}/accounts`;
+        let res = await Request('GET', url, null, {params: query});
+        // console.log('res', res);
+        if ( res.status === 200 ) {
+            const newTreeData = formatAccountTreeData(res.data)
+          setAccountTreeData([...newTreeData]);
+        }
+    }
 
-    const {selectProps: tagsSelectProps} = useSelect<ITag>({
-        resource: "tags",
-        optionLabel: "label" as any,
-        optionValue: "label" as any
-    })
+    const tagsOptionsRequest = async () => {
+        let url = `${apiUrl}/tags`;
+        let res = await Request('GET', url, null);
+        // console.log('res', res);
+        if ( res.status === 200 ) {
+            // const newTreeData = formatAccountTreeData(res.data.result)
+          setTags([...res.data]);
+        }
+    }
 
-    const {selectProps: transactionsSelectProps} = useSelect<ITransaction>({
-        resource: "transactions",
-        optionLabel: "code" as any,
-        optionValue: "code" as any,
-        searchField: "code" as any,
-        onSearch: (value) => [
-            {
-              field: "code",
-              operator: "startswith",
-              value,
-            },
-          ],
+    const transactionsOptionsRequest = async () => {
+        let url = `${apiUrl}/transactions`;
+        let res = await Request('GET', url, null);
+        // console.log('res', res);
+        if ( res.status === 200 ) {
+            // const newTreeData = formatAccountTreeData(res.data.result)
+            setTransactions([...res.data]);
+        }
+    }
+    // const { tableProps: accountTableProps, filters, setFilters } = useTable<IAccount>({
+    //     resource: "accounts",
+    //     filters: {
+    //         initial: [{
+    //             field: "type",
+    //             operator: "eq",
+    //             value: "all",
+    //         }]
+    //     },
+    //     sorters: {
+    //         mode: "off",
+    //     },
+    //     syncWithLocation: false,
+    //     pagination: {
+    //         mode: "off"
+    //       },
+    // });
+
+    // const {selectProps: tagsSelectProps} = useSelect<ITag>({
+    //     resource: "tags",
+    //     optionLabel: "label" as any,
+    //     optionValue: "label" as any
+    // })
+
+    // const {selectProps: transactionsSelectProps} = useSelect<ITransaction>({
+    //     resource: "transactions",
+    //     optionLabel: "code" as any,
+    //     optionValue: "code" as any,
+    //     searchField: "code" as any,
+    //     onSearch: (value) => [
+    //         {
+    //           field: "code",
+    //           operator: "startswith",
+    //           value,
+    //         },
+    //       ],
         
-    })
+    // })
 
     const formatAccountTreeData = (data: IAccount[]) => {
         return data?.map(account => {
@@ -94,33 +131,22 @@ const FormulaBuilder = ({formula, setFormula}) => {
 
     useEffect(()=>{
         // console.log('tree data', accountTableProps.dataSource)
-        if ( ! accountTableProps.loading) {
-            const newAccountData = formatAccountTreeData(accountTableProps.dataSource as any)
-            // console.log('new account data', newAccountData)
-            setAccountTreeData([...accountTreeData, ...newAccountData]);
+        ( async () => {
+            await accountOptionsRequest();
+            await tagsOptionsRequest();
+            await transactionsOptionsRequest();
+        })()
+    },[])
 
-        }
-    },[accountTableProps.dataSource])
 
-
-    const onLoadData: TreeSelectProps['loadData'] = (record) => {
+    const onLoadData: TreeSelectProps['loadData'] = async (record) => {
         const account = accountTreeData.find(account => account.id === record.id);
 
         // console.log('record',record, account);
         setSelectedAccount(record);
         if (account && ! account.isLeaf) {
-            setFilters([
-                {
-                    field: 'type',
-                    operator: 'eq',
-                    value: 'all',
-                },
-                {
-                    field: 'parent',
-                    operator: 'eq',
-                    value: record.id,
-                }
-            ], 'replace');
+            await accountOptionsRequest({type: 'all', parent: record.id});
+
         }
 
 
@@ -152,31 +178,34 @@ const FormulaBuilder = ({formula, setFormula}) => {
     const handleTagsSelect = (value) => {
 
         setFormula(prev => `${prev}{{T|${value}}}`);
-        textAreaRef.current?.focus({
-            cursor: 'end',
-          });
+        insertTemplate(`{{T|${value}}}`);
+        // textAreaRef.current?.focus({
+        //     cursor: 'end',
+        //   });
     }
     const handleTransactionSelect = (value) => {
 
         setFormula(prev => `${prev}{{TR|${value}}}`);
-        textAreaRef.current?.focus({
-            cursor: 'end',
-          });
+        insertTemplate(`{{TR|${value}}}`);
+        // textAreaRef.current?.focus({
+        //     cursor: 'end',
+        //   });
     }
 
     const handleAccountsSelect = (value) => {
         // console.log('ref',textAreaRef);
         setFormula(prev => `${prev}{{A|${value}}}`);
-        setFilters([
-            {
-                field: 'type',
-                operator: 'eq',
-                value: 'all',
-            }
-        ], 'replace');
-        textAreaRef.current?.focus({
-              cursor: 'end',
-            });
+        insertTemplate(`{{A|${value}}}`);
+        // setFilters([
+        //     {
+        //         field: 'type',
+        //         operator: 'eq',
+        //         value: 'all',
+        //     }
+        // ], 'replace');
+        // textAreaRef.current?.focus({
+        //       cursor: 'end',
+        //     });
     }
 
     return (
@@ -193,7 +222,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
                     /> */}
                     <Select
                         showSearch
-                        options={tagsSelectProps.options}
+                        options={tags.map(tag => ({label: tag.label, value: tag.label}))}
                         style={{ width: 200 }}
                         placeholder="Tags"
                         onSelect={handleTagsSelect}
@@ -218,7 +247,7 @@ const FormulaBuilder = ({formula, setFormula}) => {
                         onSearch={handleSearch}
                     />
                     <Select
-                        {...transactionsSelectProps}
+                        options={transactions.map(transaction => ({label: transaction.code, value: transaction.code}))}
                         filterOption={(inputValue, option) => {
                             // console.log('option', option);
                             return (option!.label as string).toUpperCase().startsWith(inputValue.toUpperCase())
@@ -242,4 +271,3 @@ const FormulaBuilder = ({formula, setFormula}) => {
     );
 };
 
-export default FormulaBuilder;
