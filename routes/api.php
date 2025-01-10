@@ -4,7 +4,9 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountsBranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FormulaController;
 use App\Http\Controllers\OptionsController;
+use App\Http\Controllers\StatementController;
 use App\Http\Controllers\StatementTemplateController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaxesController;
@@ -31,6 +33,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/generateBalances', [TransactionsController::class, 'generateBalances']);
 Route::get('/getTagMembers', [TagController::class, 'getTagMembers']);
 Route::get('/getTagBalance', [TagController::class, 'getTagBalance']);
+Route::get('/getTagLeafMembers', [TagController::class, 'getTagLeafMembers']);
+Route::get('/getTagBalanceByRanges', [TagController::class, 'getTagBalanceByRanges']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/accounts', [AccountController::class, 'index']);
@@ -46,6 +50,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/options', OptionsController::class);
     Route::apiResource('/tags', TagController::class);
     Route::apiResource('/statements', StatementTemplateController::class);
+    Route::apiResource('/reports', StatementController::class);
+    Route::apiResource('/formula', FormulaController::class);
+    Route::post('/formula/validate', [FormulaController::class, 'validateFormula']);
     Route::get('/removeLeafs', [AccountsBranchController::class, 'removeLeafs']);
     Route::get('/accounts/select', [AccountController::class, 'getSelect']);
     Route::get('/users/autologin', [UserController::class, 'autlogin']);

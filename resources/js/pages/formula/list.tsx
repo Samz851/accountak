@@ -43,7 +43,7 @@ type FormValues = {
     to?: string | undefined;
     template_id?: any;
 }
-export const StatementsList = ({ children }: PropsWithChildren) => {
+export const FormulasList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
     const { showUrl, createUrl, cloneUrl, clone, show,edit, editUrl } = useNavigation();
@@ -98,7 +98,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                     size="large"
                     onClick={() => {
                         return go({
-                            to: `${createUrl("statements")}`,
+                            to: `${createUrl("formula")}`,
                             query: {
                                 to: pathname,
                             },

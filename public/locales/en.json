@@ -711,5 +711,25 @@
     "form": {
       "add": "Add new Tag"
     }
+  },
+  "reports": {
+    "reports": "Reports",
+    "fields": {
+      "type": "Type",
+      "date_range": "Date Range",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "filters": "Filters",
+      "products": "Products",
+      "customers": "Customers",
+      "transactions": "Transactions",
+      "taxes": "Taxes",
+      "companies": "Companies",
+      "contacts": "Contacts",
+      "branches": "Accounts Branches",
+      "statements": "Statements",
+      "tags": "Tags",
+      "generate": "Generate Report"
+    } 
   }
 }

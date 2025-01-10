@@ -10,4 +10,10 @@ class StatementTemplate extends Model
     use HasFactory;
 
     protected $fillable = ['title','content'];
+
+
+    public function statements()
+    {
+        return $this->hasMany(Statement::class);
+    }
 }

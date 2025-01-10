@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "chriskonnertz/string-calc": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "http-interop/http-factory-guzzle": "^1.2",
         "laravel/framework": "^10.10",
@@ -15,6 +16,7 @@
         "meilisearch/meilisearch-php": "^1.7"
     },
     "require-dev": {
+        "beyondcode/laravel-er-diagram-generator": "^4.0",
         "beyondcode/laravel-query-detector": "^1.8",
         "fakerphp/faker": "^1.9.1",
         "kevincobain2000/laravel-erd": "^1.7",

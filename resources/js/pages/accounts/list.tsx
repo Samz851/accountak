@@ -315,6 +315,7 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
     }
     return (
         <List
+            title={t("accounts.accounts")}
             breadcrumb={false}
             headerButtons={(props) => [
                 // <ExportButton key={useId()} onClick={triggerExport} loading={isLoading} />,

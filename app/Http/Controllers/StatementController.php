@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Statement;
 use App\Models\StatementTemplate;
 use App\Models\Tag;
 use App\Services\TagService;
@@ -9,14 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-
-class StatementTemplateController extends Controller
+class StatementController extends Controller
 {
     //
 
     public function index(Request $request): Response
     {
-        $templates = StatementTemplate::all();
+        $templates = Statement::all();
 
         return response($templates);
     }
@@ -24,12 +24,28 @@ class StatementTemplateController extends Controller
     public function store(Request $request): Response
     {
         $data = $request->all();
-        $template = StatementTemplate::create($data);
 
-        return response($template);
+        $template = StatementTemplate::find($data['template_id']);
+
+        $report = Statement::create([
+            'title' => $template->title,
+            'content' => $this->templateParser($template->content, $data['from'], $data['to']),
+            'template_id' => $template->id,
+            'from' => $data['from'],
+            'to' => $data['to']
+        ]);
+
+        return response($report);
     }
 
-    private function templateParser(string $template): string
+    public function show(Request $request, int $statement): Response
+    {
+        $statement = Statement::find($statement);
+
+        return response($statement);
+    }
+
+    private function templateParser(string $template, $from, $to): string
     {
         $service = new TagService();
 
@@ -38,7 +54,7 @@ class StatementTemplateController extends Controller
         $fieldsProcessed = [];
         foreach ($fields as $key => $value) {
             $tag = Tag::where('label', $value)->first();
-            $tagBalance = $service->getTagMembersBalance($tag->id);
+            $tagBalance = $service->getTagMembersBalanceByRange($tag->id, $from, $to);
             $fieldsProcessed[$key] = $tagBalance;
         }
 
@@ -49,14 +65,5 @@ class StatementTemplateController extends Controller
         Log::info($fieldsProcessed, [__LINE__, __FILE__]);
         Log::info($templateProcessed, [__LINE__, __FILE__]);
         return $templateProcessed;
-    }
-    public function show(Request $request, int $statementTemplate): Response
-    {
-        $template = StatementTemplate::find($statementTemplate);
-
-        // $final = $this->templateParser($template->content);
-        // $template->content = $final;
-        // Log::info($statementTemplate, [__LINE__, __FILE__]);
-        return response($template);
     }
 }

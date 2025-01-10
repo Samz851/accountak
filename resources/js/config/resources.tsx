@@ -98,9 +98,24 @@ export const resources: IResourceItem[] = [
         name: "statements",
         list: "/statements",
         create: "/statements/create",
+        // clone: "/reports/create/:id",
         show: "/statements/show/:id",
         meta: {
             label: i18next.t("statements.statements"),
+            icon: <DashboardOutlined />,
+            dataProviderName: "laravel"
+        },
+    },
+    {
+        name: "reports",
+        list: "/reports",
+        create: "/reports/create",
+        // clone: "/reports/create/:id",
+        show: "/reports/show/:id",
+        edit: "/reports/edit/:id",
+        // clone: "/reports/clone/:id",
+        meta: {
+            label: i18next.t("reports.reports"),
             icon: <DashboardOutlined />,
             dataProviderName: "laravel"
         },
@@ -112,6 +127,17 @@ export const resources: IResourceItem[] = [
         edit: "/options/edit/:id",
         meta: {
             hide: true,
+            dataProviderName: "laravel"
+        }
+    },
+    {
+        name: "formula",
+        list: "/formula",
+        create: "/formula/create",
+        show: "/dev_sample_categories/show/:id",
+        meta: {
+            label: "formula",
+            icon: <DashboardOutlined />,
             dataProviderName: "laravel"
         }
     },

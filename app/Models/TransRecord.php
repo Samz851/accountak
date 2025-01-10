@@ -17,7 +17,29 @@ class TransRecord extends Model
         'description',
         'amount',
         'tax_id',
+        'code'
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($record) {
+            $last = self::latest('code')->first();
+            if ($last) {
+                if (preg_match('/^([A-Za-z]*)(\d+)$/', $last->code, $matches)) {
+                    $prefix = $matches[1]; // Extract the prefix
+                    $number = $matches[2]; // Extract the numeric part
+            
+                    // Increment the numeric part and preserve leading zeros
+                    $incrementedNumber = str_pad((int)$number + 1, strlen($number), '0', STR_PAD_LEFT);
+            
+                    // Combine the prefix and the incremented number
+                    $record->code = $prefix . $incrementedNumber;
+                }
+            } else {
+                $record->code = "T100";
+            }
+        });
+    }
 
     public function noteable(): MorphTo
     {

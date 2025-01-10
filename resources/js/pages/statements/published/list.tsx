@@ -43,7 +43,7 @@ type FormValues = {
     to?: string | undefined;
     template_id?: any;
 }
-export const StatementsList = ({ children }: PropsWithChildren) => {
+export const ReportsList = ({ children }: PropsWithChildren) => {
     const go = useGo();
     const { pathname } = useLocation();
     const { showUrl, createUrl, cloneUrl, clone, show,edit, editUrl } = useNavigation();
@@ -71,7 +71,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
       });
 
     const { tableProps, filters, sorters } = useTable<
-        IStatement,
+        IReport,
         HttpError
     >({
         filters: {
@@ -288,7 +288,7 @@ export const StatementsList = ({ children }: PropsWithChildren) => {
                             icon={<EyeOutlined />}
                             onClick={() => {
                                 return go({
-                                    to: `${showUrl("statements", record.id)}`,
+                                    to: `${showUrl("reports", record.id)}`,
                                     query: {
                                         to: pathname,
                                     },

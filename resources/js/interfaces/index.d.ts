@@ -39,6 +39,16 @@ export interface IStatement {
     title: string;
     content: string;
 }
+
+export interface IReport {
+    id: number;
+    title: string;
+    content: string;
+    cycle?: Dayjs[];
+    from?: string;
+    to?: string;
+    template_id?: any;
+}
 export interface ICompany {
     id: number;
     company_name: string;
@@ -47,6 +57,12 @@ export interface ICompany {
     contact_information?: string;
     contacts?: IContact[];
     accounts?: IAccount[];
+}
+
+export interface IFormula {
+    id: number;
+    name: string;
+    formula: string;
 }
 
 // export type OptionsOutletContextType = {
@@ -115,6 +131,7 @@ export interface IBaseAccount {
 }
 
 export interface ITransaction {
+    code: string;
     id: number;
     name?: string;
     date: string;

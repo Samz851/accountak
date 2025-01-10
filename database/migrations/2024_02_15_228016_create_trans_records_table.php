@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('trans_records', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
             $table->date('date');
             $table->string('name');
             $table->string('description');
