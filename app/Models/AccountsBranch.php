@@ -63,6 +63,14 @@ class AccountsBranch extends BaseAccount implements BaseAccountContract
         });
     }
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
     public function subbranches(): HasMany
     {
         // Log::info([$this->taxonomy, $this->getAttributes(), $this->getAttribute('taxonomy'),$this->getAttributeValue('name')], [__FILE__, __LINE__]);

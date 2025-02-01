@@ -41,6 +41,14 @@ class TransRecord extends Model
         });
     }
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
     public function noteable(): MorphTo
     {
         return $this->morphTo();
