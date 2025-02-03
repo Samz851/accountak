@@ -110,6 +110,8 @@ export interface IAccount extends IBaseAccount{
     credit_transactions?: ITransaction[];
     balance?: number;
     children?: IBaseAccount[] | [{}];
+    debitTransactions?: TransactionTableShort[],
+    creditTransactions?: TransactionTableShort[]
 }
 
 export interface ITag {

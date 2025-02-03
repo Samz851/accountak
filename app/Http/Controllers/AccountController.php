@@ -53,6 +53,9 @@ class AccountController extends Controller
             ])
             ->first();
 
+        $acc->debitTransactions = $acc->debitTransactions->sortByDesc('date')->values()->all();
+        $acc->creditTransactions = $acc->creditTransactions->sortByDesc('date')->values()->all();
+
         return response($acc);
     }
 

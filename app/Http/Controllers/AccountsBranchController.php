@@ -148,8 +148,8 @@ class AccountsBranchController extends Controller
         $debit = $transactionsD->pluck('debitTransactions')->flatten();
         $cred = $transactionsD->pluck('creditTransactions')->flatten();
         // ->pluck('debitTransactions', 'creditTransactions');
-        $acc->debitTransactions = $debit->select('date', 'amount', 'code', 'dbtrans', 'id');
-        $acc->creditTransactions = $cred->select('date', 'amount', 'code', 'crtrans', 'id');
+        $acc->debitTransactions = $debit->select('date', 'amount', 'code', 'dbtrans', 'id')->sortByDesc('date')->values()->all();
+        $acc->creditTransactions = $cred->select('date', 'amount', 'code', 'crtrans', 'id')->sortByDesc('date')->values()->all();
         Log::info($debit, [__LINE__, __FILE__]);
         return response($acc);
     }

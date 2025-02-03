@@ -33,7 +33,7 @@ export const AccountShow: React.FC<IResourceComponentsProps> = () => {
             ]}
         >
             <AccountInfoView account={account} />
-            <AccountBalanceTable transactions={{debit: account?.debit_transactions, credit: account?.credit_transactions}} />
+            <AccountBalanceTable transactions={{debit: account?.debitTransactions, credit: account?.creditTransactions}} />
         </List>
     );
 };
