@@ -93,8 +93,18 @@ export interface DebounceSelectProps<ValueType = any> extends Omit<SelectProps<V
 export interface IAccountsBranch extends IBaseAccount{
     children?: IAccountsBranch[];
     accounts?: IAccount[];
+    debitTransactions?: TransactionTableShort[],
+    creditTransactions?: TransactionTableShort[]
 }
 
+export interface TransactionTableShort {
+    code: string;
+    date: string;
+    amount: number | string;
+    crtrans?: any;
+    dbtrans?: any;
+    id: number;
+}
 export interface IAccount extends IBaseAccount{
     debit_transactions?: ITransaction[];
     credit_transactions?: ITransaction[];
