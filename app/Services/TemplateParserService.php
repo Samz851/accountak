@@ -69,14 +69,22 @@ class TemplateParserService
      *
      * @return string The parsed template with all replacements.
      */
-    public function parse(): string
+    public function parse(): string | array
     {
         $definitions = $this->extractPlaceholders($this->content);
         $this->placeholders = $this->buildDefinitions($definitions);
-        
+        $transformedPlaceholders = $this->transformPlaceholders($this->placeholders);
+        $transformPlaceholdersArray = [];
+        foreach ($transformedPlaceholders as $key => $value) {
+            foreach ($value as $k => $v) {
+                $transformPlaceholdersArray['{{'. $key . $k . '}}'] = $v;
+            }
+        }
+
+        $this->content = str_replace(array_keys($transformPlaceholdersArray), array_values($transformPlaceholdersArray), $this->content);
         // Additional parsing logic can be implemented here
         
-        return json_encode($this->placeholders);
+        return $this->content;
     }
     
     /**
@@ -136,6 +144,77 @@ class TemplateParserService
     }
 
     /**
+     * Removes empty arrays from the placeholders property and returns the filtered array.
+     *
+     * @return array The filtered placeholders array without empty value arrays.
+     */
+    private function transformPlaceholders(): array
+    {
+        $result = [];
+        $filteredPlaceholders = array_filter($this->placeholders, function($value) {
+            return !empty($value);
+        });
+        
+        foreach ($filteredPlaceholders as $key => $value) {
+            switch ($key) {
+                case "T|":
+                    $this->content = str_replace($key, $value, $this->content);
+                    break;
+                case "TR|":
+                    $result[$key] = $this->getTransactions($value);
+                    break;
+                case "A|":
+                    $result[$key] = $this->getAccounts($value);
+                    break;
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Get transactions for given codes between from and to dates.
+     * 
+     * @param array $codes Array of transaction codes
+     * @return array Transaction data
+     */
+    private function getTransactions(array $codes): array
+    {
+        $records = TransRecord::whereIn('code', $codes)
+            ->whereBetween('date', [$this->from, $this->to])
+            ->select('code', 'date', 'amount')
+            ->get();
+        $records = $records->toArray();
+        $result = [];
+        foreach ($records as $record) {
+            $result[$record['code']] = $record['amount'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get accounts for given codes.
+     * 
+     * @param array $codes Array of account codes
+     * @return array Account data
+     */
+    private function getAccounts(array $codes): array
+    {
+        $queries = [
+            'type' => 'all',
+            'code' => $codes,
+            '_from' => $this->from,
+            '_to' => $this->to
+        ];
+        $accountService = new AccountsBalanceService($codes, $this->from, $this->to);
+        $accounts = $accountService->getAllBalances();
+
+
+        return $accounts;
+    }
+
+    /**
      * Returns a JSON representation of the content and its extracted placeholders.
      *
      * @return string JSON encoded string of content details.
@@ -143,7 +222,7 @@ class TemplateParserService
     public function toJson(): string
     {
         return json_encode([
-            'content'   => $this->content, 
+            'result'   => $this->parse(), 
             'extracted' => $this->extractPlaceholders($this->content)
         ]);
     }

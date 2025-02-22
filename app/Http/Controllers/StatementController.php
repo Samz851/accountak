@@ -27,10 +27,10 @@ class StatementController extends Controller
         $data = $request->all();
 
         $template = StatementTemplate::find($data['template_id']);
-
+        $parser = new TemplateParserService($template->content, $data['from'], $data['to']);
         $report = Statement::create([
             'title' => $template->title,
-            'content' => $this->templateParser($template->content, $data['from'], $data['to']),
+            'content' => $parser->parse(),
             'template_id' => $template->id,
             'from' => $data['from'],
             'to' => $data['to']

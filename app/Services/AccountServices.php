@@ -23,7 +23,7 @@ class AccountServices implements AccountServiceContract
         ],
         'code' => [
             'required' => false,
-            'type' => 'string'
+            'type' => 'mix'
         ],
         'taxonomy' => [
             'required' => false,
@@ -39,6 +39,14 @@ class AccountServices implements AccountServiceContract
             'type' => 'string',
         ],
         '_end' => [
+            'required' => false,
+            'type' => 'string',
+        ],
+        '_from' => [
+            'required' => false,
+            'type' => 'string',
+        ],
+        '_to' => [
             'required' => false,
             'type' => 'string',
         ]
@@ -62,7 +70,7 @@ class AccountServices implements AccountServiceContract
 
         foreach ($filters as $key => $value) {
             if (array_key_exists($key, $this->filters) ) {
-                if ( gettype($value) !== $this->filters[$key]['type'] ) throw new Exception('Malformed filter');
+                if ( gettype($value) !== $this->filters[$key]['type'] && $this->filters[$key]['type'] !== 'mix' ) throw new Exception('Malformed filter');
                 if ( isset($this->filters[$key]['values'] ) && ! in_array($value, $this->filters[$key]['values']) ) throw new Exception('Malformed filter');
                 $queries[$key] = $value;
             }
@@ -243,5 +251,20 @@ class AccountServices implements AccountServiceContract
     public static function isDescendantOrAncestorByCode(string $ancestorCode, string $decendantCode): bool
     {
         return str_starts_with($decendantCode, $ancestorCode);
+    }
+
+    /**
+     * Get accounts balance for given query parameters
+     * 
+     * @param array $queries Query parameters including type, code, _from, _to
+     * @return array Account balances
+     */
+    public function getAccountsBalance(array $queries): array
+    {
+        return Account::whereIn('code', $queries['code'])
+            ->whereBetween('date', [$queries['_from'], $queries['_to']])
+            ->select('code', 'balance')
+            ->get()
+            ->toArray();
     }
 }
