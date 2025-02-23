@@ -10,6 +10,7 @@ import { MentionsOptionProps, MentionsRef, OptionProps } from 'antd/es/mentions'
 import type { GetProp, TreeSelectProps } from 'antd';
 import { TextAreaRef } from "antd/es/input/TextArea";
 import { debounce } from "lodash";
+import PlaceHoldersInput from '@/components/placeholdersInputs/placeholdersInputs';
 
 
 type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
@@ -216,13 +217,13 @@ const FormulaBuilder = ({ formula, setFormula, errors, setErrors }: FormulaBuild
                           `{{A|${value}}}` + 
                           formula.substring(cursorPosition);
         setFormula(newFormula);
-        setFilters([
-            {
-                field: 'type',
-                operator: 'eq',
-                value: 'all',
-            }
-        ], 'replace');
+        // setFilters([
+        //     {
+        //         field: 'type',
+        //         operator: 'eq',
+        //         value: 'all',
+        //     }
+        // ], 'replace');
         textAreaRef.current?.focus({
             cursor: 'end',
         });
@@ -349,52 +350,11 @@ const FormulaBuilder = ({ formula, setFormula, errors, setErrors }: FormulaBuild
     return (
         <div>
             <Space direction="vertical" style={{ width: '100%' }}>
-                <Space>
-                    {/* <AutoComplete
-                        options={formulaOptions}
-                        style={{ width: 200 }}
-                        placeholder="Formula"
-                        onSelect={(value) => setFormula(prev => `${prev} ${value}()`)}
-                        filterOption={(inputValue, option) => 
-                            (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-                    /> */}
-                    <Select
-                        showSearch
-                        options={tagsSelectProps.options}
-                        style={{ width: 200 }}
-                        placeholder="Tags"
-                        onSelect={handleTagsSelect}
-                        loading={tagsSelectProps.loading}
-                        filterOption={(inputValue, option) => 
-                            (option!.value as string).toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-                    />
-                    <TreeSelect
-                        treeDataSimpleMode
-                        style={{ width: 200 }}
-                        popupMatchSelectWidth={false}
-                        placeholder="Accounts"
-                        treeData={accountTreeData}
-                        loadData={onLoadData}
-                        onSelect={handleAccountsSelect}
-                        loading={accountTableProps.loading ? true : false}
-                        showSearch
-                        filterTreeNode={(search, item) => {
-                            return (item?.title as any).toLowerCase().startsWith(search.toLowerCase())
-                        }}
-                        onSearch={handleSearch}
-                    />
-                    <Select
-                        {...transactionsSelectProps}
-                        loading={transactionsSelectProps.loading}
-                        filterOption={(inputValue, option) => {
-                            return (option!.label as string).toUpperCase().startsWith(inputValue.toUpperCase())
-                        }}
-                        style={{ width: 200 }}
-                        placeholder="Transactions"
-                        showSearch
-                        onSelect={handleTransactionSelect}
-                    />
-                </Space>
+                <PlaceHoldersInput
+                    handleTransactionSelect={handleTransactionSelect}
+                    handleTagsSelect={handleTagsSelect}
+                    handleAccountsSelect={handleAccountsSelect}
+                />
                 <div style={{ position: 'relative' }}>
                     <Input.TextArea
                         rows={4}
