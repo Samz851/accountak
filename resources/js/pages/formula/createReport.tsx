@@ -39,7 +39,8 @@ type FormValues = {
 }
 export const CreateFormula = () => {
     const [formula, setFormula] = useState<string>('');
-    const [formulaValidationStatus, setFormulaValidationStatus] = useState('validating')
+    const [formulaValidationStatus, setFormulaValidationStatus] = useState('validating');
+    const [errors, setErrors] = useState<string[]>([]);
 
     const apiUrl = useApiUrl('laravel');
     const validateFormula = async (value) => {
@@ -77,17 +78,15 @@ export const CreateFormula = () => {
     },[formula])
 
     return (
-        <Create saveButtonProps={saveButtonProps}>
+        <Create saveButtonProps={{...saveButtonProps, disabled: errors.length > 0} }>
 
         
         <Form
             {...formProps}
             layout="vertical"
             onFinish={async (values) => {
-                // Validate values
-                const valid = await validateFormula(values.formula);
-                console.log('valid', valid);
-                if ( ! valid ) {
+                // Use errors state for validation
+                if (errors.length > 0) {
                     setFormulaValidationStatus('error');
                     return false;
                 }
@@ -129,14 +128,16 @@ export const CreateFormula = () => {
                 <Form.Item
                     label="Formula"
                     name="formula"
-                    rules={[{required: true, message: "Please gix"}]}
+                    rules={[{required: true, message: "Please fix"}]}
                     validateStatus={formulaValidationStatus as any}
-                    help={formulaValidationStatus === 'error' ? 'Formula is not valid' : ''}    
-                    
+                    help={errors.length > 0 ? errors.join(', ') : ''}    
                 >
-                {/* <FormulaBuilder formula={formula} setFormula={setFormula} /> */}
-                <FormulaBuilder formula={formula} setFormula={setFormula} />
-
+                    <FormulaBuilder 
+                        formula={formula} 
+                        setFormula={setFormula}
+                        errors={errors}
+                        setErrors={setErrors}
+                    />
                 </Form.Item>
             </Form>
             {/* <PageBuilderComponent 
