@@ -96,6 +96,7 @@ import { Button, Form } from 'antd';
 import FormulaPlugin from './plugin/formulaEditor/formulaEditor';
 import FormulaBuilder from '@/components/formulaBuilder/formulaBuilder';
 import { InputFields } from '@/components/templateAutocomplete/inputFields';
+import PlaceHoldersInput from '@/components/placeholdersInputs/placeholdersInputs';
 
 // import './App.css';
 
@@ -537,7 +538,7 @@ export const StatementEditor = ({content, setContent}) =>{
 	},[editorInstance])
 
 	const insertTemplateString = (template: string) => {
-		const templateData = `<span id="ac-template-string" class="ac_template_string">${template}</span>`
+		const templateData = template
 		const viewFragment = editorInstance?.data.processor.toView(templateData)
                 const modelFragment = editorInstance?.data.toModel(viewFragment as any)
 		editorInstance?.model.change(writer => {
@@ -545,6 +546,23 @@ export const StatementEditor = ({content, setContent}) =>{
 			writer.insert(modelFragment as any, insertPosition as any)
 		})
 	}
+	const handleTagsSelect = (value) => {
+		insertTemplateString(`{{T|${value}}}`);
+    };
+
+	const handleAccountsSelect = (value) => {
+		insertTemplateString(`{{A|${value}}}`);
+    };
+
+	const handleTransactionsSelect = (value) => {
+		insertTemplateString(`{{TR|${value}}}`);
+    };
+
+	const handleFormulasSelect = (value) => {
+		insertTemplateString(`{{F|${value}}}`);
+    };
+
+
 
 	return (
 		// <Form
@@ -552,7 +570,13 @@ export const StatementEditor = ({content, setContent}) =>{
 		// >
 		// 	<Form.Item>
 			<div className="main-container">
-				<InputFields formula={formula} setFormula={setFormula} insertTemplate={insertTemplateString} />
+				<PlaceHoldersInput 
+					handleTagsSelect={handleTagsSelect} 
+					handleAccountsSelect={handleAccountsSelect} 
+					handleTransactionSelect={handleTransactionsSelect} 
+					handleFormulaSelect={handleFormulasSelect} 
+					includeFormula={true}
+				/>
 				<div
 					className="editor-container editor-container_balloon-editor editor-container_include-style editor-container_include-block-toolbar"
 					ref={editorContainerRef}

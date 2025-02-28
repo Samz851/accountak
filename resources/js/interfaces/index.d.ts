@@ -63,6 +63,7 @@ export interface IFormula {
     id: number;
     name: string;
     formula: string;
+    code: string;
 }
 
 // export type OptionsOutletContextType = {

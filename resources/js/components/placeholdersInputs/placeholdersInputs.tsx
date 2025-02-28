@@ -4,7 +4,7 @@ import type { GetProp, TreeSelectProps } from 'antd';
 import { useSelect, useTable } from "@refinedev/antd"; // Import necessary hooks
 import { useApiUrl } from "@refinedev/core";  // Add this line
 import { Request } from "@/helpers/httpHelper";
-import { ITag, IAccount, ITransaction } from "@/interfaces";
+import { ITag, IAccount, ITransaction, IFormula } from "@/interfaces";
 import { debounce } from 'lodash';
 
 type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
@@ -14,13 +14,15 @@ interface PlaceHoldersInputProps {
     handleAccountsSelect: (value: any) => void;
     handleTransactionSelect: (value: any) => void;
     includeFormula?: boolean;
+    handleFormulaSelect?: (value: any) => void;
 }
 
 const PlaceHoldersInput: React.FC<PlaceHoldersInputProps> = ({
     handleTagsSelect, 
     handleAccountsSelect, 
     handleTransactionSelect, 
-    includeFormula = false
+    includeFormula = false,
+    handleFormulaSelect
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [accountTreeData, setAccountTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>([]);
@@ -76,6 +78,13 @@ const PlaceHoldersInput: React.FC<PlaceHoldersInputProps> = ({
             },
           ],
         
+    })
+
+    const {selectProps: formulasSelectProps} = useSelect<IFormula>({
+        resource: "formula",
+        optionLabel: "code" as any,
+        optionValue: "code" as any,
+        searchField: "code" as any,
     })
 
     const formatAccountTreeData = (data: IAccount[]) => {
@@ -188,6 +197,17 @@ const PlaceHoldersInput: React.FC<PlaceHoldersInputProps> = ({
                 showSearch
                 onSelect={handleTransactionSelect}
             />
+            {
+                includeFormula && (
+                    <Select
+                        {...formulasSelectProps}
+                        loading={formulasSelectProps.loading}
+                        placeholder="Formulas"
+                        showSearch
+                        onSelect={handleFormulaSelect}
+                    />
+                )
+            }
         </Space>
     );
 };
