@@ -91,4 +91,11 @@ class FormulaController extends Controller
         // $result = $stringCalc->calculate($formula);
         // Log::info('Result: ' . $result, [__FILE__, __LINE__]);
     }
+
+    public function show(Request $request, int $formula)
+    {
+        $formula = Formula::find($formula);
+
+        return response()->json($formula);
+    }
 }

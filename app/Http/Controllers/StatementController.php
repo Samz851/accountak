@@ -46,6 +46,14 @@ class StatementController extends Controller
         return response($statement);
     }
 
+    public function update(Request $request, int $statement): Response
+    {
+        $statement = Statement::find($statement);
+        $statement->update($request->all());
+
+        return response($statement);
+    }
+
     public function test(Request $request): Response
     {
         $statement = Statement::find($request->query('id'));

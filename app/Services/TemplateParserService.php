@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Tag;
 use App\Models\TransRecord;
 use App\Models\Account;
+use App\Models\Formula;
+use Illuminate\Support\Facades\Log;
 
 class TemplateParserService
 {
@@ -45,6 +47,7 @@ class TemplateParserService
         "T|"  => Tag::class,
         "TR|" => TransRecord::class,
         "A|"  => Account::class,
+        "F|"  => Formula::class,
     ];
 
     /**
@@ -69,9 +72,10 @@ class TemplateParserService
      *
      * @return string The parsed template with all replacements.
      */
-    public function parse(): string | array
+    public function parse(?string $content = null): string | array
     {
-        $definitions = $this->extractPlaceholders($this->content);
+        $content = $content ?? $this->content;
+        $definitions = $this->extractPlaceholders($content);
         $this->placeholders = $this->buildDefinitions($definitions);
         $transformedPlaceholders = $this->transformPlaceholders($this->placeholders);
         $transformPlaceholdersArray = [];
@@ -81,10 +85,10 @@ class TemplateParserService
             }
         }
 
-        $this->content = str_replace(array_keys($transformPlaceholdersArray), array_values($transformPlaceholdersArray), $this->content);
+        $content = str_replace(array_keys($transformPlaceholdersArray), array_values($transformPlaceholdersArray), $content);
         // Additional parsing logic can be implemented here
         
-        return $this->content;
+        return $content;
     }
     
     /**
@@ -132,6 +136,7 @@ class TemplateParserService
             "T|"  => [],
             "TR|" => [],
             "A|"  => [],
+            "F|"  => [],
         ];
 
         foreach ($extractedDefinitions as $definition) {
@@ -148,10 +153,10 @@ class TemplateParserService
      *
      * @return array The filtered placeholders array without empty value arrays.
      */
-    private function transformPlaceholders(): array
+    private function transformPlaceholders( array $placeholders): array
     {
         $result = [];
-        $filteredPlaceholders = array_filter($this->placeholders, function($value) {
+        $filteredPlaceholders = array_filter($placeholders, function($value) {
             return !empty($value);
         });
         
@@ -166,9 +171,11 @@ class TemplateParserService
                 case "A|":
                     $result[$key] = $this->getAccounts($value);
                     break;
+                case "F|":
+                    $result[$key] = $this->getFormulas($value);
+                    break;
             }
         }
-        
         return $result;
     }
 
@@ -212,6 +219,36 @@ class TemplateParserService
 
 
         return $accounts;
+    }
+
+    private function getFormulas(array $codes): array
+    {
+        $formulas = Formula::whereIn('code', $codes)
+            ->select('code', 'name', 'formula')
+            ->get();
+        $result = [];
+        foreach ($formulas as $formula) {
+            $result[$formula['code']] = $this->parseFormula($formula['formula']);
+        }
+        return $result;
+    }
+    
+    private function parseFormula(string $formula): string
+    {
+        $formulaService = new FormulaService();
+        $originalFormula = $formula;
+        $formulaDefinitions = $this->extractPlaceholders($formula);
+        $formulaDefinitions = $this->buildDefinitions($formulaDefinitions);
+        $transformedPlaceholders = $this->transformPlaceholders($formulaDefinitions);
+        $transformPlaceholdersArray = [];
+        foreach ($transformedPlaceholders as $key => $value) {
+            foreach ($value as $k => $v) {
+                $transformPlaceholdersArray['{{'. $key . $k . '}}'] = $v;
+            }
+        }
+        $formula = str_replace(array_keys($transformPlaceholdersArray), array_values($transformPlaceholdersArray), $originalFormula);
+        $formula = $formulaService->calculateFormula($formula);
+        return $formula;
     }
 
     /**

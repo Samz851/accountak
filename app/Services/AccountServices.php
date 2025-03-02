@@ -75,14 +75,14 @@ class AccountServices implements AccountServiceContract
                 $queries[$key] = $value;
             }
         }
-        Log::info($queries, [__LINE__, __FILE__]);
+        // Log::info($queries, [__LINE__, __FILE__]);
         return $queries;
     }
 
     public function getAccounts(array $filters = []): array
     {
         try {
-            Log::info($filters, [__LINE__, __FILE__]);
+            // Log::info($filters, [__LINE__, __FILE__]);
             if ( $filters ) {
                 $queries = $this->extractFilters($filters);
                 if ( isset($filters['_start']) && isset($filters['_end']) ) {
@@ -97,18 +97,18 @@ class AccountServices implements AccountServiceContract
                 {
                     if ( isset($queries['code']) )
                     {
-                        Log::info($queries['code'], [__LINE__, __FILE__]);
+                        // Log::info($queries['code'], [__LINE__, __FILE__]);
                         $accounts = $accounts->quickSearch($queries['code']);
 
                     } elseif ( !isset($queries['parent']))
                     {
-                        Log::info('CODE NOT SET', [__LINE__, __FILE__]);
+                        // Log::info('CODE NOT SET', [__LINE__, __FILE__]);
                         $accounts = $accounts->setType('branch')
                                     ->setTaxonomy('root')
                                     ->executeAccountQuery();
                     } else {
                         $accounts = AccountQueryBuilder::getChildren($queries['parent']);
-                        Log::info($accounts, [__LINE__, __FILE__]);
+                        // Log::info($accounts, [__LINE__, __FILE__]);
                     }
                 } else {
                     $accounts = $accounts->setType($queries['type']);
@@ -127,14 +127,14 @@ class AccountServices implements AccountServiceContract
                 //         $value['children'] = [];
                 //     }
                 // }
-                Log::info($accounts, [__LINE__, __FILE__]);
+                // Log::info($accounts, [__LINE__, __FILE__]);
 
                 return $accounts;
             }
+            return []; // Add default return for when $filters is empty
         } catch (\Throwable $th) {
             throw $th;
         }
-
     }
 
     public function searchAccounts( string $code ): SupportCollection
@@ -228,7 +228,7 @@ class AccountServices implements AccountServiceContract
                         ->append('children')
                         ->children
                         ->toArray();
-            Log::info($accounts, [__LINE__, __FILE__]);
+            // Log::info($accounts, [__LINE__, __FILE__]);
 
             foreach ($accounts as &$value) {
                 if ( $value['has_children'] && ! isset($value['children'])) {

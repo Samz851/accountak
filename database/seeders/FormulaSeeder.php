@@ -16,6 +16,7 @@ class FormulaSeeder extends Seeder
      */
     public function run(): void
     {
+        $symbols = ['A|', 'TR|', 'T|', 'F|'];
         $queryBuilder = new AccountQueryBuilder();
         $codes = ['01', '02', '03', '04', '05'];
         $formulaArray = [
@@ -33,7 +34,7 @@ class FormulaSeeder extends Seeder
                 $accounts = $queryBuilder->quickSearch($code)->random($i % 2 == 0 ? 2 : 3);
                 $formula = "{$formulaArray[rand(0, count($formulaArray) - 1)]}(";
                 foreach ($accounts as $account) {
-                    $formula .= "{{" . $account->code . "}},";
+                    $formula .= "{{" . $symbols[0]. $account->code . "}},";
                 }
                 $formula .= ")";
 
@@ -47,7 +48,7 @@ class FormulaSeeder extends Seeder
             $transactions = TransRecord::all()->random($i % 2 == 0 ? 2 : 3);
             $formula = "{$formulaArray[rand(0, count($formulaArray) - 1)]}(";
             foreach ($transactions as $transaction) {
-                $formula .= "{{" . $transaction->id . "}},";
+                $formula .= "{{" . $symbols[1]. $transaction->code . "}},";
             }
             $formula .= ")";
 

@@ -29,7 +29,7 @@ import {
     DatePicker,
 } from "antd";
 
-import { ICompany, IContact, IReport, IStatement } from "@/interfaces";
+import { IFormula, IReport } from "@/interfaces";
 import { EyeOutlined, FileTextOutlined, SearchOutlined } from "@ant-design/icons";
 import { PaginationTotal } from "@/components";
 import { PropsWithChildren, useId, useState } from "react";
@@ -71,7 +71,7 @@ export const FormulasList = ({ children }: PropsWithChildren) => {
       });
 
     const { tableProps, filters, sorters } = useTable<
-        IStatement,
+        IFormula,
         HttpError
     >({
         filters: {
@@ -279,7 +279,7 @@ export const FormulasList = ({ children }: PropsWithChildren) => {
                         </FilterDropdown>
                     )}
                 /> */}
-                <Table.Column<IStatement>
+                <Table.Column<IFormula>
                     fixed="right"
                     title={t("table.actions")}
                     render={(_, record) => (
@@ -288,7 +288,7 @@ export const FormulasList = ({ children }: PropsWithChildren) => {
                             icon={<EyeOutlined />}
                             onClick={() => {
                                 return go({
-                                    to: `${showUrl("statements", record.id)}`,
+                                    to: `${showUrl("formula", record.id)}`,
                                     query: {
                                         to: pathname,
                                     },
