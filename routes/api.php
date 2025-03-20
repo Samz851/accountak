@@ -35,6 +35,7 @@ Route::get('/getTagMembers', [TagController::class, 'getTagMembers']);
 Route::get('/getTagBalance', [TagController::class, 'getTagBalance']);
 Route::get('/getTagLeafMembers', [TagController::class, 'getTagLeafMembers']);
 Route::get('/getTagBalanceByRanges', [TagController::class, 'getTagBalanceByRanges']);
+Route::get('/test', [StatementController::class, 'test']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/accounts', [AccountController::class, 'index']);

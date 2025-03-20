@@ -35,6 +35,14 @@ class Account extends BaseAccount implements BaseAccountContract
         });
     }
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
     public function debitTransactions()
     {
         // return $this->hasMany(TransRecord::class, 'debit_account_id');

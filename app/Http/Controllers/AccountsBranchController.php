@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ArrayFormatters;
+use App\Models\Account;
 use App\Models\AccountsBranch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -118,6 +119,7 @@ class AccountsBranchController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info($request->all(), [__LINE__, __FILE__]);
         $parent = AccountsBranch::create($request->except('tags'));
         if ( $request->has('tags') ) $parent->attach($request->input('tags'));
 
@@ -127,14 +129,29 @@ class AccountsBranchController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AccountsBranch $parent)
+    public function show( $parent)
     {
-        $parent->accounts;
-        $parent->child_types;
-        $parent->parent;
+        // $parent->accounts;
+        // $parent->child_types;
+        // $parent->parent;
+        Log::info($parent, [__LINE__, __FILE__]);
 
-        // Log::info($parent->parent, [__LINE__, __FILE__]);
-        return response($parent);
+        $acc = AccountsBranch::where('code', $parent)
+            
+            ->first();
+        
+        $transactionsD = Account::where('code', 'like', $parent . "%")->with([
+            'parent',
+            'debitTransactions.creditAccounts:name',
+            'creditTransactions.debitAccounts:name',
+        ])->get();
+        $debit = $transactionsD->pluck('debitTransactions')->flatten();
+        $cred = $transactionsD->pluck('creditTransactions')->flatten();
+        // ->pluck('debitTransactions', 'creditTransactions');
+        $acc->debitTransactions = $debit->select('date', 'amount', 'code', 'dbtrans', 'id')->sortByDesc('date')->values()->all();
+        $acc->creditTransactions = $cred->select('date', 'amount', 'code', 'crtrans', 'id')->sortByDesc('date')->values()->all();
+        Log::info($debit, [__LINE__, __FILE__]);
+        return response($acc);
     }
 
     /**

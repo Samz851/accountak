@@ -17,8 +17,10 @@ import {
     Button,
     Divider,
     Form,
+    GetProp,
     Input,
-    Modal, Select, Space, TreeSelect
+    Modal, Select, Space, TreeSelect,
+    TreeSelectProps
 } from "antd";
 
 import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables, IAccountsBranch, ITag } from "@/interfaces";
@@ -32,10 +34,13 @@ type Props = {
 type FormValues = {
     name: string;
     description: string;
-    parent?: any;
+    parent_id?: any;
     tags: number[];
 
 };
+
+type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
+
 // type AccountsBranchesTree = IAccountsBranch & DataNode;
 export const AccountsBranchCreateForm = () => {
     const { key } = useLocation();
@@ -68,7 +73,7 @@ export const AccountsBranchCreateForm = () => {
     //     ]
     // });
 
-    const { tableProps, filters, setFilters, sorters } = useTable<
+    const { tableProps: accountTableProps, filters, setFilters, sorters } = useTable<
         IAccount,
         HttpError,
         IAccountFilterVariables
@@ -97,66 +102,125 @@ export const AccountsBranchCreateForm = () => {
         optionValue: "id",
     })
 
-    const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
+    const formatAccountTreeData = (data: IAccount[]) => {
+        return data?.map(account => {
+            // console.log('account', account)
+            return {
+            title: account.code,
+            value: account.id,
+            key: account.id,
+            isLeaf: account.has_children === true ? false : true,
+            pId: account.parent_id ? account.parent_id : 0,
+            id: account.id
+        }
+        }
+    ) ?? [];
+    }
+
+        const [accountTreeData, setAccountTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>([]);
+        
+        const [ selectedAccount, setSelectedAccount ] = useState<DefaultOptionType | null>(null);
+    
+    // const [ accounts, setAccounts ] = useState<IAccount[] | undefined>([...tableProps.dataSource as any ?? []]);
     const [ expandedAccount, setExpandedAccount ] = useState('');
     // const accountBranches = data?.data ?? [];
 
-    useEffect(()=>{
-        console.log(tableProps);
-        if ( ! tableProps.loading ) {
-            if ( expandedAccount !== '' ) {
-                setAccounts((prevAccounts) => {
-                    const updateAccounts = (accounts) => {
-                        return [...(accounts as any)?.map(account => {
-                            if ( expandedAccount.startsWith(account.code) ) {
-                                if ( expandedAccount === account.code ) {
-                                    return {
-                                        ...account,
-                                        children: [...tableProps.dataSource as any]
-                                    }
-                                }
-                                if ( expandedAccount.length > account.code.length ) {
-                                    return {
-                                        ...account,
-                                        children: updateAccounts(account.children)
-                                    }
-                                }
-                            } else {
-                                return account;
-                            }
-                        })]
-                    }
-                    return [...updateAccounts(prevAccounts)];
+    // useEffect(()=>{
+    //     console.log(tableProps);
+    //     if ( ! tableProps.loading ) {
+    //         if ( expandedAccount !== '' ) {
+    //             setAccounts((prevAccounts) => {
+    //                 const updateAccounts = (accounts) => {
+    //                     return [...(accounts as any)?.map(account => {
+    //                         if ( expandedAccount.startsWith(account.code) ) {
+    //                             if ( expandedAccount === account.code ) {
+    //                                 return {
+    //                                     ...account,
+    //                                     children: [...tableProps.dataSource as any]
+    //                                 }
+    //                             }
+    //                             if ( expandedAccount.length > account.code.length ) {
+    //                                 return {
+    //                                     ...account,
+    //                                     children: updateAccounts(account.children)
+    //                                 }
+    //                             }
+    //                         } else {
+    //                             return account;
+    //                         }
+    //                     })]
+    //                 }
+    //                 return [...updateAccounts(prevAccounts)];
     
-                })
-            } else {
-                setAccounts([...tableProps.dataSource as any]);
-            }
+    //             })
+    //         } else {
+    //             setAccounts([...tableProps.dataSource as any]);
+    //         }
+    //     }
+
+    // }, [tableProps.dataSource]);
+
+    useEffect(()=>{
+        // console.log('tree data', accountTableProps.dataSource)
+        if ( ! accountTableProps.loading) {
+            const newAccountData = formatAccountTreeData(accountTableProps.dataSource as any)
+            // console.log('new account data', newAccountData)
+            setAccountTreeData([...accountTreeData, ...newAccountData]);
+
         }
+    },[accountTableProps.dataSource])
 
-    }, [tableProps.dataSource]);
+    // const onLoadData = (record) => {
+    //     console.log('on load data node', record);
+    //     setExpandedAccount(record.code);
+    //     setFilters([
+    //         {
+    //             field: 'type',
+    //             operator: 'eq',
+    //             value: 'all',
+    //         },
+    //         {
+    //             field: 'parent',
+    //             operator: 'eq',
+    //             value: record.id,
+    //         }
+    //     ], 'replace');
+    //     return new Promise((resolve) => {
+    //         setTimeout(() => {
+    //           resolve(undefined);
+    //         }, 300);
+    //       })
+    // }
 
-    const onLoadData = (record) => {
-        console.log('on load data node', record);
-        setExpandedAccount(record.code);
-        setFilters([
-            {
-                field: 'type',
-                operator: 'eq',
-                value: 'all',
-            },
-            {
-                field: 'parent',
-                operator: 'eq',
-                value: record.id,
+        const onLoadData: TreeSelectProps['loadData'] = (record) => {
+            const account = accountTreeData.find(account => account.id === record.id);
+    
+            // console.log('record',record, account);
+            setSelectedAccount(record);
+            if (account && ! account.isLeaf) {
+                setFilters([
+                    {
+                        field: 'type',
+                        operator: 'eq',
+                        value: 'all',
+                    },
+                    {
+                        field: 'parent',
+                        operator: 'eq',
+                        value: record.id,
+                    }
+                ], 'replace');
             }
-        ], 'replace');
-        return new Promise((resolve) => {
-            setTimeout(() => {
-              resolve(undefined);
-            }, 300);
-          })
-    }
+    
+    
+            return new Promise((resolve) => {
+                setTimeout(()=>{
+                    resolve(undefined);
+                }, 300)
+            });
+            
+        };
+
     useEffect(() => {
         const prevForm = createForms.find( (form) => form.key === key );
         if ( prevForm ) {
@@ -202,7 +266,7 @@ export const AccountsBranchCreateForm = () => {
                         const data = await onFinish({
                             name: values.name,
                             description: values.description,
-                            parent: values.parent,
+                            parent_id: values.parent_id,
                             tags: values.tags
                         });
                         back();
@@ -230,21 +294,22 @@ export const AccountsBranchCreateForm = () => {
                 </Form.Item>
                 <Form.Item
                     label={t("branches.fields.parent")}
-                    name="parent"
+                    name="parent_id"
                     // rules={[{ required: true }]}
                 >
                     <TreeSelect
+                        treeDataSimpleMode
                         style={{ width: '100%' }}
                         // value={typeValue}
-                        fieldNames={{label: "code_label", "value": "code", children: "children"}}
+                        // fieldNames={{label: "code_label", "value": "code", children: "children"}}
                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accounts}
+                        treeData={accountTreeData}
                         placeholder="Please select"
                         // treeDefaultExpandAll
                         loadData={onLoadData}
                         // onChange={onChangeType}
                         allowClear={true}
-                        disabled={accounts?.length === 0}
+                        disabled={accountTreeData?.length === 0}
                         // defaultValue={initValue}
                         />
 

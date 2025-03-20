@@ -274,18 +274,18 @@ export const AccountsList = ({ children }: PropsWithChildren) => {
                 <Row>
                     <Button
                         icon={<EyeOutlined />}
-                        onClick={() => show('accounts', record.id, "push")}
+                        onClick={() => show(record.code.length == 10 ? 'accounts' : 'branches', record.code, "push")}
                     />
 
                 </Row>
                 <Row>
                     <Button
                         icon={<EyeOutlined />}
-                        onClick={() => show('accounts', record.id, "push")}
+                        onClick={() => show(record.code.length == 10 ? 'accounts' : 'branches', record.code, "push")}
                     />
                     <Button
                         icon={<EyeOutlined />}
-                        onClick={() => show('accounts', record.id, "push")}
+                        onClick={() => show(record.code.length == 10 ? 'accounts' : 'branches', record.code, "push")}
                     />
                 </Row>
                 </>

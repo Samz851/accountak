@@ -19,6 +19,7 @@ class TransactionsController extends Controller
     public function index(Request $request): Response
     {
         $transactions = TransRecord::with(['noteable', 'debitAccounts', 'creditAccounts', 'payment'])
+            ->orderBy('date', 'desc')
             // ->where('date', '>=', '2024-03-01')
             // ->paginate()
             ->get();

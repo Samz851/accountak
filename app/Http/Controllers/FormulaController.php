@@ -55,12 +55,12 @@ class FormulaController extends Controller
             if ($symbol == 'A') {
                 if (strlen($code) == 10) {
                     $val = Account::where('code', $code)->first();
-                    Log::info($val->accounts_balance->balance, [__FILE__, __LINE__]);
+                    Log::info($val->accounts_balance, [__FILE__, __LINE__]);
                     $balance = $val->accounts_balance->balance;
                 } else {
                     $val = AccountsBranch::where('code', $code)->first();
-                    Log::info($val->accounts_balance->balance, [__FILE__, __LINE__]);
-                    $balance = $val->accounts_balance->balance;
+                    Log::info($val->accounts_balance['balance'], [__FILE__, __LINE__]);
+                    $balance = $val->accounts_balance['balance'];
                 }
             } elseif ($symbol === 'TR') {
                 $val = TransRecord::where('code', $code)->first();
@@ -90,5 +90,12 @@ class FormulaController extends Controller
         }
         // $result = $stringCalc->calculate($formula);
         // Log::info('Result: ' . $result, [__FILE__, __LINE__]);
+    }
+
+    public function show(Request $request, int $formula)
+    {
+        $formula = Formula::find($formula);
+
+        return response()->json($formula);
     }
 }

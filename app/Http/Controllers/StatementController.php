@@ -6,6 +6,7 @@ use App\Models\Statement;
 use App\Models\StatementTemplate;
 use App\Models\Tag;
 use App\Services\TagService;
+use App\Services\TemplateParserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -26,10 +27,10 @@ class StatementController extends Controller
         $data = $request->all();
 
         $template = StatementTemplate::find($data['template_id']);
-
+        $parser = new TemplateParserService($template->content, $data['from'], $data['to']);
         $report = Statement::create([
             'title' => $template->title,
-            'content' => $this->templateParser($template->content, $data['from'], $data['to']),
+            'content' => $parser->parse(),
             'template_id' => $template->id,
             'from' => $data['from'],
             'to' => $data['to']
@@ -43,6 +44,22 @@ class StatementController extends Controller
         $statement = Statement::find($statement);
 
         return response($statement);
+    }
+
+    public function update(Request $request, int $statement): Response
+    {
+        $statement = Statement::find($statement);
+        $statement->update($request->all());
+
+        return response($statement);
+    }
+
+    public function test(Request $request): Response
+    {
+        $statement = Statement::find($request->query('id'));
+        $service = new TemplateParserService($statement->content, $statement->from, $statement->to);
+
+        return response($service->toJson());
     }
 
     private function templateParser(string $template, $from, $to): string

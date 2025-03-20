@@ -52,7 +52,7 @@ export const ConfigProvider = ({
         >
             <AntdConfigProvider
                 theme={{
-                    ...RefineThemes.Orange,
+                    ...RefineThemes.Blue,
                     algorithm:
                         mode === "light"
                             ? theme.defaultAlgorithm

@@ -23,7 +23,7 @@ class AccountServices implements AccountServiceContract
         ],
         'code' => [
             'required' => false,
-            'type' => 'string'
+            'type' => 'mix'
         ],
         'taxonomy' => [
             'required' => false,
@@ -39,6 +39,14 @@ class AccountServices implements AccountServiceContract
             'type' => 'string',
         ],
         '_end' => [
+            'required' => false,
+            'type' => 'string',
+        ],
+        '_from' => [
+            'required' => false,
+            'type' => 'string',
+        ],
+        '_to' => [
             'required' => false,
             'type' => 'string',
         ]
@@ -62,19 +70,19 @@ class AccountServices implements AccountServiceContract
 
         foreach ($filters as $key => $value) {
             if (array_key_exists($key, $this->filters) ) {
-                if ( gettype($value) !== $this->filters[$key]['type'] ) throw new Exception('Malformed filter');
+                if ( gettype($value) !== $this->filters[$key]['type'] && $this->filters[$key]['type'] !== 'mix' ) throw new Exception('Malformed filter');
                 if ( isset($this->filters[$key]['values'] ) && ! in_array($value, $this->filters[$key]['values']) ) throw new Exception('Malformed filter');
                 $queries[$key] = $value;
             }
         }
-        Log::info($queries, [__LINE__, __FILE__]);
+        // Log::info($queries, [__LINE__, __FILE__]);
         return $queries;
     }
 
     public function getAccounts(array $filters = []): array
     {
         try {
-            Log::info($filters, [__LINE__, __FILE__]);
+            // Log::info($filters, [__LINE__, __FILE__]);
             if ( $filters ) {
                 $queries = $this->extractFilters($filters);
                 if ( isset($filters['_start']) && isset($filters['_end']) ) {
@@ -89,18 +97,18 @@ class AccountServices implements AccountServiceContract
                 {
                     if ( isset($queries['code']) )
                     {
-                        Log::info($queries['code'], [__LINE__, __FILE__]);
+                        // Log::info($queries['code'], [__LINE__, __FILE__]);
                         $accounts = $accounts->quickSearch($queries['code']);
 
                     } elseif ( !isset($queries['parent']))
                     {
-                        Log::info('CODE NOT SET', [__LINE__, __FILE__]);
+                        // Log::info('CODE NOT SET', [__LINE__, __FILE__]);
                         $accounts = $accounts->setType('branch')
                                     ->setTaxonomy('root')
                                     ->executeAccountQuery();
                     } else {
                         $accounts = AccountQueryBuilder::getChildren($queries['parent']);
-                        Log::info($accounts, [__LINE__, __FILE__]);
+                        // Log::info($accounts, [__LINE__, __FILE__]);
                     }
                 } else {
                     $accounts = $accounts->setType($queries['type']);
@@ -119,14 +127,14 @@ class AccountServices implements AccountServiceContract
                 //         $value['children'] = [];
                 //     }
                 // }
-                Log::info($accounts, [__LINE__, __FILE__]);
+                // Log::info($accounts, [__LINE__, __FILE__]);
 
                 return $accounts;
             }
+            return []; // Add default return for when $filters is empty
         } catch (\Throwable $th) {
             throw $th;
         }
-
     }
 
     public function searchAccounts( string $code ): SupportCollection
@@ -220,7 +228,7 @@ class AccountServices implements AccountServiceContract
                         ->append('children')
                         ->children
                         ->toArray();
-            Log::info($accounts, [__LINE__, __FILE__]);
+            // Log::info($accounts, [__LINE__, __FILE__]);
 
             foreach ($accounts as &$value) {
                 if ( $value['has_children'] && ! isset($value['children'])) {
@@ -243,5 +251,20 @@ class AccountServices implements AccountServiceContract
     public static function isDescendantOrAncestorByCode(string $ancestorCode, string $decendantCode): bool
     {
         return str_starts_with($decendantCode, $ancestorCode);
+    }
+
+    /**
+     * Get accounts balance for given query parameters
+     * 
+     * @param array $queries Query parameters including type, code, _from, _to
+     * @return array Account balances
+     */
+    public function getAccountsBalance(array $queries): array
+    {
+        return Account::whereIn('code', $queries['code'])
+            ->whereBetween('date', [$queries['_from'], $queries['_to']])
+            ->select('code', 'balance')
+            ->get()
+            ->toArray();
     }
 }

@@ -34,20 +34,44 @@ class AccountQueryBuilder
         return $this;
     }
 
-    public function quickSearch(string $code): Collection
+    public function quickSearch(string|array $codes): Collection
     {
-        $codeCount = strlen($code);
-        Log::info([$code, $codeCount], [__LINE__, __FILE__]);
-        if ( $codeCount == 10 ) {
-            $this->setType('account');
-            $this->query->where('code', '=', $code );
+        if ( is_array($codes) ) {
+            $accountsCodes = array_filter($codes, function($c) {
+                return strlen($c) == 10;
+            });
+            $branchesCodes = array_filter($codes, function($c) {
+                return strlen($c) < 10;
+            });
+
+            if ( !empty($branchesCodes) ) {
+                $this->setType('branch');
+                $this->query->select(['id', 'code', 'name', 'parent_id'])->whereIn('accounts_branches.code', $branchesCodes );
+            }
+
+            if ( !empty($accountsCodes) ) {
+                if ( !empty($branchesCodes) ) {
+                    $this->query->unionAll(DB::table('accounts')->select(['id', 'code', 'name', 'parent_id'])->whereIn('accounts.code', $accountsCodes));
+                } else {
+                    $this->setType('account');
+                    $this->query->whereIn('code', $accountsCodes);
+                }
+
+            }
         } else {
-            $this->setType('branch');
-            $this->query->select(['id', 'code', 'name', 'parent_id'])->where('accounts_branches.code', 'like', $code . '%');
-            $this->query->unionAll(DB::table('accounts')->select(['id', 'code', 'name', 'parent_id'])->where('accounts.code', 'LIKE', $code .'%'));
-            // $this->query->leftJoin('accounts', function ( $join ) use ($code) {
-            //     $join->on('accounts.code', 'LIKE', DB::raw("CONCAT(accounts_branches.code, '%')"));
-            // });
+            $codeCount = strlen($codes);
+            Log::info([$codes, $codeCount], [__LINE__, __FILE__]);
+            if ( $codeCount == 10 ) {
+                $this->setType('account');
+                $this->query->where('code', '=', $codes );
+            } else {
+                $this->setType('branch');
+                $this->query->select(['id', 'code', 'name', 'parent_id'])->where('accounts_branches.code', 'like', $codes . '%');
+                $this->query->unionAll(DB::table('accounts')->select(['id', 'code', 'name', 'parent_id'])->where('accounts.code', 'LIKE', $codes .'%'));
+                // $this->query->leftJoin('accounts', function ( $join ) use ($code) {
+                //     $join->on('accounts.code', 'LIKE', DB::raw("CONCAT(accounts_branches.code, '%')"));
+                // });
+            }
         }
 
         $accounts = $this->executeAccountQuery();

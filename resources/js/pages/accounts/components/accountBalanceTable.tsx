@@ -1,15 +1,21 @@
-import { ITransaction } from "@/interfaces";
+import { ITransaction, TransactionTableShort } from "@/interfaces";
+import { useLink, useNavigation } from "@refinedev/core";
 import { Col, Row, Table, Typography } from "antd";
 import { useTranslation } from "react-i18next";
+import { resources } from '../../../config/resources';
+
 
 type Props = {
     transactions?: {
-        debit?: ITransaction[];
-        credit?: ITransaction[];
+        debit?: ITransaction[] | TransactionTableShort[];
+        credit?: ITransaction[] | TransactionTableShort[];
     };
 }
 export const AccountBalanceTable = ({transactions}: Props) => {
     const { t } = useTranslation();
+    const {showUrl} = useNavigation();
+    const Link= useLink();
+
     const { Column, ColumnGroup } = Table;
     const totalDebit = transactions?.debit?.reduce((prev, current) => {
         return prev + parseFloat(current.dbtrans.amount as string)
@@ -43,7 +49,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         dataIndex="date"
                         key="date"
                     />
-                    <Column<ITransaction["credit_accounts"]>
+                    {/* <Column<ITransaction["credit_accounts"]>
                         // title={t("transactions.fields.credit_account") as any}
                         title={() => 
                             <Row justify={"space-between"} gutter={8}>
@@ -92,6 +98,19 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                             }
                             </>
                         }
+                    /> */}
+                    <Column
+                        title={t("transactions.transactions") as any}
+                        dataIndex={["code"]}
+                        key="crtrans"
+                        render={(value) =>
+                            <Link 
+                                to= {showUrl("transactions", value)}
+                                 >
+                                    {value}
+                                 </Link>
+
+                        }
                     />
                     <Column
                         title={t("transactions.fields.amount") as any}
@@ -123,7 +142,7 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                         dataIndex="date"
                         key="alpha"
                     />
-                    <Column<ITransaction["debit_accounts"]>
+                    {/* <Column<ITransaction["debit_accounts"]>
                         // title={t("transactions.fields.debit_account") as any}
                         title={() => 
                             <Row justify={"space-between"} gutter={8}>
@@ -170,6 +189,19 @@ export const AccountBalanceTable = ({transactions}: Props) => {
                                 ))
                             }
                             </>
+                        }
+                    /> */}
+                    <Column
+                        title={t("transactions.transactions") as any}
+                        dataIndex={["code"]}
+                        key="crtrans"
+                        render={(value) =>
+                            <Link 
+                                to= {showUrl("transactions", value)}
+                                 >
+                                    {value}
+                                 </Link>
+
                         }
                     />
                     <Column

@@ -198,7 +198,7 @@ export const TransactionsList = ({ children }: PropsWithChildren) => {
                     render={(_, record) => (
                         <Button
                             icon={<EyeOutlined />}
-                            onClick={() => show("transactions", record.id, 'push')}
+                            onClick={() => show("transactions", record.code, 'push')}
                         />
                     )}
                 />

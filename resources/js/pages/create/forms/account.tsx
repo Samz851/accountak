@@ -16,14 +16,16 @@ import {
     Button,
     Divider,
     Form,
+    GetProp,
     Input,
-    Modal, Select, Space, TreeSelect
+    Modal, Select, Space, TreeSelect,
+    TreeSelectProps
 } from "antd";
 
 import { CreateContextType, CreateFormPropsType, IAccount, IAccountFilterVariables, ITag } from "@/interfaces";
 
 import { useEffect, useState } from "react";
-import { BaseOptionType, DefaultOptionType } from "antd/es/select";
+// import { BaseOptionType, DefaultOptionType } from "antd/es/select";
 
 type FormValues = {
     name: string;
@@ -31,6 +33,8 @@ type FormValues = {
     description: string;
     tags: number[];
 };
+type DefaultOptionType = GetProp<TreeSelectProps, 'treeData'>[number];
+
 
 export const AccountCreateForm = () => {
     // console.log(`Create Account`, props);
@@ -51,6 +55,9 @@ export const AccountCreateForm = () => {
         resource: "accounts",
         redirect: false,
     });
+
+    const [accountTreeData, setAccountTreeData] = useState<Omit<DefaultOptionType, 'label'>[]>([]);
+    const [ selectedAccount, setSelectedAccount ] = useState<DefaultOptionType | null>(null);
 
     // useEffect(() => {
     //     if ( ! formLoading ) {
@@ -85,9 +92,9 @@ export const AccountCreateForm = () => {
         optionLabel: "label",
   optionValue: "id",
     })
-    const handleChange = (value: BaseOption, option: DefaultOptionType) => {
-        console.log(`selected ${value}`, value, typeof value);
-      };
+    // const handleChange = (value: BaseOption, option: DefaultOptionType) => {
+    //     console.log(`selected ${value}`, value, typeof value);
+    //   };
     const onExpandAccount = (keys) => {
         console.log(keys);
         let parentID = keys.pop();
@@ -95,37 +102,60 @@ export const AccountCreateForm = () => {
         setFilters([{field: 'parent', operator: 'eq', value: parentID}], 'merge');
     }
 
+    const formatAccountTreeData = (data: IAccount[]) => {
+        return data?.map(account => {
+            // console.log('account', account)
+            return {
+            title: account.code,
+            value: account.id,
+            key: account.id,
+            isLeaf: account.has_children === true ? false : true,
+            pId: account.parent_id ? account.parent_id : 0,
+            id: account.id
+        }
+        }
+    ) ?? [];
+    }
     useEffect(()=>{
-        console.log('tags', queryResult, selectProps);
-        if ( ! AccountselectProps.loading ) {
-            if ( accountsOptions.length === 0 ) {
-                setAccountsOptions([...AccountselectProps.dataSource as any]);
-            } else if ( expandedAccount !== '' ) {
-                setAccountsOptions((prevAccounts) => {
-                    const updateAccounts = (accounts) => {
-                        return [...(accounts as any)?.map(account => {
-                            if ( expandedAccount.startsWith(account.code) ) {
-                                if ( expandedAccount === account.code ) {
-                                    return {
-                                        ...account,
-                                        children: [...AccountselectProps.dataSource as any]
-                                    }
-                                }
-                                if ( expandedAccount.length > account.code.length ) {
-                                    return {
-                                        ...account,
-                                        children: updateAccounts(account.children)
-                                    }
-                                }
-                            } else {
-                                return account;
-                            }
-                        })]
-                    }
-                    return [...updateAccounts(prevAccounts)];
+        // console.log('tags', queryResult, selectProps);
+        // if ( ! AccountselectProps.loading ) {
+        //     if ( accountsOptions.length === 0 ) {
+        //         setAccountsOptions([...AccountselectProps.dataSource as any]);
+        //     } else if ( expandedAccount !== '' ) {
+        //         setAccountsOptions((prevAccounts) => {
+        //             const updateAccounts = (accounts) => {
+        //                 return [...(accounts as any)?.map(account => {
+        //                     if ( expandedAccount.startsWith(account.code) ) {
+        //                         if ( expandedAccount === account.code ) {
+        //                             return {
+        //                                 ...account,
+        //                                 children: [...AccountselectProps.dataSource as any]
+        //                             }
+        //                         }
+        //                         if ( expandedAccount.length > account.code.length ) {
+        //                             return {
+        //                                 ...account,
+        //                                 children: updateAccounts(account.children)
+        //                             }
+        //                         }
+        //                     } else {
+        //                         return account;
+        //                     }
+        //                 })]
+        //             }
+        //             return [...updateAccounts(prevAccounts)];
     
-                })
-            }
+        //         })
+        //     }
+        // }
+
+
+        if ( ! AccountselectProps.loading) {
+            const newAccountData = formatAccountTreeData(AccountselectProps.dataSource as any)
+            console.log('new account data', newAccountData)
+            console.log('account tree data', accountTreeData)
+            setAccountTreeData([...accountTreeData, ...newAccountData]);
+
         }
 
     }, [AccountselectProps.dataSource, queryResult.data]);
@@ -138,6 +168,34 @@ export const AccountCreateForm = () => {
             // setOpenForms([...openForms, `accounts - ${key}`]);
         }
     }, []);
+        const onLoadData: TreeSelectProps['loadData'] = (record) => {
+            const account = accountTreeData.find(account => account.id === record.id);
+    
+            // console.log('record',record, account);
+            setSelectedAccount(record);
+            if (account && ! account.isLeaf) {
+                setFilters([
+                    {
+                        field: 'type',
+                        operator: 'eq',
+                        value: 'all',
+                    },
+                    {
+                        field: 'parent',
+                        operator: 'eq',
+                        value: record.id,
+                    }
+                ], 'replace');
+            }
+    
+    
+            return new Promise((resolve) => {
+                setTimeout(()=>{
+                    resolve(undefined);
+                }, 300)
+            });
+            
+        };
 
     return (
         <Create saveButtonProps={saveButtonProps}>
@@ -179,15 +237,18 @@ export const AccountCreateForm = () => {
                     rules={[{ required: true }]}
                 >
                     <TreeSelect
+                        treeDataSimpleMode
                         style={{ width: '100%' }}
                         // loadData={loadMoreAccounts as any}
-                        fieldNames={{label: "code_label", "value": "id"}}
-                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                        treeData={accountsOptions}
+                        // fieldNames={{label: "code_label", "value": "id"}}
+                        // dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                        popupMatchSelectWidth
+                        treeData={accountTreeData}
                         placeholder="Please select"
                         // onChange={onChangeType}
+                        loadData={onLoadData}
                         allowClear={true}
-                        onTreeExpand={onExpandAccount}
+                        // onTreeExpand={onExpandAccount}
                         dropdownRender={(menu) => (
                             <>
                             {menu}
@@ -212,7 +273,7 @@ export const AccountCreateForm = () => {
       allowClear
       style={{ width: '100%' }}
       placeholder="Please select"
-      onChange={handleChange}
+    //   onChange={handleChange}
     //   options={queryResult?.data?.data as any}
     {...selectProps}
     dropdownRender={(menu) => (

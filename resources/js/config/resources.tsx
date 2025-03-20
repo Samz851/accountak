@@ -134,7 +134,7 @@ export const resources: IResourceItem[] = [
         name: "formula",
         list: "/formula",
         create: "/formula/create",
-        show: "/dev_sample_categories/show/:id",
+        show: "/formula/show/:id",
         meta: {
             label: "formula",
             icon: <DashboardOutlined />,
