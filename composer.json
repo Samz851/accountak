@@ -13,8 +13,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/scout": "^10.8",
         "laravel/tinker": "^2.8",
-        "meilisearch/meilisearch-php": "^1.7",
-        "stancl/tenancy": "^3.9"
+        "meilisearch/meilisearch-php": "^1.7"
     },
     "require-dev": {
         "beyondcode/laravel-er-diagram-generator": "^4.0",
