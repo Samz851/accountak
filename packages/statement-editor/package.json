@@ -1,0 +1,32 @@
+{
+  "name": "@your-scope/statement-editor",
+  "version": "0.1.0",
+  "description": "A package containing the CKEditor StatementEditor and its dependencies.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "@ckeditor/ckeditor5-react": "^5.0.0 || ^6.0.0 || ^7.0.0",
+    "ckeditor5": "^40.0.0 || ^41.0.0",
+    "ckeditor5-premium-features": "^40.0.0 || ^41.0.0",
+    "@refinedev/antd": "^5.0.0",
+    "@refinedev/core": "^4.0.0",
+    "antd": "^5.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/lodash": "^4.14.0"
+  }
+}
